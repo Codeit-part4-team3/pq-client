@@ -1,5 +1,11 @@
+import VoiceChannel from './components/voiceChannel/VoiceChannel';
+
 function App() {
-  return <></>;
+  return (
+    <>
+      <VoiceChannel />
+    </>
+  );
 }
 
 export default App;
