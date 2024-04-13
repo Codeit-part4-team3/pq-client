@@ -2,7 +2,7 @@ name: pq
 
 on:
   push:
-    branches: [dev]
+    branches: [feature-CI/CD]
 
 jobs:
   continuous-deployment:
