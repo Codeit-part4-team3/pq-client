@@ -11,7 +11,7 @@ jobs:
       - name: Git Checkout
         uses: actions/checkout@v2
 
-      - name: Use Node.js version 18.x
+      - name: Use Node.js version 20.x
         uses: actions/setup-node@v2
         with:
           node-version: 20.x
