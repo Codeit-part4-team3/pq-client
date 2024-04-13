@@ -1,4 +1,4 @@
-name: pq
+name: pq-fe
 
 on:
   push:
