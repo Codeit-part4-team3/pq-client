@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import styled from 'styled-components';
 
@@ -9,7 +9,7 @@ export default function VoiceChannel() {
   // roomName은 나중에 params로 받아오도록 수정
   const roomName = 'test';
   // 임시 백엔드 host
-  const host = 'http://localhost:3002';
+  const host = 'http://localhost:3003';
 
   // 나의 여러가지 미디어 정보를 담을 변수
   // 비디오, 오디오, 화면 공유 등 여러가지 미디어가 들어간다
@@ -20,9 +20,11 @@ export default function VoiceChannel() {
   const myVideoDom = useRef<HTMLVideoElement>();
   // const myAudioDom = useRef<HTMLAudioElement>();
   // 상대방의 비디오 화면을 보여주기 위한 ref
-  const otherVideoDom = useRef<HTMLVideoElement>();
+  // const otherVideoDom = useRef<HTMLVideoElement>();
   // socket 객체
   const socketRef = useRef<Socket>();
+  // 다른 사람들의 미디어 스트림들을 담은 배열
+  const [otherStreams, setOtherStreams] = useState<MediaStream[]>([]);
 
   // 미디어 정보를 가져오는 함수
   const getMedia = async () => {
@@ -64,9 +66,12 @@ export default function VoiceChannel() {
       // 상대방의 비디오 화면을 받아서 화면에 출력
       // event 객체의 경우 상대방이 보낸 미디어 스트림 정보가 들어있다
       myPeerConnection.current.ontrack = (event) => {
-        if (otherVideoDom.current) {
-          otherVideoDom.current.srcObject = event.streams[0];
-        }
+        // if (otherVideoDom.current) {
+        //   otherVideoDom.current.srcObject = event.streams[0];
+        // }
+        // 다른 사람의 미디어 스트림을 배열에 저장한다.
+        // 이후에 map을 통해 화면에 출력한다
+        setOtherStreams((prev) => [...prev, event.streams[0]]);
       };
     } catch (e) {
       console.error('getMedia error', e);
@@ -168,24 +173,35 @@ export default function VoiceChannel() {
     };
   }, []);
 
+  useEffect(() => {
+    console.log('otherStreams : ', otherStreams);
+  }, [otherStreams]);
+
   return (
     <>
       <div>
         <video
           playsInline={true}
           autoPlay={true}
-          width={400}
-          height={400}
+          width={200}
+          height={200}
           ref={myVideoDom as React.RefObject<HTMLVideoElement>}
         ></video>
+      </div>
+      {otherStreams.map((stream, index) => (
         <video
+          key={index}
           playsInline={true}
           autoPlay={true}
-          width={400}
-          height={400}
-          ref={otherVideoDom as React.RefObject<HTMLVideoElement>}
+          width={200}
+          height={200}
+          ref={(videoElement) => {
+            if (videoElement && videoElement.srcObject !== stream) {
+              videoElement.srcObject = stream;
+            }
+          }}
         ></video>
-      </div>
+      ))}
       <Toolbar>
         <button
           onClick={() => {
@@ -202,6 +218,16 @@ export default function VoiceChannel() {
 const Toolbar = styled.div`
   display: flex;
 `;
+
+{
+  /* <video
+playsInline={true}
+autoPlay={true}
+width={400}
+height={400}
+ref={otherVideoDom as React.RefObject<HTMLVideoElement>}
+></video> */
+}
 
 {
   /*         <button
