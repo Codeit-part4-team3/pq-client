@@ -1,8 +1,8 @@
-name: pq-fe
+name: pq
 
 on:
   push:
-    branches: [feature-CI/CD]
+    branches: [main]
 
 jobs:
   continuous-deployment:
