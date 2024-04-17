@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import styled from 'styled-components';
 
-import handleCameraButtonClick from '../../../utils/handleCameraButtonClick';
+import handleCameraButtonClick from '../../utils/handleCameraButtonClick';
 // import handleMuteButtonClick from '../../../utils/handleMuteButtonClick';
 
 export default function VoiceChannel() {

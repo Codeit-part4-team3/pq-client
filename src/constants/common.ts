@@ -1,0 +1,16 @@
+export enum PERMISSIONS {
+  ADMIN = 0,
+  USER = 1,
+}
+
+export enum CHANNEL_TYPE {
+  TEXT = 0,
+  VOICE = 1,
+}
+
+export enum MediaQueryType {
+  MOBILE = 0,
+  TABLET = 1,
+  DESKTOP = 2,
+  DESKTOP_2XL = 3,
+}
