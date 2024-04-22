@@ -6,12 +6,14 @@ import Server from './pages/Server/Server';
 import NotFound from './pages/notfound/NotFound';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Channel from './pages/Server/Channel/Channel';
+import GlobalStyles from './GlobalStyles';
 
 function App() {
   const queryClient = new QueryClient();
 
   return (
     <>
+      <GlobalStyles />
       <QueryClientProvider client={queryClient}>
         <Routes>
           <Route path='/' element={<Landing />} />
