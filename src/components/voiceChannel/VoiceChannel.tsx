@@ -40,7 +40,7 @@ export default function VoiceChannel() {
       // 나의 미디어 스트림을 RTCPeerConnection에 추가
       if (myStreamRef.current && senderPC.current) {
         myStreamRef.current.getTracks().forEach((track) => {
-          senderPC.current?.addTrack(track, myStreamRef.current);
+          senderPC.current?.addTrack(track, myStreamRef.current || new MediaStream());
         });
       }
 
