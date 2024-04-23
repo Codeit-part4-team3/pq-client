@@ -1,25 +1,31 @@
-import { useRoutes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Landing from './pages/landing/Landing';
 import Signup from './pages/signup/Signup';
 import Login from './pages/login/Login';
-import Chat from './pages/chat/chat';
+import Server from './pages/server/Server';
 import NotFound from './pages/notfound/NotFound';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import GlobalStyles from './GlobalStyles';
+import Channel from './pages/server/channel/Channel';
 
 function App() {
   const queryClient = new QueryClient();
 
-  const routing = useRoutes([
-    { path: '/', element: <Landing /> },
-    { path: '/login', element: <Login /> },
-    { path: '/signup', element: <Signup /> },
-    { path: '/chat', element: <Chat /> },
-    { path: '*', element: <NotFound /> },
-  ]);
-
   return (
     <>
-      <QueryClientProvider client={queryClient}>{routing}</QueryClientProvider>
+      <GlobalStyles />
+      <QueryClientProvider client={queryClient}>
+        <Routes>
+          <Route path='/' element={<Landing />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
+          <Route path='/server' element={<Server />} />
+          <Route path='/server/:id' element={<Server />}>
+            <Route path='channel/:id' element={<Channel />} />
+          </Route>
+          <Route path='*' element={<NotFound />} />
+        </Routes>
+      </QueryClientProvider>
     </>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import OtherVideo from './OtherVideo';
+import { useParams } from 'react-router-dom';
 
 // 나의 RTCPeerConnection 생성 시의 세팅
 const pc_config = {
@@ -13,9 +14,10 @@ const pc_config = {
 
 const SOCKET_SERVER_URL = 'http://localhost:3003';
 
-const roomName = 'test-room';
-
 export default function VoiceChannel() {
+  const { id: roomName } = useParams();
+  console.log(roomName);
+
   const myStreamRef = useRef<MediaStream | null>(null);
   const myVideoRef = useRef<HTMLVideoElement | null>(null);
   const [remoteStreams, setRemoteStreams] = useState<MediaStream[] | null>(null);
@@ -40,7 +42,7 @@ export default function VoiceChannel() {
       // 나의 미디어 스트림을 RTCPeerConnection에 추가
       if (myStreamRef.current && senderPC.current) {
         myStreamRef.current.getTracks().forEach((track) => {
-          senderPC.current?.addTrack(track, myStreamRef.current);
+          if (myStreamRef.current) senderPC.current?.addTrack(track, myStreamRef.current);
         });
       }
 
@@ -66,7 +68,8 @@ export default function VoiceChannel() {
     socketRef.current = io(SOCKET_SERVER_URL);
 
     socketRef.current.on('connect', () => {
-      socketRef.current?.emit('join_room', roomName);
+      socketRef.current?.emit('join_voice_channel', roomName);
+      console.log(socketRef.current);
     });
 
     socketRef.current.on('answer', async (answer) => {

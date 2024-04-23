@@ -6,7 +6,7 @@ export default function Login() {
       <h1>Login Page</h1>
       <Link to='/signup'>Signup</Link>
       <br />
-      <Link to='/chat'>Chat</Link>
+      <Link to='/server/1'>Chat</Link>
     </div>
   );
 }
