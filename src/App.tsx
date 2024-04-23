@@ -1,3 +1,6 @@
+import { Route, Routes } from 'react-router-dom';
+import VoiceChannel from './components/voiceChannel/VoiceChannel';
+import ChatChannel from './components/chatChannel/ChatChannel';
 import { useRoutes } from 'react-router-dom';
 import Landing from './pages/landing/Landing';
 import Signup from './pages/signup/Signup';
@@ -14,6 +17,8 @@ function App() {
     { path: '/login', element: <Login /> },
     { path: '/signup', element: <Signup /> },
     { path: '/chat', element: <Chat /> },
+    { path: '/voiceChannel/:id', element: <VoiceChannel /> },
+    { path: '/chatChannel/:id', element: <ChatChannel /> },
     { path: '*', element: <NotFound /> },
   ]);
 
