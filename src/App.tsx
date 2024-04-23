@@ -2,11 +2,11 @@ import { Route, Routes } from 'react-router-dom';
 import Landing from './pages/landing/Landing';
 import Signup from './pages/signup/Signup';
 import Login from './pages/login/Login';
-import Server from './pages/Server/Server';
+import Server from './pages/server/Server';
 import NotFound from './pages/notfound/NotFound';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Channel from './pages/Server/Channel/Channel';
 import GlobalStyles from './GlobalStyles';
+import Channel from './pages/server/channel/Channel';
 
 function App() {
   const queryClient = new QueryClient();
