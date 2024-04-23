@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import ServerButton from './_components/ServerButton';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import NotFoundServer from './_components/NotFoundServer';
 import ChannelButton from './_components/ChannelButton';
 
@@ -17,6 +17,10 @@ import ChannelButton from './_components/ChannelButton';
 
 export default function Server() {
   const [isExist, setIsExist] = useState(false);
+
+  useEffect(() => {
+    setIsExist(true);
+  }, []);
 
   return (
     <ServerArea>
