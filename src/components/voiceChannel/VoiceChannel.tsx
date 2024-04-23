@@ -12,7 +12,7 @@ const pc_config = {
   ],
 };
 
-const SOCKET_SERVER_URL = 'https://api.pqsoft.net:8080';
+const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 export default function VoiceChannel() {
   const { id: roomName } = useParams();
