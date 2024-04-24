@@ -7,6 +7,7 @@ import NotFound from './pages/notfound/NotFound';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import GlobalStyles from './GlobalStyles';
 import Channel from './pages/server/channel/Channel';
+import Admin from './pages/admin/Admin';
 
 function App() {
   const queryClient = new QueryClient();
@@ -24,7 +25,7 @@ function App() {
             <Route path='channel/:id' element={<Channel />} />
           </Route>
           <Route path='*' element={<NotFound />} />
-          <Route path='/admin' element={<h1>Admin Page</h1>} />
+          <Route path='/admin' element={<Admin />} />
         </Routes>
       </QueryClientProvider>
     </>
