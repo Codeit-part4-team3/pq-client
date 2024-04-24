@@ -6,24 +6,26 @@ import styled from 'styled-components';
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 // @ToDo: 데이터 베이스에 채팅 메시지를 어떤 구조로 저장할지 정해야함
-// interface ChatMessage {
-//   id: string;
-//   message: string;
-//   createdAt: Date;
-// }
+interface Message {
+  messageId: string;
+  userId: string;
+  message: string;
+  createdAt: number;
+  updatedAt: number;
+  status: string;
+}
 export default function AdminChatChannel() {
   // const { id: roomName } = useParams();
   const roomName = 'admin_chat_channel';
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const socketRef = useRef<Socket | null>(null);
-  const [channelMessages, setChannelMessages] = useState([]);
 
   useEffect(() => {
     (async () => {
       const response = await axios.get('https://api.pqsoft.net:3000/admin/messages');
-      console.log(response.data);
-      setChannelMessages(response.data);
+      const messageData = response.data[0].messages;
+      setMessages([...messageData]);
     })();
   }, []);
 
@@ -65,7 +67,14 @@ export default function AdminChatChannel() {
         {messages.length === 0 ? (
           <div>환영합니다!</div>
         ) : (
-          messages.map((message, index) => <ChatMessage key={index}>{message}</ChatMessage>)
+          messages.map((message) => {
+            return (
+              <ChatMessage key={message.messageId}>
+                <div>user:{message.userId}</div>
+                <div>message:{message.message}</div>
+              </ChatMessage>
+            );
+          })
         )}
       </ChatContainer>
       <ChatForm>
@@ -94,7 +103,7 @@ const ChatContainer = styled.div`
 
 const ChatMessage = styled.div`
   display: flex;
-  flex-direction: column;
+  gap: 18px;
 `;
 
 const ChatForm = styled.form`
