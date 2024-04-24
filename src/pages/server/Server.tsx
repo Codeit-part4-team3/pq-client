@@ -3,11 +3,12 @@ import styled from 'styled-components';
 import ServerButton from './_components/ServerButton';
 import { useEffect, useState } from 'react';
 import NotFoundServer from './_components/NotFoundServer';
-import ChannelButton from './_components/ChannelButton';
-import { ChannelList, ServerItem } from './_types/type';
+import { ChannelItem, ChannelParentItem, ServerItem } from './_types/type';
 import MemberButton from './_components/MemberButton';
-import { channelMock, serverMock } from './_test/server.mock';
+import { channelMock, channelParentMock, serverMock } from './_test/server.mock';
 import AddServerButton from './_components/AddServerButton';
+import ChannelParentButton from './_components/ChannelParentButton';
+import ChannelButton from './_components/ChannelButton';
 
 /**
  *
@@ -25,14 +26,16 @@ import AddServerButton from './_components/AddServerButton';
 export default function Server() {
   const [isExist, setIsExist] = useState(false);
   const [serverList, setServerList] = useState<ServerItem[]>([]);
-  const [ChannelLists, setChannelLists] = useState<ChannelList[]>([]);
+  const [channelParentList, setChannelParentList] = useState<ChannelParentItem[]>([]);
+  const [channelList, setChannelList] = useState<ChannelItem[]>([]);
 
-  const fetchChannelLists = async (serverId: number) => {
-    setChannelLists(channelMock[serverId]);
+  const fetchChannelList = async () => {
+    setChannelList(channelMock);
+    setChannelParentList(channelParentMock);
   };
 
   const fetchServerList = async () => {
-    fetchChannelLists();
+    fetchChannelList();
 
     setServerList(serverMock);
   };
@@ -52,6 +55,18 @@ export default function Server() {
     return serverList.map((server) => <ServerButton data={server} />);
   };
 
+  const createChannelButton = (parentId: number) => {
+    return channelList.map((channel) => {
+      if (channel.parentId === parentId) return <ChannelButton data={channel} />;
+    });
+  };
+
+  const createChannelParentButton = (channelParents: ChannelParentItem[]) => {
+    return channelParents.map((parent) => {
+      return <ChannelParentButton data={parent}>{createChannelButton(parent.id)}</ChannelParentButton>;
+    });
+  };
+
   useEffect(() => {
     fetchServerList();
 
@@ -65,11 +80,7 @@ export default function Server() {
           {createServerButton(serverList)}
           <AddServerButton />
         </Menu>
-        <ChannelBox>
-          <ChannelButton />
-          <ChannelButton />
-          <ChannelButton />
-        </ChannelBox>
+        <ChannelContainer>{createChannelParentButton(channelParentList)}</ChannelContainer>
         {!isExist && <NotFoundServer />}
         <Outlet />
         <MemberBox>
@@ -112,9 +123,9 @@ const Menu = styled.aside`
   background-color: #bedeff;
 `;
 
-const ChannelBox = styled.aside`
+const ChannelContainer = styled.aside`
   width: 260px;
-  height: 100%;
+  height: 100vh;
 
   padding: 15px;
   display: flex;
@@ -128,7 +139,6 @@ const ChannelBox = styled.aside`
 
 const MemberBox = styled.aside`
   width: 200px;
-  height: 100%;
 
   padding: 15px;
   display: flex;
