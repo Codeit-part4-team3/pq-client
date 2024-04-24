@@ -24,6 +24,7 @@ function App() {
             <Route path='channel/:id' element={<Channel />} />
           </Route>
           <Route path='*' element={<NotFound />} />
+          <Route path='/admin' element={<h1>Admin Page</h1>} />
         </Routes>
       </QueryClientProvider>
     </>
