@@ -7,8 +7,9 @@ import { ChannelItem, ChannelParentItem, ServerItem } from './_types/type';
 import MemberButton from './_components/MemberButton';
 import { channelMock, channelParentMock, serverMock } from './_test/server.mock';
 import AddServerButton from './_components/AddServerButton';
-import ChannelParentButton from './_components/ChannelParentButton';
+import ChannelSubject from './_components/ChannelSubject';
 import ChannelButton from './_components/ChannelButton';
+import CalendarContainer from './_components/CalendarContainer';
 
 /**
  *
@@ -18,20 +19,17 @@ import ChannelButton from './_components/ChannelButton';
  *
  * 해당 컴포넌트에서 현재 서버 정보 및 체널 정보를 가지고 있어야함
  *
- * 데이터의 계층
- * item -> list -> lists
- *
  */
 
 export default function Server() {
   const [isExist, setIsExist] = useState(false);
   const [serverList, setServerList] = useState<ServerItem[]>([]);
-  const [channelParentList, setChannelParentList] = useState<ChannelParentItem[]>([]);
+  const [channelSubjectList, setChannelSubjectList] = useState<ChannelParentItem[]>([]);
   const [channelList, setChannelList] = useState<ChannelItem[]>([]);
 
   const fetchChannelList = async () => {
     setChannelList(channelMock);
-    setChannelParentList(channelParentMock);
+    setChannelSubjectList(channelParentMock);
   };
 
   const fetchServerList = async () => {
@@ -61,9 +59,9 @@ export default function Server() {
     });
   };
 
-  const createChannelParentButton = (channelParents: ChannelParentItem[]) => {
-    return channelParents.map((parent) => {
-      return <ChannelParentButton data={parent}>{createChannelButton(parent.id)}</ChannelParentButton>;
+  const createChannelSubject = (channelParents: ChannelParentItem[]) => {
+    return channelParents.map((pChannel) => {
+      return <ChannelSubject data={pChannel}>{createChannelButton(pChannel.id)}</ChannelSubject>;
     });
   };
 
@@ -80,12 +78,12 @@ export default function Server() {
           {createServerButton(serverList)}
           <AddServerButton />
         </Menu>
-        <ChannelContainer>{createChannelParentButton(channelParentList)}</ChannelContainer>
-        {!isExist && <NotFoundServer />}
-        <Outlet />
+        <ChannelContainer>
+          <CalendarContainer />
+          {createChannelSubject(channelSubjectList)}
+        </ChannelContainer>
+        {!isExist ? <NotFoundServer /> : <Outlet />}
         <MemberBox>
-          <MemberButton />
-          <MemberButton />
           <MemberButton />
           <MemberButton />
           <MemberButton />
@@ -127,13 +125,14 @@ const ChannelContainer = styled.aside`
   width: 260px;
   height: 100vh;
 
-  padding: 15px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   gap: 10px;
 
+  font-size: 14px;
   background-color: #f1f8ff;
 `;
 

@@ -8,18 +8,20 @@ interface ChannelButtonProps {
 export default function ChannelButton({ data }: ChannelButtonProps) {
   return (
     <Button>
-      <strong>{data.name}</strong>
+      <span>{`# ${data.name}`}</span>
     </Button>
   );
 }
 
 const Button = styled.button`
   width: 100%;
-  height: 100%;
+  height: 36px;
 
   border-radius: 5px;
   border: none;
   background-color: transparent;
+
+  text-align: left;
 
   &:hover {
     cursor: pointer;
