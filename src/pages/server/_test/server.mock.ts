@@ -1,4 +1,4 @@
-import { ChannelItem, ChannelParentItem, ServerItem } from '../_types/type';
+import { ChannelItem, ChannelSubjectItem, ServerItem } from '../_types/type';
 
 export const serverMock: ServerItem[] = [
   {
@@ -28,7 +28,7 @@ export const serverMock: ServerItem[] = [
   },
 ];
 
-export const channelParentMock: ChannelParentItem[] = [
+export const channelParentMock: ChannelSubjectItem[] = [
   {
     id: 1,
     name: '일반',
@@ -46,56 +46,56 @@ export const channelParentMock: ChannelParentItem[] = [
 export const channelMock: ChannelItem[] = [
   {
     id: 1,
-    parentId: 1,
+    subjectId: 1,
     name: '일반1',
     isVoice: false,
   },
   {
     id: 2,
-    parentId: 1,
+    subjectId: 1,
     name: '일반2',
     isVoice: false,
   },
   {
     id: 3,
-    parentId: 1,
+    subjectId: 1,
     name: '일반3',
     isVoice: false,
   },
 
   {
     id: 4,
-    parentId: 2,
+    subjectId: 2,
     name: '스터디1',
     isVoice: false,
   },
   {
     id: 5,
-    parentId: 2,
+    subjectId: 2,
     name: '스터디2',
     isVoice: false,
   },
   {
     id: 6,
-    parentId: 2,
+    subjectId: 2,
     name: '스터디3',
     isVoice: false,
   },
   {
     id: 7,
-    parentId: 3,
+    subjectId: 3,
     name: '음성1',
     isVoice: true,
   },
   {
     id: 8,
-    parentId: 3,
+    subjectId: 3,
     name: '음성2',
     isVoice: true,
   },
   {
     id: 9,
-    parentId: 3,
+    subjectId: 3,
     name: '음성3',
     isVoice: true,
   },
