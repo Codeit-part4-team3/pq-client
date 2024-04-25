@@ -4,8 +4,8 @@ import Signup from './pages/signup/Signup';
 import Login from './pages/login/Login';
 import Server from './pages/server/Server';
 import NotFound from './pages/notfound/NotFound';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import GlobalStyles from './GlobalStyles';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { GlobalStyles } from './GlobalStyles';
 import Channel from './pages/server/channel/Channel';
 
 function App() {
