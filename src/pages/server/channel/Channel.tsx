@@ -3,14 +3,14 @@ import VoiceChannel from '../../../components/voiceChannel/VoiceChannel';
 
 export default function Channel() {
   return (
-    <ChannelArea>
+    <Area>
       <h1>Channel Page</h1>
       <VoiceChannel />
-    </ChannelArea>
+    </Area>
   );
 }
 
-const ChannelArea = styled.section`
+const Area = styled.section`
   width: 100%;
   height: 100vh;
 

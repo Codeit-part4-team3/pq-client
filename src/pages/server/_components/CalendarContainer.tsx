@@ -3,14 +3,14 @@ import { ButtonIcon } from '../../../GlobalStyles';
 
 export default function CalendarContainer() {
   return (
-    <CalendarArea>
-      <CalenderButton />
+    <Area>
+      <Button />
       <span>일정</span>
-    </CalendarArea>
+    </Area>
   );
 }
 
-const CalendarArea = styled.section`
+const Area = styled.section`
   width: 100%;
 
   display: flex;
@@ -20,6 +20,6 @@ const CalendarArea = styled.section`
   gap: 8px;
 `;
 
-const CalenderButton = styled(ButtonIcon)`
+const Button = styled(ButtonIcon)`
   background-image: url('/images/calendar.svg');
 `;

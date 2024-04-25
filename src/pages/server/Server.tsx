@@ -72,28 +72,28 @@ export default function Server() {
   }, []);
 
   return (
-    <ServerArea>
-      <ContentsArea>
-        <Menu onClick={onClickServer}>
+    <Area>
+      <Container>
+        <ServerContainer onClick={onClickServer}>
           {createServerButton(serverList)}
           <AddServerButton />
-        </Menu>
+        </ServerContainer>
         <ChannelContainer>
           <CalendarContainer />
           {createChannelSubject(channelSubjectList)}
         </ChannelContainer>
         {!isExist ? <NotFoundServer /> : <Outlet />}
-        <MemberBox>
+        <MemberContainer>
           <MemberButton />
           <MemberButton />
           <MemberButton />
-        </MemberBox>
-      </ContentsArea>
-    </ServerArea>
+        </MemberContainer>
+      </Container>
+    </Area>
   );
 }
 
-const ServerArea = styled.section`
+const Area = styled.section`
   width: 100%;
   height: 100vh;
 
@@ -101,13 +101,13 @@ const ServerArea = styled.section`
   flex-direction: column;
 `;
 
-const ContentsArea = styled.main`
+const Container = styled.main`
   height: 100%;
   display: flex;
   background-color: #ffe0e0;
 `;
 
-const Menu = styled.aside`
+const ServerContainer = styled.aside`
   width: 68px;
   height: 100%;
 
@@ -136,7 +136,7 @@ const ChannelContainer = styled.aside`
   background-color: #f1f8ff;
 `;
 
-const MemberBox = styled.aside`
+const MemberContainer = styled.aside`
   width: 200px;
 
   padding: 15px;
