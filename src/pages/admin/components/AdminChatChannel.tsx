@@ -47,8 +47,14 @@ export default function AdminChatChannel() {
     // 채팅 채널 입장
     socketRef.current.emit('join_chat_channel', roomName);
 
+    // 다른 유저가 들어왔을 때 다른 유저가 들어왔다고 로그 찍기
     socketRef.current.on('user_joined', (socketId) => {
       console.log(socketId + 'is joined');
+    });
+
+    socketRef.current.on('receive_message', (newMessage: Message) => {
+      console.log('new message data : ', newMessage);
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
     return () => {
