@@ -14,6 +14,7 @@ interface Message {
   updatedAt: number;
   status: string;
 }
+
 export default function AdminChatChannel() {
   // const { id: roomName } = useParams();
   const roomName = 'admin_chat_channel';
@@ -21,6 +22,7 @@ export default function AdminChatChannel() {
   const [inputValue, setInputValue] = useState<string>('');
   const socketRef = useRef<Socket | null>(null);
 
+  // message 데이터 socket-server에서 가져오기
   useEffect(() => {
     (async () => {
       const response = await axios.get('https://api.pqsoft.net:3000/admin/messages');
@@ -33,7 +35,6 @@ export default function AdminChatChannel() {
   const sendMessage = (message: string, roomName: string) => {
     socketRef.current?.emit('send_message', message, roomName);
     // 내 채팅창 업데이트
-    setMessages((prevMessage) => [...prevMessage, message]);
   };
 
   const inputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,11 +49,6 @@ export default function AdminChatChannel() {
 
     socketRef.current.on('user_joined', (socketId) => {
       console.log(socketId + 'is joined');
-    });
-
-    // 채팅 메시지 수신
-    socketRef.current.on('receive_message', (message) => {
-      setMessages((prevMessage) => [...prevMessage, message]);
     });
 
     return () => {
