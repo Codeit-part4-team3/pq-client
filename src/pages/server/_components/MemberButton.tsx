@@ -1,27 +1,20 @@
 import styled from 'styled-components';
-import { ChannelItem } from '../_types/type';
 
-interface ChannelButtonProps {
-  data: ChannelItem;
-}
-
-export default function ChannelButton({ data }: ChannelButtonProps) {
+export default function MemberButton() {
   return (
     <Button>
-      <span>{`# ${data.name}`}</span>
+      <strong>구성원 ooo</strong>
     </Button>
   );
 }
 
 const Button = styled.button`
-  width: 100%;
-  height: 36px;
+  width: 120px;
+  height: 20px;
 
   border-radius: 5px;
   border: none;
   background-color: transparent;
-
-  text-align: left;
 
   &:hover {
     cursor: pointer;
