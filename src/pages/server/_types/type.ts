@@ -6,12 +6,12 @@ export interface ServerItem {
 
 export interface ChannelItem {
   id: number;
-  parentId: number;
+  subjectId: number;
   name: string;
   isVoice: boolean;
 }
 
-export interface ChannelParentItem {
+export interface ChannelSubjectItem {
   id: number;
   name: string;
 }

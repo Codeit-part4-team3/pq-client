@@ -1,10 +1,10 @@
 import styled from 'styled-components';
-import { ChannelParentItem } from '../_types/type';
+import { ChannelSubjectItem } from '../_types/type';
 import { useRef } from 'react';
 import { ButtonIcon } from '../../../GlobalStyles';
 
 interface ChannelSubjectProps {
-  data: ChannelParentItem;
+  data: ChannelSubjectItem;
   children: React.ReactNode;
 }
 
@@ -20,7 +20,7 @@ export default function ChannelSubject({ data, children }: ChannelSubjectProps) 
     <Area>
       <Header>
         <div>
-          <DropDownButton onClick={onClickDropDown} />
+          <DropDownButton data-testid='channel-dropdown' onClick={onClickDropDown} />
           <span>{data.name}</span>
         </div>
         <PlusButton />
@@ -30,7 +30,7 @@ export default function ChannelSubject({ data, children }: ChannelSubjectProps) 
   );
 }
 
-const Area = styled.button`
+const Area = styled.div`
   width: 100%;
 
   display: flex;
