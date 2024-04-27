@@ -53,4 +53,8 @@ const Button = styled.button`
   flex-shrink: 0;
 
   cursor: pointer;
+
+  &:hover {
+    background: #ccc;
+  }
 `;
