@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import ServerButton from './_components/ServerButton';
 import { useEffect, useState } from 'react';
 import NotFoundServer from './_components/NotFoundServer';
-import { ChannelItem, ChannelParentItem, ServerItem } from './_types/type';
+import { ChannelItem, ChannelSubjectItem, ServerItem } from './_types/type';
 import MemberButton from './_components/MemberButton';
 import { channelMock, channelParentMock, serverMock } from './_test/server.mock';
 import AddServerButton from './_components/AddServerButton';
@@ -24,7 +24,7 @@ import CalendarContainer from './_components/CalendarContainer';
 export default function Server() {
   const [isExist, setIsExist] = useState(false);
   const [serverList, setServerList] = useState<ServerItem[]>([]);
-  const [channelSubjectList, setChannelSubjectList] = useState<ChannelParentItem[]>([]);
+  const [channelSubjectList, setChannelSubjectList] = useState<ChannelSubjectItem[]>([]);
   const [channelList, setChannelList] = useState<ChannelItem[]>([]);
 
   const fetchChannelList = async () => {
@@ -53,15 +53,15 @@ export default function Server() {
     return serverList.map((server) => <ServerButton data={server} />);
   };
 
-  const createChannelButton = (parentId: number) => {
+  const createChannelButton = (subjectId: number) => {
     return channelList.map((channel) => {
-      if (channel.parentId === parentId) return <ChannelButton data={channel} />;
+      if (channel.subjectId === subjectId) return <ChannelButton data={channel} />;
     });
   };
 
-  const createChannelSubject = (channelParents: ChannelParentItem[]) => {
-    return channelParents.map((pChannel) => {
-      return <ChannelSubject data={pChannel}>{createChannelButton(pChannel.id)}</ChannelSubject>;
+  const createChannelSubject = (channelSubjects: ChannelSubjectItem[]) => {
+    return channelSubjects.map((sChannel) => {
+      return <ChannelSubject data={sChannel}>{createChannelButton(sChannel.id)}</ChannelSubject>;
     });
   };
 
