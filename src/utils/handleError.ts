@@ -6,7 +6,7 @@ export default function handleError(error: unknown) {
     const customEvent = new CustomEvent('axiosError', {
       detail: error.response?.data?.message || `Error status: ${error.status}`,
     });
-    window.dispatchEvent(customEvent);
+    dispatchEvent(customEvent);
     throw error;
   }
   if (error instanceof Error) {

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { ButtonHTMLAttributes, ReactNode } from 'react';
-import { SocialVariant } from '/types/buttonType';
-import { ButtonNormal } from '/GlobalStyles';
+import { SocialVariant } from 'src/types/buttonType';
+import { ButtonNormal } from 'src/GlobalStyles';
 
 interface SocialButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant: SocialVariant;

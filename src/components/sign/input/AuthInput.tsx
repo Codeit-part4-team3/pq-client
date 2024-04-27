@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { InputNormal } from '/GlobalStyles';
+import { InputNormal } from 'src/GlobalStyles';
 import { ChangeEvent, useRef } from 'react';
 import { Control, Controller, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 

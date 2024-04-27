@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import SocialButton from '/components/sign/button/SocialButton';
+import SocialButton from 'src/components/sign/button/SocialButton';
 
 export default function SocialButtons() {
   return (

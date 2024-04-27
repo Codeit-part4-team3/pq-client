@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import { SubmitButton } from '/components/sign/button/SignSubmitButton';
-import { ButtonNormal } from '/GlobalStyles';
-import AuthInput, { FormValues } from '/components/sign/input/AuthInput';
+import { SubmitButton } from 'src/components/sign/button/SignSubmitButton';
+import { ButtonNormal } from 'src/GlobalStyles';
+import AuthInput, { FormValues } from 'src/components/sign/input/AuthInput';
 
 export default function EmailCheckForm() {
   const { control, handleSubmit, getValues, setValue } = useForm<FormValues>();

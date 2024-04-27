@@ -1,6 +1,6 @@
 import EmailCheckForm from '../_components/EmailCheckForm';
-import Header from '/components/sign/Header';
-import { Area, Container } from '/components/sign/CommonStyles';
+import Header from 'src/components/sign/Header';
+import { Area, Container } from 'src/components/sign/CommonStyles';
 
 export default function EmailCheck() {
   return (

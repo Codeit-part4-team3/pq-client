@@ -1,5 +1,5 @@
 import axios from 'axios';
-import handleError from '/utils/handleError';
+import handleError from 'src/utils/handleError';
 
 const BASE_URL = 'https://api.pqsoft.net';
 
@@ -26,7 +26,7 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      // 토큰 갱신 로직
+      // TODO: 토큰 갱신 로직
     }
     handleError(error);
     return Promise.reject(error);

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { SubmitButton } from '/components/sign/button/SignSubmitButton';
-import SignInput from '/components/sign/input/SignInput';
+import { SubmitButton } from 'src/components/sign/button/SignSubmitButton';
+import SignInput from 'src/components/sign/input/SignInput';
 
 export default function LoginForm() {
   return (

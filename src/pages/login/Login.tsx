@@ -2,9 +2,9 @@ import SocialButtons from './_components/SocialButtons';
 import { useState } from 'react';
 import EmailLogin from './EmailLogin';
 import { Link } from 'react-router-dom';
-import Line from '/components/sign/Line';
-import Header from '/components/sign/Header';
-import { Area, Container, Button, Prompt } from '/components/sign/CommonStyles';
+import Line from 'src/components/sign/Line';
+import Header from 'src/components/sign/Header';
+import { Area, Container, Button, Prompt } from 'src/components/sign/CommonStyles';
 
 export default function Login() {
   const [isEmailLogin, setIsEmailLogin] = useState(false);

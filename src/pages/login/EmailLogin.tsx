@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import SocialButtons from './_components/SocialButtons';
 import LoginForm from './_components/LoginForm';
-import Line from '/components/sign/Line';
-import Header from '/components/sign/Header';
-import { Area, Container, Prompt } from '/components/sign/CommonStyles';
+import Line from 'src/components/sign/Line';
+import Header from 'src/components/sign/Header';
+import { Area, Container, Prompt } from 'src/components/sign/CommonStyles';
 
 export default function EmailLogin() {
   return (
