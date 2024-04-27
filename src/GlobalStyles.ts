@@ -64,6 +64,20 @@ export const ButtonIcon = styled.button`
   }
 `;
 
+export const InputNormal = styled.input`
+  border: 1px solid #eee;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  overflow: hidden;
+  white-space: nowrap;
+`;
+
 //
 // Animations
 //

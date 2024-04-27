@@ -43,7 +43,7 @@ export default function Signup() {
   );
 }
 
-const Area = styled.div`
+const Area = styled.section`
   width: 100%;
   height: 100vh;
 
@@ -57,7 +57,7 @@ const Area = styled.div`
   background-color: #fff;
 `;
 
-const Container = styled.div`
+const Container = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
