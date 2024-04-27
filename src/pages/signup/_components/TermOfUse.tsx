@@ -10,11 +10,7 @@ export default function TermOfUse() {
 }
 
 const TermsOfUse = styled.label`
-  font-size: 10px;
-  color: #666;
-
   display: flex;
-  align-items: center;
   gap: 4px;
 
   margin-top: 18px;
@@ -22,12 +18,14 @@ const TermsOfUse = styled.label`
 `;
 
 const TermsOfUseInput = styled.input`
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
 `;
 
 const TermsOfUseLabel = styled.label`
+  font-size: 10px;
+  color: #666;
+
   display: flex;
   align-items: center;
-  height: 16px;
 `;

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { SubmitButton } from '../../../components/Button/SignSubmitButton';
-import SignInput from '../../../components/Input/SignInput';
+import { SubmitButton } from '../../../components/sign/button/SignSubmitButton';
+import SignInput from '../../../components/sign/input/SignInput';
 
 export default function FindPasswordForm() {
   const navigate = useNavigate();

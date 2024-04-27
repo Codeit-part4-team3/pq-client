@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { SubmitButton } from '../../../components/sign/button/SignSubmitButton';
+import SignInput from '../../../components/sign/input/SignInput';
 import TermOfUse from './TermOfUse';
-import { SubmitButton } from '../../../components/Button/SignSubmitButton';
-import SignInput from '../../../components/Input/SignInput';
 
 export default function SignupForm() {
   const navigate = useNavigate();

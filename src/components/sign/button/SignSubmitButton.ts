@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ButtonEmphasis } from '../../GlobalStyles';
+import { ButtonEmphasis } from '../../../GlobalStyles';
 
 export const SubmitButton = styled(ButtonEmphasis)`
   width: 440px;
