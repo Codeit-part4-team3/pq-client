@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import volumeSvg from '../../../public/images/volume_up_FILL0_wght200_GRAD0_opsz24.svg';
-import cameraSvg from '../../../public/images/videocam_off_FILL0_wght200_GRAD0_opsz24.svg';
-import micOnSvg from '../../../public/images/mic_on_FILL0_wght200_GRAD0_opsz24.svg';
+import volumeSvg from '../../../../../../public/images/volume_up_FILL0_wght200_GRAD0_opsz24.svg';
+import cameraSvg from '../../../../../../public/images/videocam_off_FILL0_wght200_GRAD0_opsz24.svg';
+import micOnSvg from '../../../../../../public/images/mic_on_FILL0_wght200_GRAD0_opsz24.svg';
 
 export default function MyMediaControlPanel() {
   const handleSpeakerVolumeButtonClick = () => {

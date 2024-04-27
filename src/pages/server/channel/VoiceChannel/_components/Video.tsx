@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import profileImage from '../../../public/images/videoProfile.jfif';
-import micOffSvg from '../../../public/images/mic_off_FILL0_wght200_GRAD0_opsz24.svg';
+import profileImage from '../../../../../../public/images/videoProfile.jfif';
+import micOffSvg from '../../../../../../public/images/mic_off_FILL0_wght200_GRAD0_opsz24.svg';
 
 interface OtherVideoProps {
   // stream: MediaStream;

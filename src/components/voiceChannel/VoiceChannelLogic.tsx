@@ -1,4 +1,4 @@
-// @ToDo 로직 완성 후 사용 예정
+// @ToDo 로직 완성 후 마이그레이션 예정
 const pc_config = {
   iceServers: [
     {
@@ -9,6 +9,6 @@ const pc_config = {
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
-export default function VoiceChannel() {
+export default function VoiceChannelLogic() {
   return <></>;
 }
