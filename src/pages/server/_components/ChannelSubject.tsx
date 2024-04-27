@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { ChannelSubjectItem } from '../_types/type';
 import { useRef } from 'react';
-import { ButtonIcon } from '../../../GlobalStyles';
+import { ButtonIcon } from '/GlobalStyles';
 
 interface ChannelSubjectProps {
   data: ChannelSubjectItem;

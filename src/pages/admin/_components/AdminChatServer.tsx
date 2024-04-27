@@ -1,9 +1,5 @@
 import styled from 'styled-components';
-import {
-  useMutationCreateServer,
-  useMutationUpdateServer,
-  useQueryAllServers,
-} from '../../../apis/service/chatService';
+import { useMutationCreateServer, useMutationUpdateServer, useQueryAllServers } from '/apis/service/chatService';
 import { useEffect, useState } from 'react';
 
 // TODO : request api

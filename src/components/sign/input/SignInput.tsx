@@ -1,6 +1,6 @@
 import { ChangeEventHandler, HTMLInputTypeAttribute } from 'react';
 import styled from 'styled-components';
-import { InputNormal } from '../../../GlobalStyles';
+import { InputNormal } from '/GlobalStyles';
 
 interface Props {
   id: string;

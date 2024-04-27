@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { scaleAnim } from '../../../GlobalStyles';
+import { scaleAnim } from '/GlobalStyles';
 
 export default function AddServerButton() {
   return (

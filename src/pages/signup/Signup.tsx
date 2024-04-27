@@ -2,9 +2,9 @@ import SocialButtons from './_components/SocialButtons';
 import EmailSignup from './EmailSignup';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Line from '../../components/sign/Line';
-import Header from '../../components/sign/Header';
-import { Area, Container, Button, Prompt } from '../../components/sign/CommonStyles';
+import Line from '/components/sign/Line';
+import Header from '/components/sign/Header';
+import { Area, Container, Button, Prompt } from '/components/sign/CommonStyles';
 
 export default function Signup() {
   const [isEmailSignup, setIsEmailSignup] = useState(false);
