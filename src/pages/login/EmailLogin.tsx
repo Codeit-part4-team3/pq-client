@@ -1,17 +1,9 @@
 import styled from 'styled-components';
-import SocialButtons from './_components/SocialButtons';
-import { useState } from 'react';
-import EmailLogin from './EmailLogin';
 import { Link } from 'react-router-dom';
-import { ButtonNormal } from '../../GlobalStyles';
+import SocialButtons from './_components/SocialButtons';
+import LoginForm from './_components/LoginForm';
 
-export default function Login() {
-  const [isEmailLogin, setIsEmailLogin] = useState(false);
-
-  if (isEmailLogin) {
-    return <EmailLogin />;
-  }
-
+export default function EmailLogin() {
   return (
     <Area>
       <Container>
@@ -20,7 +12,11 @@ export default function Login() {
           로그인
         </Header>
 
-        <SocialButtons />
+        <LoginForm />
+
+        <Prompt>
+          비밀번호를 잊으셨나요? <Link to='/findPassword'>PW 찾기</Link>
+        </Prompt>
 
         <Line>
           <img src='/images/line.svg' />
@@ -28,14 +24,8 @@ export default function Login() {
           <img src='/images/line.svg' />
         </Line>
 
-        <Button
-          type='button'
-          onClick={() => {
-            setIsEmailLogin(true);
-          }}
-        >
-          이메일로 로그인하기
-        </Button>
+        <SocialButtons />
+
         <Prompt>
           아직 계정이 없으신가요? <Link to='/signup'>회원가입 하러가기</Link>
         </Prompt>
@@ -52,7 +42,7 @@ const Area = styled.div`
   flex-direction: column;
 
   font-weight: 400;
-  font-family: 'Inter', 'Pretendard', sans-serif;
+  font-family: Inter;
   line-height: 160%;
 
   background-color: #fff;
@@ -84,29 +74,15 @@ const Logo = styled.img`
   font-style: normal;
 `;
 
+const Prompt = styled.p`
+  font-size: 14px;
+  margin: 20px 0 0 0;
+`;
+
 const Line = styled.div`
   font-size: 12px;
 
   display: flex;
   gap: 16px;
   margin: 50px 0px;
-`;
-
-const Prompt = styled.p`
-  font-size: 14px;
-  margin: 20px 0 0 0;
-`;
-
-const Button = styled(ButtonNormal)`
-  width: 440px;
-  height: 40px;
-  font-size: 14px;
-
-  background: #fff;
-  border: 1px solid #f4f4f4;
-  border-radius: 10px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;

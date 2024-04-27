@@ -8,6 +8,9 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { GlobalStyles } from './GlobalStyles';
 import Channel from './pages/server/channel/Channel';
 import Admin from './pages/admin/Admin';
+import EmailCheck from './pages/signup/EmailCheck.tsx/EmailCheck';
+import FindPassword from './pages/login/findPassword/FindPassowrd';
+import ChangePassword from './pages/login/changePassword/ChangePassword';
 
 function App() {
   const queryClient = new QueryClient();
@@ -19,7 +22,10 @@ function App() {
         <Routes>
           <Route path='/' element={<Landing />} />
           <Route path='/login' element={<Login />} />
+          <Route path='/findPassword' element={<FindPassword />} />
+          <Route path='/changePassword' element={<ChangePassword />} />
           <Route path='/signup' element={<Signup />} />
+          <Route path='/checkEmail' element={<EmailCheck />} />
           <Route path='/server' element={<Server />} />
           <Route path='/server/:id' element={<Server />}>
             <Route path='channel/:id' element={<Channel />} />
