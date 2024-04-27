@@ -1,11 +1,11 @@
 import styled from 'styled-components';
-import VoiceChannelUi from '../../../components/voiceChannel/VocieChannelUi';
+import VoiceChannel from './VoiceChannel/VoiceChannel';
 
 export default function Channel() {
   return (
     <Area>
       {/* <VoiceChannel/> */}
-      <VoiceChannelUi />
+      <VoiceChannel />
     </Area>
   );
 }
