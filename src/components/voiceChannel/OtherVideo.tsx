@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import profileImage from '../../../public/images/videoProfile.jfif';
 
 interface OtherVideoProps {
   stream: MediaStream;
@@ -20,8 +21,8 @@ const OtherVideo: React.FC<OtherVideoProps> = ({ stream }) => {
     <>
       {/* <video ref={videoRef} autoPlay playsInline width={200} height={200} />; */}
       <Media>
-        <ProfileImage src='' alt='프로필 이미지' />
-        <NameTag>{'이름'}</NameTag>
+        <ProfileImage src={profileImage} alt='프로필 이미지' />
+        <NameTag>{'참여자 이름'}</NameTag>
       </Media>
     </>
   );
@@ -48,7 +49,8 @@ const Media = styled.div`
 const ProfileImage = styled.img`
   width: 96px;
   height: 96px;
-  border-radius: 13px;
+  border-radius: 50%;
+  object-fit: cover;
 `;
 
 const NameTag = styled.div`
