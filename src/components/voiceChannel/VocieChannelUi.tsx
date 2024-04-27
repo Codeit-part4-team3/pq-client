@@ -1,10 +1,12 @@
 import styled from 'styled-components';
 import OtherVideo from './OtherVideo';
+import MyMediaControlPanel from './MyMediaControlPanel';
 
 export default function VoiceChannelUi() {
   return (
     <Wrapper>
       <OtherVideo />
+      <MyMediaControlPanel />
     </Wrapper>
   );
 }
