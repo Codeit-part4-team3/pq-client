@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import VoiceChannel from '../../../components/voiceChannel/VoiceChannel';
 import VoiceChannelUi from '../../../components/voiceChannel/VocieChannelUi';
 
 export default function Channel() {

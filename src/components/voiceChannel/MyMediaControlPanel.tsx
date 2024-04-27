@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import volumeSvg from '../../../public/images/volume_up_FILL0_wght200_GRAD0_opsz24.svg';
 import cameraSvg from '../../../public/images/videocam_off_FILL0_wght200_GRAD0_opsz24.svg';
-import micSvg from '../../../public/images/mic_FILL0_wght200_GRAD0_opsz24.svg';
+import micOnSvg from '../../../public/images/mic_on_FILL0_wght200_GRAD0_opsz24.svg';
 
 export default function MyMediaControlPanel() {
   const handleSpeakerVolumeButtonClick = () => {
@@ -25,7 +25,7 @@ export default function MyMediaControlPanel() {
         <img src={cameraSvg} alt='카메라 on/off 버튼 이미지' width={36} height={36} />
       </Button>
       <Button type='button' onClick={handleMicVolumeButtonClick}>
-        <img src={micSvg} alt='마이크 볼륨 조절 버튼 이미지' width={36} height={36} />
+        <img src={micOnSvg} alt='마이크 볼륨 조절 버튼 이미지' width={36} height={36} />
       </Button>
     </Wrapper>
   );

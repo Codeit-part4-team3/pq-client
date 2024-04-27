@@ -2,20 +2,26 @@ import styled from 'styled-components';
 import groupSvg from '../../../public/images/group_FILL0_wght200_GRAD0_opsz24 1.svg';
 import tagSvg from '../../../public/images/tag_FILL0_wght200_GRAD0_opsz24 11.svg';
 
+// voiceChannel, chatChannel 공통
+// @ToDo 채널 이름, 채널 설명, 채널 참여자 수를 서버에서 받아와서 렌더링
 export default function ChannelHeader() {
+  const MockChannelName = '채팅방 이름1';
+  const MockChannelDescription = '채팅방 이름1을 소개하는 설명입니다.';
+  const MockChannelParticipants = '5명';
+
   return (
     <Wrapper>
       <LeftBox>
         <ChannelName>
           <img src={tagSvg} width={24} height={24} alt='채널 이름 태그 이미지' />
-          <span>{'채팅방 이름1'}</span>
+          <span>{MockChannelName}</span>
         </ChannelName>
-        <ChannelDescription>{'채팅방 이름1을 소개하는 설명입니다.'}</ChannelDescription>
+        <ChannelDescription>{MockChannelDescription}</ChannelDescription>
       </LeftBox>
       <RightBox>
         <ChannelParticipants type='button'>
           <img src={groupSvg} width={20} height={20} alt='채널 참여자 수 이미지' />
-          <span>{'5명'}</span>
+          <span>{MockChannelParticipants}</span>
         </ChannelParticipants>
       </RightBox>
     </Wrapper>

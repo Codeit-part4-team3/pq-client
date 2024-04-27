@@ -1,17 +1,19 @@
 import styled from 'styled-components';
-import OtherVideo from './OtherVideo';
+
 import MyMediaControlPanel from './MyMediaControlPanel';
 import ChannelHeader from './ChannelHeader';
+import Video from './Video';
 
+// @ToDo webRTC 버그 수정 전까지만 이 컴포넌트로 사용예정(일단 보여주기 식 입니다.)
 export default function VoiceChannelUi() {
   return (
     <Wrapper>
       <ChannelHeader />
       <VideoContainer>
-        <OtherVideo />
-        <OtherVideo />
-        <OtherVideo />
-        <OtherVideo />
+        <Video onVoice={true} />
+        <Video onVoice={false} />
+        <Video onVoice={false} />
+        <Video onVoice={false} />
       </VideoContainer>
 
       <MyMediaControlPanel />

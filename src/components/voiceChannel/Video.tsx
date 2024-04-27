@@ -1,43 +1,37 @@
-import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import profileImage from '../../../public/images/videoProfile.jfif';
+import micOffSvg from '../../../public/images/mic_off_FILL0_wght200_GRAD0_opsz24.svg';
 
 interface OtherVideoProps {
-  stream: MediaStream;
+  // stream: MediaStream;
+  onVoice: boolean;
 }
 
-const OtherVideo: React.FC<OtherVideoProps> = ({ stream }) => {
-  console.log(stream);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  console.log(videoRef);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream;
-    }
-  }, [stream]);
-
+export default function Video({ onVoice }: OtherVideoProps) {
   return (
     <>
       {/* <video ref={videoRef} autoPlay playsInline width={200} height={200} />; */}
-      <Media>
+      <Media onVoice={onVoice}>
         <ProfileImage src={profileImage} alt='프로필 이미지' />
         <NameTag>{'참여자 이름'}</NameTag>
+        {onVoice ? null : (
+          <MicOff>
+            <img src={micOffSvg} alt='마이크 off 이미지' width={24} height={24} />
+          </MicOff>
+        )}
       </Media>
     </>
   );
-};
+}
 
-export default OtherVideo;
-
-const Media = styled.div`
+const Media = styled.div<{ onVoice: boolean }>`
   border-radius: 10px;
-  border: 0.5px solid #eaeaea;
+  border: ${({ onVoice }) => (onVoice ? '2px solid #00BB83' : '1px solid #ccc')};
   width: 600px;
   height: 338px;
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.05);
 
-  background: #d9d9d9;
+  background: ${({ onVoice }) => (onVoice ? '#F1F8FF' : '#d9d9d9')};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -73,4 +67,20 @@ const NameTag = styled.div`
   position: absolute;
   left: 10px;
   bottom: 12px;
+`;
+
+const MicOff = styled.div`
+  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  background: #fff;
+
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
 `;
