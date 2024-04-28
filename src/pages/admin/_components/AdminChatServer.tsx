@@ -1,9 +1,5 @@
 import styled from 'styled-components';
-import {
-  useMutationCreateServer,
-  useMutationUpdateServer,
-  useQueryAllServers,
-} from '../../../apis/service/chatService';
+import { useMutationDelete, useMutationPatch, useMutationPost, useQueryGet } from '../../../apis/service/chatService';
 import { useEffect, useState } from 'react';
 
 // TODO : request api
@@ -11,27 +7,33 @@ export default function AdminChatServer() {
   const [logs, setLogs] = useState<string>('');
   const [createName, setCreateName] = useState<string>('');
   const [createImageUrl, setCreateImageUrl] = useState<string>('');
+  const [updateId, setUpdateId] = useState<string>('');
   const [updateName, setUpdateName] = useState<string>('');
   const [updateImageUrl, setUpdateImageUrl] = useState<string>('');
-  const result = useQueryAllServers();
-  const createMutation = useMutationCreateServer();
-  const updateMutation = useMutationUpdateServer();
+
+  const { data, error, isLoading } = useQueryGet('getAllServers', '/chat/v1/server/all');
+  console.log(data, error, isLoading);
+
+  const createMutation = useMutationPost('/chat/v1/server');
+
+  const updateMutation = useMutationPatch('/chat/v1/server/id');
+  const deleteMutation = useMutationDelete('/chat/v1/server/id');
 
   const updateLogs = (newLog: string) => {
     setLogs((prevLogs) => prevLogs + '\n' + newLog);
   };
 
   useEffect(() => {
-    // updateLogs(result.data);
-  }, [result.data]);
-
-  useEffect(() => {
-    updateLogs(createMutation.data);
+    if (createMutation.data) updateLogs(String(createMutation.data));
   }, [createMutation.data]);
 
   useEffect(() => {
-    updateLogs(updateMutation.data);
+    if (updateMutation.data) updateLogs(String(updateMutation.data));
   }, [updateMutation.data]);
+
+  useEffect(() => {
+    if (deleteMutation.data) updateLogs(String(deleteMutation.data));
+  }, [deleteMutation.data]);
 
   return (
     <Area>
@@ -48,9 +50,17 @@ export default function AdminChatServer() {
         </div>
         <div>
           <label>Update Server</label>
+          <input placeholder='id' value={updateId} onChange={(e) => setUpdateId(e.target.value)} />
           <input placeholder='name' value={updateName} onChange={(e) => setUpdateName(e.target.value)} />
           <input placeholder='imageUrl' value={updateImageUrl} onChange={(e) => setUpdateImageUrl(e.target.value)} />
-          <button onClick={() => updateMutation.mutate({ name: updateName, imageUrl: updateImageUrl })}>전송</button>
+          <button onClick={() => createMutation.mutate({ id: updateId, name: createName, imageUrl: createImageUrl })}>
+            전송
+          </button>
+        </div>
+        <div>
+          <label>Delete Server</label>
+          <input placeholder='id' />
+          <button onClick={() => deleteMutation.mutate()}>전송</button>
         </div>
       </ChatContainer>
       <LogContainer>

@@ -3,75 +3,41 @@
 import { useMutation, useQuery } from 'react-query';
 import axiosInstance from '../instance/axiosInstance';
 
-interface ChatDataBody {
-  message: string;
-}
+export const useQueryGet = (queryKey: string, url: string, options: object = {}) => {
+  const { data, error, isError, isSuccess, isLoading, isFetching } = useQuery(
+    queryKey,
+    async () => {
+      const res = await axiosInstance.get(url);
+      return res.data;
+    },
+    options,
+  );
 
-interface ChatDataResponse {
-  // Define the shape of the response data here
-}
-
-interface CreateServerBody {
-  name: string;
-  imageUrl: string;
-}
-
-const getChatData = async () => {
-  const response = await axiosInstance.get('/chat');
-  return response.data;
+  return { data, error, isError, isSuccess, isLoading, isFetching };
 };
 
-const postChatData = async (data: ChatDataBody): Promise<ChatDataResponse> => {
-  const response = await axiosInstance.post<ChatDataResponse>('/chat', data);
-  return response.data;
+export const useMutationPost = (url: string, options: object = {}) => {
+  const mutation = useMutation(async (body: object) => {
+    const res = await axiosInstance.post(url, body);
+    return res.data;
+  }, options);
+  return mutation;
 };
 
-const getAllServers = async () => {
-  try {
-    const response = await axiosInstance.get('/chat/v1/server/all');
-    return response.data;
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
+export const useMutationPatch = (url: string, options: object = {}) => {
+  const mutation = useMutation(async (body: object) => {
+    const res = await axiosInstance.patch(url, body);
+    return res.data;
+  }, options);
+
+  return mutation;
 };
 
-const createServer = async (data: CreateServerBody) => {
-  try {
-    const response = await axiosInstance.post('/chat/v1/server', data);
-    return response.data;
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
-};
+export const useMutationDelete = (url: string, options: object = {}) => {
+  const mutation = useMutation(async () => {
+    const res = await axiosInstance.delete(url);
+    return res.data;
+  }, options);
 
-const updateServer = async (data: CreateServerBody) => {
-  try {
-    const response = await axiosInstance.put('/chat/v1/server', data);
-    return response.data;
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
-};
-
-export const useQueryChatData = () => {
-  return useQuery({ queryFn: getChatData });
-};
-
-export const useMutationChatData = () => {
-  return useMutation({ mutationFn: postChatData });
-};
-
-export const useQueryAllServers = () => {
-  return useQuery({ queryFn: getAllServers });
-};
-
-export const useMutationCreateServer = () => {
-  return useMutation({ mutationFn: createServer });
-};
-
-export const useMutationUpdateServer = () => {
-  return useMutation({ mutationFn: updateServer });
+  return mutation;
 };
