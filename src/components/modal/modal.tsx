@@ -12,28 +12,41 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 
   return (
     <Overlay>
-      <ModalWrapper>
-        <CloseButton onClick={onClose}>Close</CloseButton>
-        <Content>{children}</Content>
-      </ModalWrapper>
+      <Background onClick={onClose} />
+      <ModalWrapper>{children}</ModalWrapper>
     </Overlay>
   );
 };
 
 const Overlay = styled.div`
   /* Add your modal-overlay styles here */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Background = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
 `;
 
 const ModalWrapper = styled.div`
   /* Add your modal styles here */
-`;
-
-const CloseButton = styled.button`
-  /* Add your modal-close-btn styles here */
-`;
-
-const Content = styled.div`
-  /* Add your modal-content styles here */
+  padding: 32px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
 `;
 
 export default Modal;

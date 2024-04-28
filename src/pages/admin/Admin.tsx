@@ -1,4 +1,5 @@
 import AdminChatServer from './_components/AdminChatServer';
+import AdminServerModal from './_components/AdminServerModal';
 import AdminSocketServer from './_components/AdminSocketServer';
 import styled from 'styled-components';
 
@@ -7,6 +8,7 @@ export default function Admin() {
     <Area>
       <AdminSocketServer />
       <AdminChatServer />
+      <AdminServerModal />
     </Area>
   );
 }
