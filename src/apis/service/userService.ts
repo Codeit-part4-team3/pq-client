@@ -69,7 +69,7 @@ const getNewToken = async () => {
   return response.data;
 };
 
-// ----------react-query
+// ----------react-query----------
 export const useQueryUserData = (id: string | number) => {
   return useQuery(['user', id], () => getUserData(id));
 };

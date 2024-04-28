@@ -1,4 +1,4 @@
-import { HTMLInputTypeAttribute, forwardRef, useState } from 'react';
+import { HTMLInputTypeAttribute, forwardRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { InputNormal } from 'src/GlobalStyles';
 import { FieldErrors } from 'react-hook-form';
@@ -15,7 +15,8 @@ interface SignInputProps {
 const SignInput = forwardRef<HTMLInputElement, SignInputProps>(
   ({ id, label, type = 'text', placeholder, errors, ...field }, ref) => {
     const [inputTypeValue, setInputTypeValue] = useState(type);
-    const [eyeIconSrc, setEyeIconSrc] = useState('');
+    const [isPassword, setIsPassword] = useState(false);
+    const [eyeIconSrc, setEyeIconSrc] = useState('src/assets/images/eye-close.svg');
 
     const handleEyeIconClick = () => {
       setInputTypeValue(inputTypeValue === 'password' ? 'text' : 'password');
@@ -24,12 +25,13 @@ const SignInput = forwardRef<HTMLInputElement, SignInputProps>(
       );
     };
 
-    const visibilityToggleIcon = () => {
-      if (id === 'password' || id === 'passwordConfirm') {
-        return <EyeIcon src={eyeIconSrc} onClick={handleEyeIconClick} />;
+    useEffect(() => {
+      if (type === 'password') {
+        setIsPassword(true);
+        return;
       }
-      return null;
-    };
+      setIsPassword(false);
+    }, []);
 
     return (
       <InputBox>
@@ -37,8 +39,10 @@ const SignInput = forwardRef<HTMLInputElement, SignInputProps>(
           {label}
           <Span>*</Span>
         </Label>
-        <Input {...field} ref={ref} type={inputTypeValue} placeholder={placeholder} id={id} $error={!!errors?.[id]} />
-        {visibilityToggleIcon()}
+        <Box>
+          <Input {...field} ref={ref} type={inputTypeValue} placeholder={placeholder} id={id} $error={!!errors?.[id]} />
+          {isPassword && <EyeIcon src={eyeIconSrc} onClick={handleEyeIconClick} />}
+        </Box>
         {errors?.[id]?.message && <ErrorMessage>{errors[id]?.message}</ErrorMessage>}
       </InputBox>
     );
@@ -50,7 +54,6 @@ export default SignInput;
 const InputBox = styled.div`
   display: flex;
   flex-direction: column;
-  position: relative;
 `;
 
 const Label = styled.label`
@@ -61,6 +64,10 @@ const Label = styled.label`
 
 const Span = styled.span`
   color: #258dff;
+`;
+
+const Box = styled.div`
+  position: relative;
 `;
 
 const Input = styled(InputNormal)<{ $error?: boolean }>`
@@ -76,8 +83,8 @@ const EyeIcon = styled.img`
   height: 15px;
 
   position: absolute;
-  top: 0;
-  right: 0;
+  bottom: 10px;
+  right: 13px;
 `;
 
 const ErrorMessage = styled.p`
