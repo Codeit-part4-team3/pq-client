@@ -1,16 +1,14 @@
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import { SubmitButton } from 'src/components/sign/button/SignSubmitButton';
 import TermOfUse from './TermOfUse';
 import { FormValues } from '../_types/type';
 import SignInput from 'src/components/sign/input/SignInput';
 import { Control, Controller, FieldErrors, useForm } from 'react-hook-form';
 import { ERROR_MESSAGES } from 'src/constants/error';
-import { AxiosError } from 'axios';
 import { EMAIL_REGEX, PASSWORD_REGEX } from 'src/constants/regex';
+import { useSignup } from 'src/hooks/useSignup';
 
 export default function SignupForm() {
-  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
@@ -27,40 +25,7 @@ export default function SignupForm() {
     },
   });
 
-  const onSubmit = () => {
-    // if (isPending) {
-    //   return;
-    // }
-
-    try {
-      // const { accessToken, refreshToken } = data;
-      // Cookies.set('accessToken', accessToken, { expires: 1 });
-      // Cookies.set('refreshToken', refreshToken, { expires: 7 });
-      navigate('/checkEmail');
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      const status = axiosError?.response?.status;
-
-      if (status === 400) {
-        setError('email', {
-          type: 'custom',
-          message: ERROR_MESSAGES.AUTH.EMAIL_CHECK_FAILED,
-        });
-        setError('password', {
-          type: 'custom',
-          message: ERROR_MESSAGES.AUTH.PASSWORD_CHECK_FAILED,
-        });
-        setError('passwordConfirm', {
-          type: 'custom',
-          message: ERROR_MESSAGES.AUTH.PASSWORD_CONFIRM_CHECK_FAILED,
-        });
-        return;
-      }
-
-      alert(ERROR_MESSAGES.AUTH.SIGN_UP_FAILED);
-      throw Error;
-    }
-  };
+  const { onSubmit } = useSignup({ setError });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

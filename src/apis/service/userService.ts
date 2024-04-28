@@ -6,6 +6,22 @@ import axiosInstance from '../instance/axiosInstance';
 const userUrl = '/api/user/v1/user';
 const authUrl = '/api/user/v1/auth';
 
+interface SignupBody {
+  email: string;
+  password: string;
+  nickname: string;
+}
+
+interface LoginBody {
+  email: string;
+  password: string;
+}
+
+interface EmailVerifyBody {
+  email: string;
+  code: string;
+}
+
 const getUserData = async (id: string | number) => {
   try {
     const response = await axiosInstance.get(`${userUrl}/${id}`);
@@ -28,9 +44,9 @@ const getUserWithToken = async () => {
 };
 
 // 회원가입
-const postUserSignup = async () => {
+const postUserSignup = async (data: SignupBody) => {
   try {
-    const response = await axiosInstance.post(`${authUrl}/signup`);
+    const response = await axiosInstance.post(`${authUrl}/signup`, data);
     return response.data;
   } catch (e) {
     console.log(e);
@@ -39,9 +55,9 @@ const postUserSignup = async () => {
 };
 
 // 이메일 인증
-const postEmailVerify = async () => {
+const postEmailVerify = async (data: EmailVerifyBody) => {
   try {
-    const response = await axiosInstance.post(`${authUrl}/signup/confirm`);
+    const response = await axiosInstance.post(`${authUrl}/signup/confirm`, data);
     return response.data;
   } catch (e) {
     console.log(e);
@@ -61,9 +77,9 @@ const postResendVerification = async () => {
 };
 
 // 로그인
-const postUserLogin = async () => {
+const postUserLogin = async (data: LoginBody) => {
   try {
-    const response = await axiosInstance.post(`${authUrl}/login`);
+    const response = await axiosInstance.post(`${authUrl}/login`, data);
     return response.data;
   } catch (e) {
     console.log(e);

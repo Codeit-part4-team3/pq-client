@@ -4,7 +4,7 @@ import { InputNormal } from 'src/GlobalStyles';
 import { FieldErrors } from 'react-hook-form';
 import { FormValues } from 'src/pages/signup/_types/type';
 
-interface Props {
+interface SignInputProps {
   id: keyof FormValues;
   type?: HTMLInputTypeAttribute;
   placeholder?: string;
@@ -12,7 +12,7 @@ interface Props {
   errors?: FieldErrors<FormValues>;
 }
 
-const SignInput = forwardRef<HTMLInputElement, Props>(
+const SignInput = forwardRef<HTMLInputElement, SignInputProps>(
   ({ id, label, type = 'text', placeholder, errors, ...field }, ref) => {
     const [inputTypeValue, setInputTypeValue] = useState(type);
     const [eyeIconSrc, setEyeIconSrc] = useState('');
@@ -31,9 +31,6 @@ const SignInput = forwardRef<HTMLInputElement, Props>(
       return null;
     };
 
-    console.log('Error for ' + id, errors?.[id]);
-    console.log(field);
-
     return (
       <InputBox>
         <Label htmlFor={id}>
@@ -47,6 +44,8 @@ const SignInput = forwardRef<HTMLInputElement, Props>(
     );
   },
 );
+
+export default SignInput;
 
 const InputBox = styled.div`
   display: flex;
@@ -86,5 +85,3 @@ const ErrorMessage = styled.p`
   font-size: 12px;
   margin: 0 0 0 4px;
 `;
-
-export default SignInput;

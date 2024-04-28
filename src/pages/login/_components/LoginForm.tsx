@@ -2,13 +2,11 @@ import styled from 'styled-components';
 import { SubmitButton } from 'src/components/sign/button/SignSubmitButton';
 import SignInput from 'src/components/sign/input/SignInput';
 import { FormValues } from 'src/pages/signup/_types/type';
-import { useNavigate } from 'react-router-dom';
 import { Control, Controller, FieldErrors, useForm } from 'react-hook-form';
 import { ERROR_MESSAGES } from 'src/constants/error';
-import { AxiosError } from 'axios';
+import { useLogin } from 'src/hooks/useLogin';
 
 export default function LoginForm() {
-  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
@@ -22,33 +20,7 @@ export default function LoginForm() {
     },
   });
 
-  const onSubmit = () => {
-    // if (isPending) {
-    //   return;
-    // }
-
-    try {
-      // const { accessToken, refreshToken } = data;
-      // Cookies.set('accessToken', accessToken, { expires: 1 });
-      // Cookies.set('refreshToken', refreshToken, { expires: 7 });
-      navigate('/checkEmail');
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      if (axiosError?.response?.status === 400) {
-        setError('email', {
-          type: 'custom',
-          message: ERROR_MESSAGES.AUTH.EMAIL_CHECK_FAILED,
-        });
-        setError('password', {
-          type: 'custom',
-          message: ERROR_MESSAGES.AUTH.PASSWORD_CHECK_FAILED,
-        });
-        return;
-      }
-      alert(ERROR_MESSAGES.AUTH.LOGIN_FAILED);
-      throw Error;
-    }
-  };
+  const { onSubmit } = useLogin({ setError });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

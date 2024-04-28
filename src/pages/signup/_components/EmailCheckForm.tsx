@@ -2,19 +2,25 @@ import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
 import { SubmitButton } from 'src/components/sign/button/SignSubmitButton';
 import { ButtonNormal } from 'src/GlobalStyles';
-import AuthInput, { FormValues } from 'src/components/sign/input/AuthInput';
+import AuthInput from 'src/components/sign/input/AuthInput';
+import { FormValues } from '../_types/type';
+import { useCheckEmail } from 'src/hooks/useCheckEmail';
 
 export default function EmailCheckForm() {
-  const { control, handleSubmit, getValues, setValue } = useForm<FormValues>();
-  const onSubmit = (data: FormValues) => {
-    const verificationCode = Object.values(data).join('');
-    console.log(verificationCode);
-  };
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    setValue,
+    setError,
+    formState: { errors },
+  } = useForm<FormValues>();
+  const { onSubmit } = useCheckEmail({ setError });
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <InputContainer>
-        <AuthInput control={control} getValues={getValues} setValue={setValue} />
+        <AuthInput control={control} getValues={getValues} setValue={setValue} errors={errors} />
       </InputContainer>
       <SubmitButton type='submit'>인증하기</SubmitButton>
       <PromptButton type='button'>메일 재전송</PromptButton>
