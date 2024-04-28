@@ -17,6 +17,12 @@ interface LoginBody {
   password: string;
 }
 
+interface LoginResponseBody {
+  email: string;
+  accessToken: string;
+  refreshToken: string;
+}
+
 interface EmailVerifyBody {
   email: string;
   code: string;
@@ -63,6 +69,7 @@ const getNewToken = async () => {
   return response.data;
 };
 
+// ----------react-query
 export const useQueryUserData = (id: string | number) => {
   return useQuery(['user', id], () => getUserData(id));
 };
@@ -85,7 +92,7 @@ export const useMutationResendVerification = () => {
   return useMutation({ mutationFn: postResendVerification });
 };
 
-export const useMutationUserLogin = (options: UseMutationOptions<LoginBody, unknown, LoginBody, unknown>) => {
+export const useMutationUserLogin = (options: UseMutationOptions<LoginResponseBody, unknown, LoginBody, unknown>) => {
   return useMutation(postUserLogin, options);
 };
 

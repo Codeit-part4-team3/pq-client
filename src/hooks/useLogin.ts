@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMutationUserLogin } from 'src/apis/service/userService';
 import { ERROR_MESSAGES } from 'src/constants/error';
 import { FormValues } from 'src/pages/signup/_types/type';
+import Cookies from 'js-cookie';
 
 interface UseLoginProps {
   setError: UseFormSetError<FormValues>;
@@ -30,7 +31,10 @@ export const useLogin = ({ setError }: UseLoginProps) => {
       alert(ERROR_MESSAGES.AUTH.LOGIN_FAILED);
     },
 
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const { accessToken, refreshToken } = data;
+      Cookies.set('accessToken', accessToken, { expires: 1, secure: true, sameSite: 'strict' });
+      Cookies.set('refreshToken', refreshToken, { expires: 7, secure: true, sameSite: 'strict' });
       navigate('/server');
     },
   });

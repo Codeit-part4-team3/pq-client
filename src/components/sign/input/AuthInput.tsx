@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Control, Controller, FieldErrors, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 import { FormValues } from 'src/pages/signup/_types/type';
-import OTPInput from './OTPInput';
+import OTPInput from './OtpInput';
 
 interface AuthInputProps {
   control: Control<FormValues>;
