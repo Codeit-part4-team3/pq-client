@@ -9,12 +9,12 @@ import { Area, Container, Button, Prompt } from 'src/components/sign/CommonStyle
 export default function Login() {
   const [isEmailLogin, setIsEmailLogin] = useState(false);
 
-  if (isEmailLogin) {
-    return <EmailLogin />;
-  }
+  const renderContent = () => {
+    if (isEmailLogin) {
+      return <EmailLogin />;
+    }
 
-  return (
-    <Area>
+    return (
       <Container>
         <Header>로그인</Header>
         <SocialButtons />
@@ -31,6 +31,8 @@ export default function Login() {
           아직 계정이 없으신가요? <Link to='/signup'>회원가입 하러가기</Link>
         </Prompt>
       </Container>
-    </Area>
-  );
+    );
+  };
+
+  return <Area>{renderContent()}</Area>;
 }

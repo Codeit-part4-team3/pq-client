@@ -11,7 +11,7 @@ interface SocialButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export default function SocialButton({ variant, src, children }: SocialButtonProps) {
   return (
-    <Button type='button' variant={variant}>
+    <Button type='button' $variant={variant}>
       <SocialLogo src={src} />
       {children}
       <span></span>
@@ -19,12 +19,12 @@ export default function SocialButton({ variant, src, children }: SocialButtonPro
   );
 }
 
-const Button = styled(ButtonNormal)<{ variant: SocialVariant }>`
+const Button = styled(ButtonNormal)<{ $variant: SocialVariant }>`
   width: 440px;
   height: 40px;
   font-size: 14px;
 
-  background: ${({ variant }) => (variant === 'kakao' ? '#FFE812' : '#fff')};
+  background: ${({ $variant }) => ($variant === 'kakao' ? '#FFE812' : '#fff')};
   border: 1px solid #f4f4f4;
   border-radius: 10px;
 

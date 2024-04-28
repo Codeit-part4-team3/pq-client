@@ -9,27 +9,23 @@ import { Area, Container, Button, Prompt } from 'src/components/sign/CommonStyle
 export default function Signup() {
   const [isEmailSignup, setIsEmailSignup] = useState(false);
 
-  if (isEmailSignup) {
-    return <EmailSignup />;
-  }
+  const renderContent = () => {
+    if (isEmailSignup) {
+      return <EmailSignup />;
+    }
 
-  return (
-    <Area>
+    return (
       <Container>
         <Header>회원가입</Header>
         <SocialButtons />
         <Line />
-        <Button
-          onClick={() => {
-            setIsEmailSignup(true);
-          }}
-        >
-          이메일로 가입하기
-        </Button>
+        <Button onClick={() => setIsEmailSignup(true)}>이메일로 가입하기</Button>
         <Prompt>
           이미 계정이 있으신가요? <Link to='/login'>로그인 하러가기</Link>
         </Prompt>
       </Container>
-    </Area>
-  );
+    );
+  };
+
+  return <Area>{renderContent()}</Area>;
 }

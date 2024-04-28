@@ -2,17 +2,7 @@ import styled from 'styled-components';
 import { InputNormal } from 'src/GlobalStyles';
 import { ChangeEvent, useRef } from 'react';
 import { Control, Controller, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
-
-export interface FormValues {
-  'digit-0': string;
-  'digit-1': string;
-  'digit-2': string;
-  'digit-3': string;
-  'digit-4': string;
-  'digit-5': string;
-  password: string;
-  passwordConfirm: string;
-}
+import { FormValues } from 'src/pages/signup/_types/type';
 
 interface AuthInputProps {
   control: Control<FormValues>;

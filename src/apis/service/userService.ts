@@ -1,8 +1,7 @@
 // useUserData.js
 
-import { useQuery } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
 import axiosInstance from '../instance/axiosInstance';
-import { useMutation } from '@tanstack/react-query';
 
 const userUrl = '/api/user/v1/user';
 const authUrl = '/api/user/v1/auth';
