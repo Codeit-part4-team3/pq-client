@@ -4,6 +4,7 @@ interface Props {
   closeClick: () => void;
   ctaText: string;
   type?: 'button' | 'submit' | 'reset';
+  onClick?: () => void;
 }
 
 export default function ModalButtons({ closeClick, ctaText, ...rest }: Props) {

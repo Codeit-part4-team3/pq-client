@@ -3,14 +3,13 @@ import Modal from '../modal';
 import styled from 'styled-components';
 import ImageUploadBox from '../input/ImageUploadBox';
 import ModalButtons from '../button/ModalButtons';
+import { ModalProps } from '../../../types/modalType';
+import { ModalContainer, ModalForm, ModalInputBox, ModalTitle } from './../CommonStyles';
+import EssentialInput from '../input/EssentialInput';
 
-interface Props {
-  closeModal: () => void;
-  isOpen: boolean;
-}
-
-export default function CreateServerModal({ closeModal, isOpen }: Props) {
+export default function CreateServerModal({ closeModal, isOpen }: ModalProps) {
   const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+  const [serverName, setServerName] = useState('');
 
   const handleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
@@ -38,56 +37,22 @@ export default function CreateServerModal({ closeModal, isOpen }: Props) {
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
-      <Container>
-        <Title>서버 생성하기</Title>
-        <Form onSubmit={handleSubmit}>
-          <InputBox>
+      <ModalContainer>
+        <ModalTitle>서버 생성하기</ModalTitle>
+        <ModalForm onSubmit={handleSubmit}>
+          <ModalInputBox>
             <ServerSpan>서버 대표 이미지</ServerSpan>
             <ImageUploadBox imagePreviewUrl={imagePreviewUrl} onChange={handleImageChange} />
-          </InputBox>
-          <InputBox>
-            <Label>
-              서버 이름
-              <EssentialSpan>*</EssentialSpan>
-            </Label>
-            <NameInput />
-          </InputBox>
+          </ModalInputBox>
+          <ModalInputBox>
+            <EssentialInput labelName='서버이름' state={serverName} setState={setServerName} />
+          </ModalInputBox>
           <ModalButtons closeClick={closeModal} ctaText='생성' type='submit' />
-        </Form>
-      </Container>
+        </ModalForm>
+      </ModalContainer>
     </Modal>
   );
 }
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 32px;
-`;
-const Title = styled.h3`
-  margin: 0 auto;
-  color: #000;
-  text-align: center;
-  font-size: 24px;
-  font-family: Pretendard;
-  font-style: normal;
-  font-weight: 700;
-`;
-
-const Form = styled.form`
-  width: 480px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-`;
-
-const InputBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-`;
 
 const ServerSpan = styled.span`
   color: #000;
@@ -96,35 +61,4 @@ const ServerSpan = styled.span`
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-`;
-
-const Label = styled.label`
-  color: #000;
-  font-family: Pretendard;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-`;
-
-const EssentialSpan = styled.span`
-  color: #258dff;
-  font-family: Pretendard;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-`;
-
-const NameInput = styled.input`
-  width: 100%;
-  padding: 16px;
-  gap: 10px;
-  border-radius: 10px;
-  border: 1px solid #b3b3b3;
-  background: #fff;
-  &:focus {
-    outline: none;
-    border: 1px solid #258dff;
-  }
 `;

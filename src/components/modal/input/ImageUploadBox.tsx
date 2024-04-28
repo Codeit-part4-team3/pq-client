@@ -26,7 +26,7 @@ const ImageLabel = styled.label`
   height: 80px;
   justify-content: center;
   align-items: center;
-  gap: 10px; /* 중앙 정렬 */
+  gap: 10px;
   cursor: pointer; /* 커서 모양 변경 */
   border-radius: 10px;
   border: 1px solid #b3b3b3;
