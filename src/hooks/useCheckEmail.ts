@@ -43,8 +43,9 @@ export const useCheckEmail = ({ setError }: UseCheckEmailProps) => {
     }
 
     const verificationCode = Object.values(data).join('');
+    const email = localStorage.get('email'); // 임시
     const EmailVerifyData = {
-      email: '',
+      email: email,
       code: verificationCode,
     };
 

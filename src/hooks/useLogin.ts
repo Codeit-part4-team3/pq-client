@@ -33,7 +33,7 @@ export const useLogin = ({ setError }: UseLoginProps) => {
 
     onSuccess: (data) => {
       const { accessToken, refreshToken } = data;
-      Cookies.set('accessToken', accessToken, { expires: 1, secure: true, sameSite: 'strict' });
+      Cookies.set('accessToken', accessToken, { expires: 1, secure: true, sameSite: 'strict' }); // TODO: 상태관리 라이브러리로 변경 예정
       Cookies.set('refreshToken', refreshToken, { expires: 7, secure: true, sameSite: 'strict' });
       navigate('/server');
     },

@@ -35,7 +35,9 @@ export const useSignup = ({ setError }: UseSignupProps) => {
       alert(ERROR_MESSAGES.AUTH.SIGN_UP_FAILED);
     },
 
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const { email } = data;
+      localStorage.set('email', email); // 임시
       navigate('/checkEmail');
     },
   });
