@@ -11,24 +11,9 @@ interface UseLoginProps {
 
 export const useLogin = ({ setError }: UseLoginProps) => {
   const navigate = useNavigate();
-  const { mutate: signup, isLoading } = useMutationUserLogin();
-
-  const onSubmit = async (data: FormValues) => {
-    if (isLoading) {
-      return;
-    }
-
-    const userData = {
-      email: data.email,
-      password: data.password,
-    };
-
-    try {
-      const res = await signup(userData);
-      console.log(res);
-      navigate('/checkEmail');
-    } catch (e) {
-      const axiosError = e as AxiosError;
+  const { mutate, isLoading } = useMutationUserLogin({
+    onError: (error: unknown) => {
+      const axiosError = error as AxiosError;
       const status = axiosError?.response?.status;
 
       if (status === 400) {
@@ -40,13 +25,27 @@ export const useLogin = ({ setError }: UseLoginProps) => {
           type: 'custom',
           message: ERROR_MESSAGES.AUTH.PASSWORD_CHECK_FAILED,
         });
-        return;
       }
 
-      console.log(e);
       alert(ERROR_MESSAGES.AUTH.LOGIN_FAILED);
-      throw Error;
+    },
+
+    onSuccess: () => {
+      navigate('/server');
+    },
+  });
+
+  const onSubmit = async (data: FormValues) => {
+    if (isLoading) {
+      return;
     }
+
+    const userData = {
+      email: data.email,
+      password: data.password,
+    };
+
+    mutate(userData);
   };
 
   return { onSubmit };

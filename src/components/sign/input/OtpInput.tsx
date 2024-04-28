@@ -36,10 +36,15 @@ export default function OTPInput({ length = 6, onComplete }: OTPInputProps) {
       {Array.from({ length }, (_, index) => (
         <Input
           key={index}
-          type='text'
+          type='tel'
           maxLength={1}
           value={OTP[index]}
-          onChange={(e) => handleTextChange(e.target.value, index)}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === '' || /^[0-9]$/i.test(val)) {
+              handleTextChange(val, index);
+            }
+          }}
           ref={(ref) => (inputRefs.current[index] = ref as HTMLInputElement)}
         />
       ))}

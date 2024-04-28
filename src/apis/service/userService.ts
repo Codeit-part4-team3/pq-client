@@ -1,6 +1,6 @@
 // useUserData.js
 
-import { useQuery, useMutation } from 'react-query';
+import { useQuery, useMutation, UseMutationOptions } from 'react-query';
 import axiosInstance from '../instance/axiosInstance';
 
 const userUrl = '/api/user/v1/user';
@@ -23,79 +23,44 @@ interface EmailVerifyBody {
 }
 
 const getUserData = async (id: string | number) => {
-  try {
-    const response = await axiosInstance.get(`${userUrl}/${id}`);
-    return response.data;
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
+  const response = await axiosInstance.get(`${userUrl}/${id}`);
+  return response.data;
 };
 
 // 토큰으로 유저 확인
 const getUserWithToken = async () => {
-  try {
-    const response = await axiosInstance.get(`${authUrl}/user`);
-    return response.data;
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
+  const response = await axiosInstance.get(`${authUrl}/user`);
+  return response.data;
 };
 
 // 회원가입
 const postUserSignup = async (data: SignupBody) => {
-  try {
-    const response = await axiosInstance.post(`${authUrl}/signup`, data);
-    return response.data;
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
+  const response = await axiosInstance.post(`${authUrl}/signup`, data);
+  return response.data;
 };
 
 // 이메일 인증
 const postEmailVerify = async (data: EmailVerifyBody) => {
-  try {
-    const response = await axiosInstance.post(`${authUrl}/signup/confirm`, data);
-    return response.data;
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
+  const response = await axiosInstance.post(`${authUrl}/signup/confirm`, data);
+  return response.data;
 };
 
 // 이메일 인증 재전송
 const postResendVerification = async () => {
-  try {
-    const response = await axiosInstance.post(`${authUrl}/signup/resend`);
-    return response.data;
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
+  const response = await axiosInstance.post(`${authUrl}/signup/resend`);
+  return response.data;
 };
 
 // 로그인
 const postUserLogin = async (data: LoginBody) => {
-  try {
-    const response = await axiosInstance.post(`${authUrl}/login`, data);
-    return response.data;
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
+  const response = await axiosInstance.post(`${authUrl}/login`, data);
+  return response.data;
 };
 
 //토큰 갱신
 const getNewToken = async () => {
-  try {
-    const response = await axiosInstance.get(`${authUrl}/user`);
-    return response.data;
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
+  const response = await axiosInstance.get(`${authUrl}/user`);
+  return response.data;
 };
 
 export const useQueryUserData = (id: string | number) => {
@@ -106,20 +71,22 @@ export const useQueryUserWithToken = () => {
   return useQuery(['userWithToken'], getUserWithToken);
 };
 
-export const useMutationUserSignup = () => {
-  return useMutation({ mutationFn: postUserSignup });
+export const useMutationUserSignup = (options: UseMutationOptions<SignupBody, unknown, SignupBody, unknown>) => {
+  return useMutation(postUserSignup, options);
 };
 
-export const useMutationEmailVerify = () => {
-  return useMutation({ mutationFn: postEmailVerify });
+export const useMutationEmailVerify = (
+  options: UseMutationOptions<EmailVerifyBody, unknown, EmailVerifyBody, unknown>,
+) => {
+  return useMutation(postEmailVerify, options);
 };
 
 export const useMutationResendVerification = () => {
   return useMutation({ mutationFn: postResendVerification });
 };
 
-export const useMutationUserLogin = () => {
-  return useMutation({ mutationFn: postUserLogin });
+export const useMutationUserLogin = (options: UseMutationOptions<LoginBody, unknown, LoginBody, unknown>) => {
+  return useMutation(postUserLogin, options);
 };
 
 export const useQueryNewToken = () => {

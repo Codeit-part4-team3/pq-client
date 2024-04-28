@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Control, Controller, FieldErrors, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 import { FormValues } from 'src/pages/signup/_types/type';
-import OTPInput from './OtpInput';
+import OTPInput from './OTPInput';
 
 interface AuthInputProps {
   control: Control<FormValues>;
@@ -27,9 +27,9 @@ export default function AuthInput({ control, setValue, errors }: AuthInputProps)
           control={control}
           name='otp'
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: ref, ...rest }) => <OTPInput {...rest} length={6} onComplete={onComplete} />}
+          render={({ field: ref, ...restField }) => <OTPInput {...restField} length={6} onComplete={onComplete} />}
         />
-        {errors?.otp && <ErrorMessage>{errors['otp'].message}</ErrorMessage>}
+        {errors?.otp && <ErrorMessage>{errors.otp.message}</ErrorMessage>}
       </AuthInputBox>
     </AuthInputContainer>
   );
@@ -39,6 +39,7 @@ const AuthInputContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: relative;
 `;
 
 const AuthInputBox = styled.div`
@@ -56,6 +57,8 @@ const Span = styled.span`
 
 const ErrorMessage = styled.p`
   color: #ff5b56;
-  font-size: 12px;
-  margin: 0 0 0 4px;
+  font-size: 14px;
+  margin-top: 0 0 0 4px;
+  position: absolute;
+  bottom: -25px;
 `;

@@ -15,6 +15,7 @@ export default function EmailCheckForm() {
     setError,
     formState: { errors },
   } = useForm<FormValues>();
+
   const { onSubmit } = useCheckEmail({ setError });
 
   return (
