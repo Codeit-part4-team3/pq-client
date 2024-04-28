@@ -17,7 +17,15 @@ export default function SignupForm() {
     watch,
     formState: { errors },
     setError,
-  } = useForm<FormValues>({ mode: 'onBlur' });
+  } = useForm<FormValues>({
+    mode: 'onBlur',
+    defaultValues: {
+      email: '',
+      password: '',
+      passwordConfirm: '',
+      nickname: '',
+    },
+  });
 
   const onSubmit = () => {
     // if (isPending) {
@@ -31,7 +39,9 @@ export default function SignupForm() {
       navigate('/checkEmail');
     } catch (error) {
       const axiosError = error as AxiosError;
-      if (axiosError?.response?.status === 400) {
+      const status = axiosError?.response?.status;
+
+      if (status === 400) {
         setError('email', {
           type: 'custom',
           message: ERROR_MESSAGES.AUTH.EMAIL_CHECK_FAILED,
@@ -46,6 +56,7 @@ export default function SignupForm() {
         });
         return;
       }
+
       alert(ERROR_MESSAGES.AUTH.SIGN_UP_FAILED);
       throw Error;
     }

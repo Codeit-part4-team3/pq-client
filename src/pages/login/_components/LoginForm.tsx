@@ -14,7 +14,13 @@ export default function LoginForm() {
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<FormValues>({ mode: 'onBlur' });
+  } = useForm<FormValues>({
+    mode: 'onBlur',
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
 
   const onSubmit = () => {
     // if (isPending) {

@@ -14,18 +14,14 @@ interface Props {
 
 const SignInput = forwardRef<HTMLInputElement, Props>(
   ({ id, label, type = 'text', placeholder, errors, ...field }, ref) => {
-    const [value, setValue] = useState('');
     const [inputTypeValue, setInputTypeValue] = useState(type);
     const [eyeIconSrc, setEyeIconSrc] = useState('');
 
     const handleEyeIconClick = () => {
-      if (inputTypeValue === 'password') {
-        setInputTypeValue('text');
-        setEyeIconSrc('src/assets/images/eye-open.png');
-        return;
-      }
-      setInputTypeValue('password');
-      setEyeIconSrc('src/assets/images/eye-close.svg');
+      setInputTypeValue(inputTypeValue === 'password' ? 'text' : 'password');
+      setEyeIconSrc(
+        inputTypeValue === 'password' ? 'src/assets/images/eye-open.png' : 'src/assets/images/eye-close.svg',
+      );
     };
 
     const visibilityToggleIcon = () => {
@@ -35,22 +31,16 @@ const SignInput = forwardRef<HTMLInputElement, Props>(
       return null;
     };
 
+    console.log('Error for ' + id, errors?.[id]);
+    console.log(field);
+
     return (
       <InputBox>
         <Label htmlFor={id}>
           {label}
           <Span>*</Span>
         </Label>
-        <Input
-          {...field}
-          ref={ref}
-          type={inputTypeValue}
-          placeholder={placeholder}
-          id={id}
-          $error={errors?.[id]}
-          onChange={(e) => setValue(e.target.value)}
-          value={value}
-        />
+        <Input {...field} ref={ref} type={inputTypeValue} placeholder={placeholder} id={id} $error={!!errors?.[id]} />
         {visibilityToggleIcon()}
         {errors?.[id]?.message && <ErrorMessage>{errors[id]?.message}</ErrorMessage>}
       </InputBox>
@@ -74,13 +64,12 @@ const Span = styled.span`
   color: #258dff;
 `;
 
-const Input = styled(InputNormal)<{ $error?: FieldErrors<FormValues> | undefined }>`
-  // 수정: error 속성 추가
+const Input = styled(InputNormal)<{ $error?: boolean }>`
   width: 440px;
   height: 36px;
   padding: 7px 12px;
   margin-top: 8px;
-  border: 1px solid ${(props) => (props.$error ? '#ff5b56' : '#eee')};
+  border: 1px solid ${({ $error }) => ($error ? '#ff5b56' : '#eee')};
 `;
 
 const EyeIcon = styled.img`
