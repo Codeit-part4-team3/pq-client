@@ -33,12 +33,20 @@ export const useSignup = ({ setError }: UseSignupProps) => {
         return;
       }
 
+      if (status === 409) {
+        setError('email', {
+          type: 'custom',
+          message: ERROR_MESSAGES.AUTH.DUPLICATE_EMAIL,
+        });
+        return;
+      }
+
       alert(ERROR_MESSAGES.AUTH.SIGN_UP_FAILED);
     },
 
     onSuccess: (data) => {
       const { email } = data;
-      Cookies.set('email', email); // 임시
+      Cookies.set('email', email, { expires: 1 }); // 임시
       navigate('/checkEmail');
     },
   });
