@@ -4,6 +4,7 @@ import { ERROR_MESSAGES } from 'src/constants/error';
 import { FormValues } from 'src/pages/signup/_types/type';
 import { UseFormSetError } from 'react-hook-form';
 import { AxiosError } from 'axios';
+import Cookies from 'js-cookie';
 
 interface UseSignupProps {
   setError: UseFormSetError<FormValues>;
@@ -37,7 +38,7 @@ export const useSignup = ({ setError }: UseSignupProps) => {
 
     onSuccess: (data) => {
       const { email } = data;
-      localStorage.set('email', email); // 임시
+      Cookies.set('email', email); // 임시
       navigate('/checkEmail');
     },
   });
