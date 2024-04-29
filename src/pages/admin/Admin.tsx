@@ -7,8 +7,8 @@ import styled from 'styled-components';
 export default function Admin() {
   return (
     <Area>
-      <AdminSocketServer />
-      <AdminChatServer />
+      {/* <AdminSocketServer />
+      <AdminChatServer /> */}
       <AdminServerModal />
       <AdminJoinServerModal />
     </Area>

@@ -1,15 +1,8 @@
-import { useState } from 'react';
 import CreateServerModal from '../../../components/modal/contents/CreateServerModal';
+import { useOpenModal } from '../../../hooks/useOpenModal';
 
 export default function AdminServerModal() {
-  const [isOpen, setIsOpen] = useState(false); // 모달 상태 관리
-  const openModal = () => {
-    setIsOpen(true); // 모달 열기
-  };
-
-  const closeModal = () => {
-    setIsOpen(false); // 모달 닫기
-  };
+  const { isOpen, openModal, closeModal } = useOpenModal();
   return (
     <div>
       <button onClick={openModal} type='button'>

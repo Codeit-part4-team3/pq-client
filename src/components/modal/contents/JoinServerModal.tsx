@@ -31,7 +31,7 @@ export default function JoinServerModal({ closeModal, isOpen }: ModalProps) {
         <ModalTitle>서버 참가하기</ModalTitle>
         {isSuccess ? (
           <>
-            <Image src='/public/images/plus.svg' alt='서버 이미지' />
+            <Image src='/images/plus.svg' alt='서버 이미지' />
             <ServerName>서버명입니다.</ServerName>
             <ModalButtons closeClick={closeModal} ctaText='참가' type='button' onClick={handleClick} />
           </>
