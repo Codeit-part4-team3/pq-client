@@ -1,10 +1,11 @@
 // useChatData.js
 
-import { useMutation, useQuery } from 'react-query';
+import { MutationFunction, useMutation, useQuery } from 'react-query';
 import axiosInstance from '../instance/axiosInstance';
+import { AxiosResponse } from 'axios';
 
-export const useQueryGet = (queryKey: string, url: string, options: object = {}) => {
-  const { data, error, isError, isSuccess, isLoading, isFetching } = useQuery(
+export const useQueryGet = <Res>(queryKey: string, url: string, options: object = {}) => {
+  const { data, error, isError, isSuccess, isLoading, isFetching } = useQuery<Res>(
     queryKey,
     async () => {
       const res = await axiosInstance.get(url);
@@ -16,28 +17,32 @@ export const useQueryGet = (queryKey: string, url: string, options: object = {})
   return { data, error, isError, isSuccess, isLoading, isFetching };
 };
 
-export const useMutationPost = (url: string, options: object = {}) => {
-  const mutation = useMutation(async (body: object) => {
-    const res = await axiosInstance.post(url, body);
+export const useMutationPost = <Res, Req>(url: string, options: object = {}) => {
+  const mutationFn: MutationFunction<Res, Req> = async (body) => {
+    const res: AxiosResponse<Res> = await axiosInstance.post(url, body);
     return res.data;
-  }, options);
+  };
+
+  const mutation = useMutation<Res, unknown, Req>(mutationFn, options);
   return mutation;
 };
 
-export const useMutationPatch = (url: string, options: object = {}) => {
-  const mutation = useMutation(async (body: object) => {
-    const res = await axiosInstance.patch(url, body);
+export const useMutationPatch = <Res, Req>(url: string, options: object = {}) => {
+  const mutationFn: MutationFunction<Res, Req> = async (body) => {
+    const res: AxiosResponse<Res> = await axiosInstance.put(url, body);
     return res.data;
-  }, options);
+  };
 
+  const mutation = useMutation<Res, unknown, Req>(mutationFn, options);
   return mutation;
 };
 
 export const useMutationDelete = (url: string, options: object = {}) => {
-  const mutation = useMutation(async () => {
+  const mutationFn = async () => {
     const res = await axiosInstance.delete(url);
     return res.data;
-  }, options);
+  };
 
+  const mutation = useMutation(mutationFn, options);
   return mutation;
 };

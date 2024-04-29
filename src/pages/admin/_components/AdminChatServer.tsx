@@ -10,14 +10,23 @@ export default function AdminChatServer() {
   const [updateId, setUpdateId] = useState<string>('');
   const [updateName, setUpdateName] = useState<string>('');
   const [updateImageUrl, setUpdateImageUrl] = useState<string>('');
+  const [deleteId, setDeleteId] = useState<string>('');
 
-  const { data, error, isLoading } = useQueryGet('getAllServers', '/chat/v1/server/all');
+  interface Server {
+    id: string;
+    name: string;
+    imageUrl: string;
+  }
+
+  type ServerRequest = Omit<Server, 'id'>;
+  type ServerResponse = Server | null;
+
+  const { data, error, isLoading } = useQueryGet<ServerResponse>('getAllServers', '/chat/v1/server/all');
   console.log(data, error, isLoading);
 
-  const createMutation = useMutationPost('/chat/v1/server');
-
-  const updateMutation = useMutationPatch('/chat/v1/server/id');
-  const deleteMutation = useMutationDelete('/chat/v1/server/id');
+  const createMutation = useMutationPost<ServerResponse, ServerRequest>('/chat/v1/server');
+  const updateMutation = useMutationPatch<ServerResponse, ServerRequest>(`/chat/v1/server/${updateId}`);
+  const deleteMutation = useMutationDelete(`/chat/v1/server/${deleteId}`);
 
   const updateLogs = (newLog: string) => {
     setLogs((prevLogs) => prevLogs + '\n' + newLog);
@@ -53,13 +62,11 @@ export default function AdminChatServer() {
           <input placeholder='id' value={updateId} onChange={(e) => setUpdateId(e.target.value)} />
           <input placeholder='name' value={updateName} onChange={(e) => setUpdateName(e.target.value)} />
           <input placeholder='imageUrl' value={updateImageUrl} onChange={(e) => setUpdateImageUrl(e.target.value)} />
-          <button onClick={() => createMutation.mutate({ id: updateId, name: createName, imageUrl: createImageUrl })}>
-            전송
-          </button>
+          <button onClick={() => createMutation.mutate({ name: createName, imageUrl: createImageUrl })}>전송</button>
         </div>
         <div>
           <label>Delete Server</label>
-          <input placeholder='id' />
+          <input placeholder='id' value={deleteId} onChange={(e) => setDeleteId(e.target.value)} />
           <button onClick={() => deleteMutation.mutate()}>전송</button>
         </div>
       </ChatContainer>
