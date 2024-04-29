@@ -21,5 +21,8 @@ export const ERROR_MESSAGES = {
     LOGIN_FAILED: '로그인에 실패했습니다. 다시 시도해주세요.',
     SIGN_UP_FAILED: '회원가입에 실패했습니다. 다시 시도해주세요.',
     EMAIL_VERIFY_FAILED: '인증에 실패하였습니다. 다시 시도해주세요.',
+
+    DUPLICATE_EMAIL: '이미 존재하는 유저입니다.',
+    INVALID_LOGIN: '로그인 정보가 일치하지 않습니다.',
   },
 } as const;
