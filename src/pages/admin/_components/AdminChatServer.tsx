@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useMutationDelete, useMutationPatch, useMutationPost, useQueryGet } from '../../../apis/service/chatService';
 import { useEffect, useState } from 'react';
+import { ServerResponse, ServerRequest } from '../../server/_types/type';
 
 // TODO : request api
 export default function AdminChatServer() {
@@ -11,15 +12,6 @@ export default function AdminChatServer() {
   const [updateName, setUpdateName] = useState<string>('');
   const [updateImageUrl, setUpdateImageUrl] = useState<string>('');
   const [deleteId, setDeleteId] = useState<string>('');
-
-  interface Server {
-    id: string;
-    name: string;
-    imageUrl: string;
-  }
-
-  type ServerRequest = Omit<Server, 'id'>;
-  type ServerResponse = Server | null;
 
   const { data, error, isLoading } = useQueryGet<ServerResponse>('getAllServers', '/chat/v1/server/all');
   console.log(data, error, isLoading);

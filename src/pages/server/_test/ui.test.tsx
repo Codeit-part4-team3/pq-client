@@ -1,10 +1,10 @@
 import '@testing-library/jest-dom';
 import { render, fireEvent, screen } from '@testing-library/react';
-import { ChannelSubjectItem } from '../_types/type';
-import ChannelSubject from '../_components/ChannelSubject';
+import { ChannelGroupData } from '../_types/type';
+import ChannelGroup from '../_components/ChannelGroup';
 
 describe('toggles display style of Body on DropDownButton click', () => {
-  let mockData: ChannelSubjectItem;
+  let mockData: ChannelGroupData;
   let mockChild: React.ReactNode;
 
   beforeEach(() => {
@@ -14,7 +14,7 @@ describe('toggles display style of Body on DropDownButton click', () => {
     };
     mockChild = <span>Test Child</span>;
 
-    render(<ChannelSubject data={mockData}>{mockChild}</ChannelSubject>);
+    render(<ChannelGroup data={mockData}>{mockChild}</ChannelGroup>);
   });
 
   it('initially hides the Body', () => {

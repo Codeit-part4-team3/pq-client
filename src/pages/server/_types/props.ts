@@ -1,5 +1,14 @@
-import { ServerItem } from './type';
+import { ChannelData, ChannelGroupData, ServerData } from './type';
 
-export interface ServerButtonProps {
-  data: ServerItem;
+export interface ServerItemProps {
+  data: ServerData;
+}
+
+export interface ChannelItemProps {
+  data: ChannelData;
+}
+
+export interface ChannelGroupProps {
+  data: ChannelGroupData;
+  children: React.ReactNode;
 }
