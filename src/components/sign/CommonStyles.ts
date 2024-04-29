@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ButtonNormal } from '../../GlobalStyles';
+import { ButtonNormal } from 'src/GlobalStyles';
 
 export const Area = styled.section`
   width: 100%;
