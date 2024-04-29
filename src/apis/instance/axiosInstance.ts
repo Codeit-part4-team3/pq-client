@@ -3,11 +3,14 @@ import Cookies from 'js-cookie';
 import { URL } from 'src/constants/apiUrl';
 import handleError from 'src/utils/handleError';
 
+/**
+ * axios instance 속성 추가
+ */
+
 const axiosInstance = axios.create({
   baseURL: URL.BASE,
   headers: {
     'Content-Type': 'application/json',
-    'Cache-Control': 'no-cache',
   },
 });
 

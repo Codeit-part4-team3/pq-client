@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useId } from 'react';
-import { ServerButtonProps } from '../_types/props';
+import { ServerItemProps } from '../_types/props';
 
 /**
  *
@@ -14,11 +14,10 @@ import { ServerButtonProps } from '../_types/props';
  *
  */
 
-export default function ServerButton({ data }: ServerButtonProps) {
+export default function ServerItem({ data }: ServerItemProps) {
   const lid = useId();
 
   return (
-    //
     <Button key={`${lid}-${data.id}`}>
       {data.imageUrl ? (
         <img src={data.imageUrl} alt='img' data-serverid={data.id} />
