@@ -11,7 +11,7 @@ export const ERROR_MESSAGES = {
     EMAIL_VERIFY_CHECK_FAILED: '유효한 인증번호가 아닙니다.',
 
     INVALID_EMAIL: '올바른 이메일 주소가 아닙니다.',
-    INVALID_PASSWORD: '비밀번호는 영문, 숫자 조합 8자 이상 입력해 주세요.',
+    INVALID_PASSWORD: '비밀번호는 영문, 숫자, 특수문자 조합 8자 이상 입력해 주세요.',
     INVALID_PASSWORD_CONFIRM: '비밀번호가 일치하지 않습니다.',
 
     LOGIN_ERROR: '로그인 에러',
