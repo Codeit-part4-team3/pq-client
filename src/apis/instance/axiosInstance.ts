@@ -26,9 +26,6 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
-      // TODO: 토큰 갱신 로직
-    }
     handleError(error);
     return Promise.reject(error);
   },
