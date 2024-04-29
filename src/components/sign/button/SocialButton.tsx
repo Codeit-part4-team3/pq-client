@@ -12,7 +12,7 @@ interface SocialButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export default function SocialButton({ variant, src, children }: SocialButtonProps) {
   return (
     <Button type='button' $variant={variant}>
-      <SocialLogo src={src} />
+      <SocialLogo src={src} alt={`${variant} 아이콘`} />
       {children}
       <span></span>
     </Button>
