@@ -8,7 +8,7 @@ interface SignHeaderProps {
 export default function SignHeader({ children }: SignHeaderProps) {
   return (
     <Header>
-      <Logo src='src/assets/images/logo.svg' alt='pq 메인 로고' />
+      <Logo src='/images/logo.svg' alt='pq 메인 로고' />
       {children}
     </Header>
   );

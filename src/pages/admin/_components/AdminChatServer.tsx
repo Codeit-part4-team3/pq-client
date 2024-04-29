@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useMutationDelete, useMutationPatch, useMutationPost, useQueryGet } from '../../../apis/service/chatService';
+import { useMutationDelete, useMutationPatch, useMutationPost, useQueryGet } from 'src/apis/service/chatService';
 import { useEffect, useState } from 'react';
 import { ServerResponse, ServerRequest } from '../../server/_types/type';
 
