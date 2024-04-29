@@ -1,11 +1,10 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { URL } from 'src/constants/apiUrl';
 import handleError from 'src/utils/handleError';
 
-const BASE_URL = 'https://api.pqsoft.net';
-
 const axiosInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: URL.BASE,
   headers: {
     'Content-Type': 'application/json',
     'Cache-Control': 'no-cache',

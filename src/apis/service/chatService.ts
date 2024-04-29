@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery } from 'react-query';
 import axiosInstance from '../instance/axiosInstance';
+import { URL } from 'src/constants/apiUrl';
 
 interface ChatDataBody {
   message: string;
@@ -27,17 +28,17 @@ const postChatData = async (data: ChatDataBody): Promise<ChatDataResponse> => {
 };
 
 const getAllServers = async () => {
-  const response = await axiosInstance.get('/chat/v1/server/all');
+  const response = await axiosInstance.get(`${URL.SERVER}/all`);
   return response.data;
 };
 
 const createServer = async (data: CreateServerBody) => {
-  const response = await axiosInstance.post('/chat/v1/server', data);
+  const response = await axiosInstance.post(`${URL.SERVER}`, data);
   return response.data;
 };
 
 const updateServer = async (data: CreateServerBody) => {
-  const response = await axiosInstance.put('/chat/v1/server', data);
+  const response = await axiosInstance.put(`${URL.SERVER}`, data);
   return response.data;
 };
 
