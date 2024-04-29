@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import { SubmitButton } from '../../../components/sign/button/SignSubmitButton';
-import { ButtonNormal } from '../../../GlobalStyles';
-import SignInput from '../../../components/sign/input/SignInput';
-import AuthInput, { FormValues } from '../../../components/sign/input/AuthInput';
+import { SubmitButton } from 'src/components/sign/button/SignSubmitButton';
+import { ButtonNormal } from 'src/GlobalStyles';
+import SignInput from 'src/components/sign/input/SignInput';
+import AuthInput from 'src/components/sign/input/AuthInput';
+import { FormValues } from 'src/pages/signup/_types/type';
 
 export default function ChangePasswordForm() {
   const { control, handleSubmit, getValues, setValue } = useForm<FormValues>();

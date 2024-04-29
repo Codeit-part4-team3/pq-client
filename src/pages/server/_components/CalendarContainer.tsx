@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ButtonIcon } from '../../../GlobalStyles';
+import { ButtonIcon } from 'src/GlobalStyles';
 
 export default function CalendarContainer() {
   return (
