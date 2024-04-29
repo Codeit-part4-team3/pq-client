@@ -1,14 +1,9 @@
 import styled from 'styled-components';
-import { ChannelSubjectItem } from '../_types/type';
 import { useRef } from 'react';
 import { ButtonIcon } from '../../../GlobalStyles';
+import { ChannelGroupProps } from '../_types/props';
 
-interface ChannelSubjectProps {
-  data: ChannelSubjectItem;
-  children: React.ReactNode;
-}
-
-export default function ChannelSubject({ data, children }: ChannelSubjectProps) {
+export default function ChannelGroup({ data, children }: ChannelGroupProps) {
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const onClickDropDown = () => {
@@ -21,7 +16,7 @@ export default function ChannelSubject({ data, children }: ChannelSubjectProps) 
       <Header>
         <div>
           <DropDownButton data-testid='channel-dropdown' onClick={onClickDropDown} />
-          <span>{data.name}</span>
+          <span>{data?.name}</span>
         </div>
         <PlusButton />
       </Header>

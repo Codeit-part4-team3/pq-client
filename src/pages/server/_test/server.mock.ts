@@ -1,6 +1,6 @@
-import { ChannelItem, ChannelSubjectItem, ServerItem } from '../_types/type';
+import { ServerData, ChannelData, ChannelGroupData } from '../_types/type';
 
-export const serverMock: ServerItem[] = [
+export const serverMock: ServerData[] = [
   {
     id: 1,
     name: '코드잇 3기',
@@ -28,7 +28,7 @@ export const serverMock: ServerItem[] = [
   },
 ];
 
-export const channelParentMock: ChannelSubjectItem[] = [
+export const channelGroupMock: ChannelGroupData[] = [
   {
     id: 1,
     name: '일반',
@@ -43,60 +43,69 @@ export const channelParentMock: ChannelSubjectItem[] = [
   },
 ];
 
-export const channelMock: ChannelItem[] = [
+export const channelItemMock: ChannelData[] = [
   {
     id: 1,
-    subjectId: 1,
+    serverId: 1,
     name: '일반1',
+    groupId: 1,
     isVoice: false,
   },
   {
     id: 2,
-    subjectId: 1,
+    serverId: 1,
     name: '일반2',
+    groupId: 1,
     isVoice: false,
   },
   {
     id: 3,
-    subjectId: 1,
+    serverId: 1,
     name: '일반3',
+    groupId: 1,
     isVoice: false,
   },
 
   {
     id: 4,
-    subjectId: 2,
+    serverId: 2,
     name: '스터디1',
+    groupId: 2,
     isVoice: false,
   },
   {
     id: 5,
-    subjectId: 2,
+    serverId: 2,
     name: '스터디2',
+    groupId: 2,
     isVoice: false,
   },
   {
     id: 6,
-    subjectId: 2,
+    serverId: 2,
     name: '스터디3',
+    groupId: 2,
     isVoice: false,
   },
   {
     id: 7,
-    subjectId: 3,
+    serverId: 3,
     name: '음성1',
+    groupId: 3,
     isVoice: true,
   },
   {
     id: 8,
-    subjectId: 3,
+    serverId: 3,
     name: '음성2',
+    groupId: 3,
     isVoice: true,
   },
   {
     id: 9,
-    subjectId: 3,
+    serverId: 3,
     name: '음성3',
+    groupId: 3,
     isVoice: true,
   },
 ];
