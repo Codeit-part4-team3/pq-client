@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { InputNormal } from 'src/GlobalStyles';
 import { FieldErrors } from 'react-hook-form';
 import { FormValues } from 'src/pages/signup/_types/type';
+import eyeOpenIcon from 'src/assets/images/eye-open.png'; // 임시
+import eyeCloseIcon from 'src/assets/images/eye-close.svg';
 
 interface SignInputProps {
   id: keyof FormValues;
@@ -16,13 +18,11 @@ const SignInput = forwardRef<HTMLInputElement, SignInputProps>(
   ({ id, label, type = 'text', placeholder, errors, ...field }, ref) => {
     const [inputTypeValue, setInputTypeValue] = useState(type);
     const [isPassword, setIsPassword] = useState(false);
-    const [eyeIconSrc, setEyeIconSrc] = useState('src/assets/images/eye-close.svg');
+    const [eyeIcon, setEyeIcon] = useState(eyeCloseIcon);
 
     const handleEyeIconClick = () => {
       setInputTypeValue(inputTypeValue === 'password' ? 'text' : 'password');
-      setEyeIconSrc(
-        inputTypeValue === 'password' ? 'src/assets/images/eye-open.png' : 'src/assets/images/eye-close.svg',
-      );
+      setEyeIcon(inputTypeValue === 'password' ? eyeOpenIcon : eyeCloseIcon);
     };
 
     useEffect(() => {
@@ -41,7 +41,7 @@ const SignInput = forwardRef<HTMLInputElement, SignInputProps>(
         </Label>
         <Box>
           <Input {...field} ref={ref} type={inputTypeValue} placeholder={placeholder} id={id} $error={!!errors?.[id]} />
-          {isPassword && <EyeIcon src={eyeIconSrc} onClick={handleEyeIconClick} />}
+          {isPassword && <EyeIcon src={eyeIcon} onClick={handleEyeIconClick} alt='눈 모양 토글 아이콘' />}
         </Box>
         {errors?.[id]?.message && <ErrorMessage>{errors[id]?.message}</ErrorMessage>}
       </InputBox>
