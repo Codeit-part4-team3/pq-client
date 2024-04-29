@@ -4,15 +4,13 @@ import { useQuery, useMutation, UseMutationOptions } from 'react-query';
 import axiosInstance from '../instance/axiosInstance';
 import { URL } from 'src/constants/apiUrl';
 
-interface SignupBody {
-  email: string;
-  password: string;
-  nickname: string;
-}
-
 interface LoginBody {
   email: string;
   password: string;
+}
+
+interface SignupBody extends LoginBody {
+  nickname: string;
 }
 
 interface LoginResponseBody {
