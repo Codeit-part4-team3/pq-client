@@ -15,7 +15,7 @@ interface Message {
   status: string;
 }
 
-export default function AdminChatChannel() {
+export default function AdminSocketServer() {
   // const { id: roomName } = useParams();
   const roomName = 'admin_chat_channel';
   const [messages, setMessages] = useState<Message[]>([]);
@@ -63,7 +63,7 @@ export default function AdminChatChannel() {
   }, [roomName]);
 
   return (
-    <>
+    <section>
       <ChannelName>AdminChat</ChannelName>
       <ChatContainer>
         {messages.length === 0 ? (
@@ -90,7 +90,7 @@ export default function AdminChatChannel() {
           submit
         </ChatSubmit>
       </ChatForm>
-    </>
+    </section>
   );
 }
 

@@ -1,11 +1,7 @@
 import styled from 'styled-components';
-import { ChannelItem } from '../_types/type';
+import { ChannelItemProps } from '../_types/props';
 
-interface ChannelButtonProps {
-  data: ChannelItem;
-}
-
-export default function ChannelButton({ data }: ChannelButtonProps) {
+export default function ChannelItem({ data }: ChannelItemProps) {
   return (
     <Button>
       <span>{`# ${data.name}`}</span>

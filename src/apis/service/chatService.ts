@@ -1,30 +1,48 @@
 // useChatData.js
 
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { MutationFunction, useMutation, useQuery } from 'react-query';
 import axiosInstance from '../instance/axiosInstance';
+import { AxiosResponse } from 'axios';
 
-const getChatData = async () => {
-  const response = await axiosInstance.get('/chat');
-  return response.data;
+export const useQueryGet = <Res>(queryKey: string, url: string, options: object = {}) => {
+  const { data, error, isError, isSuccess, isLoading, isFetching } = useQuery<Res>(
+    queryKey,
+    async () => {
+      const res = await axiosInstance.get(url);
+      return res.data;
+    },
+    options,
+  );
+
+  return { data, error, isError, isSuccess, isLoading, isFetching };
 };
 
-interface ChatDataBody {
-  message: string;
-}
+export const useMutationPost = <Res, Req>(url: string, options: object = {}) => {
+  const mutationFn: MutationFunction<Res, Req> = async (body) => {
+    const res: AxiosResponse<Res> = await axiosInstance.post(url, body);
+    return res.data;
+  };
 
-interface ChatDataResponse {
-  // Define the shape of the response data here
-}
-
-const postChatData = async (data: ChatDataBody): Promise<ChatDataResponse> => {
-  const response = await axiosInstance.post<ChatDataResponse>('/chat', data);
-  return response.data;
+  const mutation = useMutation<Res, unknown, Req>(mutationFn, options);
+  return mutation;
 };
 
-export const useQueryChatData = () => {
-  return useQuery<ChatDataResponse, Error>({ queryKey: ['chatData'], queryFn: getChatData });
+export const useMutationPatch = <Res, Req>(url: string, options: object = {}) => {
+  const mutationFn: MutationFunction<Res, Req> = async (body) => {
+    const res: AxiosResponse<Res> = await axiosInstance.put(url, body);
+    return res.data;
+  };
+
+  const mutation = useMutation<Res, unknown, Req>(mutationFn, options);
+  return mutation;
 };
 
-export const useMutationChatData = () => {
-  return useMutation<ChatDataResponse, Error, ChatDataBody>({ mutationFn: postChatData });
+export const useMutationDelete = (url: string, options: object = {}) => {
+  const mutationFn = async () => {
+    const res = await axiosInstance.delete(url);
+    return res.data;
+  };
+
+  const mutation = useMutation(mutationFn, options);
+  return mutation;
 };

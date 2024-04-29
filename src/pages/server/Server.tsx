@@ -1,14 +1,14 @@
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
-import ServerButton from './_components/ServerButton';
+import ServerItem from './_components/ServerItem';
 import { useEffect, useState } from 'react';
 import NotFoundServer from './_components/NotFoundServer';
-import { ChannelItem, ChannelParentItem, ServerItem } from './_types/type';
+import { ServerData, ChannelGroupData, ChannelData } from './_types/type';
 import MemberButton from './_components/MemberButton';
-import { channelMock, channelParentMock, serverMock } from './_test/server.mock';
+import { channelItemMock, channelGroupMock, serverMock } from './_test/server.mock';
 import AddServerButton from './_components/AddServerButton';
-import ChannelSubject from './_components/ChannelSubject';
-import ChannelButton from './_components/ChannelButton';
+import ChannelGroup from './_components/ChannelGroup';
+import ChannelItem from './_components/ChannelItem';
 import CalendarContainer from './_components/CalendarContainer';
 
 /**
@@ -23,13 +23,13 @@ import CalendarContainer from './_components/CalendarContainer';
 
 export default function Server() {
   const [isExist, setIsExist] = useState(false);
-  const [serverList, setServerList] = useState<ServerItem[]>([]);
-  const [channelSubjectList, setChannelSubjectList] = useState<ChannelParentItem[]>([]);
-  const [channelList, setChannelList] = useState<ChannelItem[]>([]);
+  const [serverList, setServerList] = useState<ServerData[]>([]);
+  const [channelGroupList, setChannelGroupList] = useState<ChannelGroupData[]>([]);
+  const [channelItemList, setChannelItemList] = useState<ChannelData[]>([]);
 
   const fetchChannelList = async () => {
-    setChannelList(channelMock);
-    setChannelSubjectList(channelParentMock);
+    setChannelItemList(channelItemMock);
+    setChannelGroupList(channelGroupMock);
   };
 
   const fetchServerList = async () => {
@@ -49,19 +49,19 @@ export default function Server() {
     }
   };
 
-  const createServerButton = (serverList: ServerItem[]) => {
-    return serverList.map((server) => <ServerButton data={server} />);
+  const createServerItemList = (serverList: ServerData[]) => {
+    return serverList.map((server) => <ServerItem data={server} />);
   };
 
-  const createChannelButton = (parentId: number) => {
-    return channelList.map((channel) => {
-      if (channel.parentId === parentId) return <ChannelButton data={channel} />;
+  const createChannelItemList = (groupId: number) => {
+    return channelItemList.map((channel) => {
+      if (channel.groupId === groupId) return <ChannelItem data={channel} />;
     });
   };
 
-  const createChannelSubject = (channelParents: ChannelParentItem[]) => {
-    return channelParents.map((pChannel) => {
-      return <ChannelSubject data={pChannel}>{createChannelButton(pChannel.id)}</ChannelSubject>;
+  const createChannelGroupList = (channelGroupList: ChannelGroupData[]) => {
+    return channelGroupList.map((group) => {
+      return <ChannelGroup data={group}>{createChannelItemList(group.id)}</ChannelGroup>;
     });
   };
 
@@ -75,12 +75,12 @@ export default function Server() {
     <Area>
       <Container>
         <ServerContainer onClick={onClickServer}>
-          {createServerButton(serverList)}
+          {createServerItemList(serverList)}
           <AddServerButton />
         </ServerContainer>
         <ChannelContainer>
           <CalendarContainer />
-          {createChannelSubject(channelSubjectList)}
+          {createChannelGroupList(channelGroupList)}
         </ChannelContainer>
         {!isExist ? <NotFoundServer /> : <Outlet />}
         <MemberContainer>
