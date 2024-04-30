@@ -5,7 +5,7 @@ import tagSvg from '../../../../public/images/tag_FILL0_wght200_GRAD0_opsz24 3.s
 
 export default function ChannelItem({ data }: ChannelItemProps) {
   return (
-    <ChannelItemWrapper to={`/server/${data.serverId}/channel/${data.id}`}>
+    <ChannelItemWrapper to={`/server/1/channel/${data.id}`}>
       <img src={tagSvg} alt='채널 태그 이미지' />
       {data.name}
     </ChannelItemWrapper>
