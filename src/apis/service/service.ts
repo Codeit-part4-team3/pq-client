@@ -1,18 +1,18 @@
 // useChatData.js
 
-import { MutationFunction, useMutation, useQuery } from 'react-query';
+import { MutationFunction, useMutation, useQuery } from '@tanstack/react-query';
 import axiosInstance from '../instance/axiosInstance';
 import { AxiosResponse } from 'axios';
 
 export const useQueryGet = <Res>(queryKey: string, url: string, options: object = {}) => {
-  const { data, error, isError, isSuccess, isLoading, isFetching } = useQuery<Res>(
-    queryKey,
-    async () => {
+  const { data, error, isError, isSuccess, isLoading, isFetching } = useQuery<Res>({
+    queryKey: [queryKey],
+    queryFn: async () => {
       const res = await axiosInstance.get(url);
       return res.data;
     },
-    options,
-  );
+    ...options,
+  });
 
   return { data, error, isError, isSuccess, isLoading, isFetching };
 };
@@ -23,7 +23,7 @@ export const useMutationPost = <Res, Req>(url: string, options: object = {}) => 
     return res.data;
   };
 
-  const mutation = useMutation<Res, unknown, Req>(mutationFn, options);
+  const mutation = useMutation<Res, unknown, Req>({ mutationFn, ...options });
   return mutation;
 };
 
@@ -33,7 +33,7 @@ export const useMutationPatch = <Res, Req>(url: string, options: object = {}) =>
     return res.data;
   };
 
-  const mutation = useMutation<Res, unknown, Req>(mutationFn, options);
+  const mutation = useMutation<Res, unknown, Req>({ mutationFn, ...options });
   return mutation;
 };
 
@@ -43,6 +43,6 @@ export const useMutationDelete = (url: string, options: object = {}) => {
     return res.data;
   };
 
-  const mutation = useMutation(mutationFn, options);
+  const mutation = useMutation({ mutationFn, ...options });
   return mutation;
 };

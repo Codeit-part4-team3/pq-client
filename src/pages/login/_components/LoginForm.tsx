@@ -20,7 +20,20 @@ export default function LoginForm() {
     },
   });
 
-  const { onSubmit } = useLogin({ setError });
+  const { mutate, isPending } = useLogin(setError);
+
+  const onSubmit = async (data: FormValues) => {
+    if (isPending) {
+      return;
+    }
+
+    const userData = {
+      email: data.email,
+      password: data.password,
+    };
+
+    mutate(userData);
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

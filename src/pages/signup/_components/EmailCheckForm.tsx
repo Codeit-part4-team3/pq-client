@@ -16,7 +16,23 @@ export default function EmailCheckForm() {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const { onSubmit } = useCheckEmail({ setError });
+  const { mutate, isPending } = useCheckEmail(setError);
+
+  const onSubmit = async (data: FormValues) => {
+    if (isPending) {
+      return;
+    }
+
+    const verificationCode = Object.values(data).join('');
+    const email = localStorage.getItem('email'); // 임시
+
+    const EmailVerifyData = {
+      email: email as string,
+      code: verificationCode,
+    };
+
+    mutate(EmailVerifyData);
+  };
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
