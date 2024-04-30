@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useParams } from 'react-router-dom';
 
-const SOCKET_SERVER_URL = 'http://localhost:3001';
+const SOCKET_SERVER_URL = 'https://pqsoft.net:3000';
 
 const pc_Config = {
   iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
