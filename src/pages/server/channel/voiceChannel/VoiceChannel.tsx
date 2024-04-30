@@ -48,14 +48,11 @@ export default function VoiceChannel() {
       };
 
       // ice connection state 변경
-      senderPCRef.current.oniceconnectionstatechange = (e) => {
-        console.log('oniceconnectionstatechange :', e);
-      };
+      senderPCRef.current.oniceconnectionstatechange = (e) => {};
 
       // Create and send offer
       const offer = await senderPCRef.current.createOffer();
       await senderPCRef.current.setLocalDescription(offer);
-      console.log('newParticipant_offer :', offer);
       socketRef.current?.emit('newParticipant_offer', { offer, senderPCId: socketRef.current?.id, roomName });
     } catch (error) {
       console.error('getUserMedia Error:', error);
@@ -69,10 +66,36 @@ export default function VoiceChannel() {
       socketRef.current?.emit('join_voice_channel', { roomName });
 
       socketRef.current?.on('newParticipant_answer', async ({ answer }) => {
-        console.log('newParticipant_answer :', answer);
         if (senderPCRef.current) {
           await senderPCRef.current.setRemoteDescription(new RTCSessionDescription(answer));
         }
+      });
+
+      socketRef.current?.on('existingParticipant_offer', async ({ offer, senderPCId, roomName }) => {
+        console.log('existingParticipant_offer :', offer);
+        if (!receiverPCsRef.current[senderPCId]) {
+          receiverPCsRef.current[senderPCId] = new RTCPeerConnection(pc_Config);
+        }
+
+        // ontrack 이벤트 핸들러
+        receiverPCsRef.current[senderPCId].ontrack = (e) => {
+          console.log('ontrack :', e);
+          setRemoteStreams((prev) => [...prev, e.streams[0]]);
+        };
+
+        await receiverPCsRef.current[senderPCId].setRemoteDescription(new RTCSessionDescription(offer));
+        const answer = await receiverPCsRef.current[senderPCId].createAnswer();
+        await receiverPCsRef.current[senderPCId].setLocalDescription(answer);
+        socketRef.current?.emit('existingParticipant_answer', {
+          answer,
+          receiverPCId: socketRef.current?.id,
+          senderPCId,
+          roomName,
+        });
+      });
+
+      socketRef.current?.on('existingParticipant_ice_candidate', async ({ candidate, senderPCId }) => {
+        await receiverPCsRef.current[senderPCId].addIceCandidate(new RTCIceCandidate(candidate));
       });
 
       // 로컬 미디어 스트림 가져오기
@@ -91,6 +114,16 @@ export default function VoiceChannel() {
       <VideoContainer>
         <Video onVoice={true} />
         <video ref={localVideoRef} autoPlay playsInline width={600} height={338}></video>
+        {remoteStreams.map((stream, index) => (
+          <video
+            key={index}
+            ref={(videoEl) => {
+              if (videoEl) videoEl.srcObject = stream;
+            }}
+            autoPlay
+            playsInline
+          />
+        ))}
       </VideoContainer>
 
       <MyMediaControlPanel />
