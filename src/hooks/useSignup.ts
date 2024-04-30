@@ -57,7 +57,7 @@ export const useSignup = ({ setError }: UseSignupProps) => {
       nickname: data.nickname,
     };
 
-    localStorage.set('email', data.email); // 임시
+    localStorage.setItem('email', data.email); // 임시
     mutate(userData);
   };
 
