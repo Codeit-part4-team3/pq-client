@@ -25,7 +25,20 @@ export default function SignupForm() {
     },
   });
 
-  const { onSubmit } = useSignup({ setError });
+  const { mutate, isPending } = useSignup(setError);
+
+  const onSubmit = (data: FormValues) => {
+    if (isPending) return;
+
+    const userData = {
+      email: data.email,
+      password: data.password,
+      nickname: data.nickname,
+    };
+
+    localStorage.setItem('email', data.email); // 임시
+    mutate(userData);
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

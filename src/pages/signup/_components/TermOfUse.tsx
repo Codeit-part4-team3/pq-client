@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export default function TermOfUse() {
   return (
     <TermsOfUse>
-      <TermsOfUseInput type='checkbox' />
+      <TermsOfUseInput type='checkbox' required />
       <TermsOfUseLabel>이용약관에 동의합니다.</TermsOfUseLabel>
     </TermsOfUse>
   );
