@@ -28,7 +28,7 @@ function App() {
           <Route path='/checkEmail' element={<EmailCheck />} />
           <Route path='/server' element={<Server />} />
           <Route path='/server/:serverId' element={<Server />}>
-            <Route path='channel/:channeId' element={<Channel />} />
+            <Route path='channel/:channelId' element={<Channel />} />
           </Route>
           <Route path='*' element={<NotFound />} />
           <Route path='/admin' element={<Admin />} />
