@@ -1,5 +1,5 @@
 export const URL = {
-  BASE: 'https://api.pqsoft.net',
+  BASE: import.meta.env.VITE_APP_ORIGIN,
 
   SERVER: 'chat/v1/server',
   USER: '/api/user/v1/user',

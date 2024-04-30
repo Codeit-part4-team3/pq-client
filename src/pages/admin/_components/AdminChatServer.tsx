@@ -17,8 +17,8 @@ export default function AdminChatServer() {
   console.log(data, error, isLoading);
 
   const createMutation = useMutationPost<ServerResponse, ServerRequest>('/chat/v1/server');
-  const updateMutation = useMutationPatch<ServerResponse, ServerRequest>(`/chat/v1/server/${updateId}`);
-  const deleteMutation = useMutationDelete(`/chat/v1/server/${deleteId}`);
+  const updateMutation = useMutationPatch<ServerResponse, ServerRequest>(`/chat/v1/server/${9}`);
+  const deleteMutation = useMutationDelete(`/chat/v1/server/${9}`);
 
   const updateLogs = (newLog: string) => {
     setLogs((prevLogs) => prevLogs + '\n' + newLog);
@@ -54,7 +54,7 @@ export default function AdminChatServer() {
           <input placeholder='id' value={updateId} onChange={(e) => setUpdateId(e.target.value)} />
           <input placeholder='name' value={updateName} onChange={(e) => setUpdateName(e.target.value)} />
           <input placeholder='imageUrl' value={updateImageUrl} onChange={(e) => setUpdateImageUrl(e.target.value)} />
-          <button onClick={() => createMutation.mutate({ name: createName, imageUrl: createImageUrl })}>전송</button>
+          <button onClick={() => updateMutation.mutate({ name: updateName, imageUrl: updateImageUrl })}>전송</button>
         </div>
         <div>
           <label>Delete Server</label>
