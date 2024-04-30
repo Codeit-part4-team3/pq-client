@@ -10,9 +10,15 @@ import EssentialInput from '../input/EssentialInput';
 export default function CreateServerModal({ closeModal, isOpen }: ModalProps) {
   const [imagePreviewUrl, setImagePreviewUrl] = useState('');
   const [serverName, setServerName] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
+    setErrorMessage('');
+    if (serverName === '') {
+      setErrorMessage('이름은 필수입니다.');
+      return;
+    }
     closeModal();
   };
 
@@ -44,9 +50,12 @@ export default function CreateServerModal({ closeModal, isOpen }: ModalProps) {
             <ServerSpan>서버 대표 이미지</ServerSpan>
             <ImageUploadBox imagePreviewUrl={imagePreviewUrl} onChange={handleImageChange} />
           </ModalInputBox>
-          <ModalInputBox>
-            <EssentialInput labelName='서버이름' state={serverName} setState={setServerName} />
-          </ModalInputBox>
+          <EssentialInput
+            errorMessage={errorMessage}
+            labelName='서버이름'
+            state={serverName}
+            setState={setServerName}
+          />
           <ModalButtons closeClick={closeModal} ctaText='생성' type='submit' />
         </ModalForm>
       </ModalContainer>

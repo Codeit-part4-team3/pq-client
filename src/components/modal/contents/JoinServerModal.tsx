@@ -3,20 +3,27 @@ import { ModalProps } from '../../../types/modalType';
 import ModalButtons from '../button/ModalButtons';
 import EssentialInput from '../input/EssentialInput';
 import Modal from '../modal';
-import { ModalContainer, ModalForm, ModalInputBox, ModalTitle } from './../CommonStyles';
+import { ModalContainer, ModalForm, ModalTitle } from './../CommonStyles';
 import styled from 'styled-components';
 
 export default function JoinServerModal({ closeModal, isOpen }: ModalProps) {
   const [link, setLink] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
+    setErrorMessage('');
+    if (link === '') {
+      setErrorMessage('링크는 필수입니다.');
+      return;
+    }
     // 임시 링크
     if (link == '링크') {
       setIsSuccess(true);
       return;
     }
+
     // 예외 처리
   };
 
@@ -37,9 +44,7 @@ export default function JoinServerModal({ closeModal, isOpen }: ModalProps) {
           </>
         ) : (
           <ModalForm onSubmit={handleSubmit}>
-            <ModalInputBox>
-              <EssentialInput labelName='초대 링크' state={link} setState={setLink} />
-            </ModalInputBox>
+            <EssentialInput errorMessage={errorMessage} labelName='초대 링크' state={link} setState={setLink} />
             <ModalButtons closeClick={closeModal} ctaText='다음' type='submit' />
           </ModalForm>
         )}

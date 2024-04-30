@@ -1,31 +1,25 @@
 import styled from 'styled-components';
+import { ModalInputBox, ModalInputLabel, NameInput } from '../CommonStyles';
 
 interface Props {
   labelName: string;
   state: string;
   setState: (value: string) => void;
+  errorMessage: string;
 }
 
-export default function EssentialInput({ labelName, state, setState }: Props) {
+export default function EssentialInput({ labelName, state, setState, errorMessage }: Props) {
   return (
-    <>
-      <Label>
+    <ModalInputBox>
+      <ModalInputLabel>
         {labelName}
         <EssentialSpan>*</EssentialSpan>
-      </Label>
+      </ModalInputLabel>
       <NameInput value={state} onChange={(e) => setState(e.target.value)} />
-    </>
+      <ErrorMessage>{errorMessage}</ErrorMessage>
+    </ModalInputBox>
   );
 }
-
-const Label = styled.label`
-  color: #000;
-  font-family: Pretendard;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-`;
 
 const EssentialSpan = styled.span`
   color: #258dff;
@@ -36,15 +30,7 @@ const EssentialSpan = styled.span`
   line-height: normal;
 `;
 
-const NameInput = styled.input`
-  width: 100%;
-  padding: 16px;
-  gap: 10px;
-  border-radius: 10px;
-  border: 1px solid #b3b3b3;
-  background: #fff;
-  &:focus {
-    outline: none;
-    border: 1px solid #258dff;
-  }
+const ErrorMessage = styled.span`
+  color: red;
+  font-size: 12px;
 `;

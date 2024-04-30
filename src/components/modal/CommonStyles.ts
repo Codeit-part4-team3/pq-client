@@ -30,3 +30,25 @@ export const ModalInputBox = styled.div`
   align-items: flex-start;
   gap: 8px;
 `;
+
+export const ModalInputLabel = styled.label`
+  color: #000;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+`;
+
+export const NameInput = styled.input`
+  width: 100%;
+  padding: 16px;
+  gap: 10px;
+  border-radius: 10px;
+  border: 1px solid #b3b3b3;
+  background: #fff;
+  &:focus {
+    outline: none;
+    border: 1px solid #258dff;
+  }
+`;

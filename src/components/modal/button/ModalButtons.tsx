@@ -1,17 +1,17 @@
+import { ButtonHTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-interface Props {
-  closeClick: () => void;
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   ctaText: string;
-  type?: 'button' | 'submit' | 'reset';
-  onClick?: () => void;
+  closeClick?: () => void;
+  closeText?: string;
 }
 
-export default function ModalButtons({ closeClick, ctaText, ...rest }: Props) {
+export default function ModalButtons({ ctaText, closeClick, closeText = '취소', ...rest }: Props) {
   return (
     <Container>
       <CloseButton type='button' onClick={closeClick}>
-        취소
+        {closeText}
       </CloseButton>
       <CtaButton {...rest}>{ctaText}</CtaButton>
     </Container>
@@ -37,6 +37,7 @@ const CloseButton = styled.button`
 `;
 
 const CtaButton = styled.button`
+  color: #fff;
   display: flex;
   width: 100%;
   padding: 13px;
