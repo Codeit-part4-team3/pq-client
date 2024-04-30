@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import addSvg from '../../../../../public/images/add_FILL0_wght200_GRAD0_opsz24 3.svg';
-import ChannelHeader from '../../../../components/voiceChannel/ChannelHeader';
+import ChannelHeader from 'src/components/channel/ChannelHeader';
 import ChatMessages from './_components/ChatMessages';
 import { MessageItem } from './_types';
 import { useEffect, useRef, useState } from 'react';
