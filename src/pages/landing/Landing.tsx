@@ -8,6 +8,10 @@ export default function Landing() {
       <br />
       <Link to='/signup'>Signup</Link>
       <br />
+      <Link to='/server/1'>Server</Link>
+      <br />
+      <Link to='/server/1/channel/1'>Channel</Link>
+      <br />
       <Link to='/admin'>Admin Page</Link>
     </div>
   );

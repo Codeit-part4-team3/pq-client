@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { ButtonHTMLAttributes, ReactNode } from 'react';
-import { SocialVariant } from '../../../types/buttonType';
-import { ButtonNormal } from '../../../GlobalStyles';
+import { SocialVariant } from 'src/types/buttonType';
+import { ButtonNormal } from 'src/GlobalStyles';
 
 interface SocialButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant: SocialVariant;
@@ -11,20 +11,20 @@ interface SocialButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export default function SocialButton({ variant, src, children }: SocialButtonProps) {
   return (
-    <Button type='button' variant={variant}>
-      <SocialLogo src={src} />
+    <Button type='button' $variant={variant}>
+      <SocialLogo src={src} alt={`${variant} 아이콘`} />
       {children}
       <span></span>
     </Button>
   );
 }
 
-const Button = styled(ButtonNormal)<{ variant: SocialVariant }>`
+const Button = styled(ButtonNormal)<{ $variant: SocialVariant }>`
   width: 440px;
   height: 40px;
   font-size: 14px;
 
-  background: ${({ variant }) => (variant === 'kakao' ? '#FFE812' : '#fff')};
+  background: ${({ $variant }) => ($variant === 'kakao' ? '#FFE812' : '#fff')};
   border: 1px solid #f4f4f4;
   border-radius: 10px;
 

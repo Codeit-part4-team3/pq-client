@@ -1,13 +1,13 @@
 import styled from 'styled-components';
-import SocialButton from '../../../components/sign/button/SocialButton';
+import SocialButton from 'src/components/sign/button/SocialButton';
 
 export default function SocialButtons() {
   return (
     <SocialContainer>
-      <SocialButton variant='google' src='src/assets/images/google.png'>
+      <SocialButton variant='google' src='/images/google.png'>
         구글로 로그인하기
       </SocialButton>
-      <SocialButton variant='kakao' src='src/assets/images/kakao.png'>
+      <SocialButton variant='kakao' src='/images/kakao.png'>
         카카오로 로그인하기
       </SocialButton>
     </SocialContainer>

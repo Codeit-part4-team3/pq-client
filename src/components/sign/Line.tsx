@@ -3,9 +3,9 @@ import styled from 'styled-components';
 export default function Line() {
   return (
     <HorizontalLine>
-      <img src='/images/line.svg' />
+      <img src='/images/line.svg' alt='가로선' />
       <span>or</span>
-      <img src='/images/line.svg' />
+      <img src='/images/line.svg' alt='가로선' />
     </HorizontalLine>
   );
 }

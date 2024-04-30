@@ -1,13 +1,18 @@
+import { useState } from 'react';
+
 import styled from 'styled-components';
-import VoiceChannel from '../../../components/voiceChannel/VoiceChannel';
+
+import ChatChannel from './chatChannel/ChatChannel';
+
+import { useParams } from 'react-router-dom';
+import VoiceChannel from './voiceChannel/VoiceChannel';
 
 export default function Channel() {
-  return (
-    <Area>
-      <h1>Channel Page</h1>
-      <VoiceChannel />
-    </Area>
-  );
+  const { serverId, channeId } = useParams();
+  console.log(serverId, channeId);
+  // Channel의 종류에 따라 VoiceChannel, ChatChannel을 렌더링
+  const [channelType] = useState('chat');
+  return <Area>{channelType === 'chat' ? <ChatChannel /> : <VoiceChannel />}</Area>;
 }
 
 const Area = styled.section`
@@ -15,4 +20,6 @@ const Area = styled.section`
   height: 100vh;
 
   background-color: #ffffff;
+
+  position: relative;
 `;

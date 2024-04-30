@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ButtonEmphasis, ButtonNormal } from '../../../GlobalStyles';
+import { ButtonEmphasis, ButtonNormal } from 'src/GlobalStyles';
 
 export default function NotFoundServer() {
   return (

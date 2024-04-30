@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import FindPasswordForm from '../_components/FindPasswordForm';
-import Header from '../../../components/sign/Header';
-import { Area, Container, Prompt } from '../../../components/sign/CommonStyles';
+import Header from 'src/components/sign/Header';
+import { Area, Container, Prompt } from 'src/components/sign/CommonStyles';
 
 export default function FindPassword() {
   return (
