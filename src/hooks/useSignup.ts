@@ -44,9 +44,7 @@ export const useSignup = ({ setError }: UseSignupProps) => {
       alert(ERROR_MESSAGES.AUTH.SIGN_UP_FAILED);
     },
 
-    onSuccess: (data) => {
-      const { email } = data;
-      Cookies.set('email', email, { expires: 1 }); // 임시
+    onSuccess: () => {
       navigate('/checkEmail');
     },
   });
@@ -61,6 +59,7 @@ export const useSignup = ({ setError }: UseSignupProps) => {
     };
 
     mutate(userData);
+    Cookies.set('email', data.email, { expires: 1 }); // 임시
   };
 
   return { onSubmit, isLoading };
