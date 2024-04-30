@@ -5,7 +5,7 @@ import axiosInstance from '../instance/axiosInstance';
 import { AxiosResponse } from 'axios';
 
 export const useQueryGet = <Res>(queryKey: string, url: string, options: object = {}) => {
-  const { data, error, isError, isSuccess, isLoading, isFetching } = useQuery<Res>({
+  const query = useQuery<Res>({
     queryKey: [queryKey],
     queryFn: async () => {
       const res = await axiosInstance.get(url);
@@ -14,7 +14,7 @@ export const useQueryGet = <Res>(queryKey: string, url: string, options: object 
     ...options,
   });
 
-  return { data, error, isError, isSuccess, isLoading, isFetching };
+  return query;
 };
 
 export const useMutationPost = <Res, Req>(url: string, options: object = {}) => {
@@ -29,7 +29,7 @@ export const useMutationPost = <Res, Req>(url: string, options: object = {}) => 
 
 export const useMutationPatch = <Res, Req>(url: string, options: object = {}) => {
   const mutationFn: MutationFunction<Res, Req> = async (body) => {
-    const res: AxiosResponse<Res> = await axiosInstance.put(url, body);
+    const res: AxiosResponse<Res> = await axiosInstance.patch(url, body);
     return res.data;
   };
 
