@@ -1,15 +1,14 @@
-import { FormEventHandler, useState } from 'react';
-import { ModalProps } from '../../../types/modalType';
-import { ModalForm } from '../CommonStyles';
-import ModalButtons from '../button/ModalButtons';
-import EssentialInput from '../input/EssentialInput';
+import { ModalContainer, ModalForm, ModalTitle } from '../CommonStyles';
 import Modal from '../modal';
-import { ModalTitle, ModalContainer } from './../CommonStyles';
-import PrivateToggleButton from '../button/PrivateToggleButton';
-import InviteLinkInput from '../input/InviteLinkInput';
 import MemberInviteSearchForm from '../form/MemberInviteSearchForm';
+import InviteLinkInput from '../input/InviteLinkInput';
+import EssentialInput from '../input/EssentialInput';
+import PrivateToggleButton from '../button/PrivateToggleButton';
+import ModalButtons from '../button/ModalButtons';
+import { ModalProps } from 'src/types/modalType';
+import { FormEventHandler, useState } from 'react';
 
-export default function CreateCategoryModal({ closeModal, isOpen }: ModalProps) {
+export default function CreateChannelModal({ closeModal, isOpen }: ModalProps) {
   const mockData = [
     { id: 1, name: '노진석', email: 'shwlstjr08@naver.com' },
     { id: 2, name: '고기호', email: 'sprint@codeit.kr', imageUrl: '/images/plus.svg' },
@@ -39,7 +38,7 @@ export default function CreateCategoryModal({ closeModal, isOpen }: ModalProps) 
     }
     setIsNextModal(!isNextModal);
   };
-  const createCategory: FormEventHandler = (e) => {
+  const createChannel: FormEventHandler = (e) => {
     e.preventDefault();
     setErrorMessage('');
     if (categoryName === '') {
@@ -55,10 +54,10 @@ export default function CreateCategoryModal({ closeModal, isOpen }: ModalProps) 
       <ModalContainer>
         {isNextModal ? (
           <>
-            <ModalTitle>비공개 카테고리 초대</ModalTitle>
+            <ModalTitle>비공개 채널 초대</ModalTitle>
             <MemberInviteSearchForm buttonClick={handleInvite} invitedUsers={invitedUsers} initialValue={mockData} />
             <InviteLinkInput link='링크 ' />
-            <form onSubmit={createCategory}>
+            <form onSubmit={createChannel}>
               <ModalButtons
                 closeClick={handleNextModalClick}
                 ctaText={invitedUsers.length > 0 ? '다음' : '건너뛰기'}
@@ -69,15 +68,15 @@ export default function CreateCategoryModal({ closeModal, isOpen }: ModalProps) 
           </>
         ) : (
           <>
-            <ModalTitle>카테고리 만들기</ModalTitle>
-            <ModalForm onSubmit={createCategory}>
+            <ModalTitle>채널 만들기</ModalTitle>
+            <ModalForm onSubmit={createChannel}>
               <EssentialInput
                 errorMessage={errorMessage}
-                labelName='카테고리 이름'
+                labelName='채널 이름'
                 state={categoryName}
                 setState={setCategoryName}
               />
-              <PrivateToggleButton title='비공개 카테고리' state={isPrivate} toggleClick={handleToggle} />
+              <PrivateToggleButton title='비공개 채널' state={isPrivate} toggleClick={handleToggle} />
               <ModalButtons
                 closeClick={closeModal}
                 ctaText={isPrivate ? '다음' : '생성'}

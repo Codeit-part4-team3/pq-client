@@ -3,7 +3,7 @@ import { ModalInputLabel, NameInput } from '../CommonStyles';
 import { useEffect, useState } from 'react';
 import useDebounce from '../../../hooks/useDebounce';
 
-type data = { id: number; name: string; email: string; imageUrl: string }[];
+type data = { id: number; name: string; email: string; imageUrl?: string }[];
 
 interface Props {
   // 일단 목데이터 기반 나중에 initialValue로 수정예정
@@ -48,7 +48,7 @@ export default function MemberInviteSearchForm({ initialValue, invitedUsers, but
         {participants.map((user) => (
           <UserContainer key={user.id}>
             <UserInfoBox>
-              <UserImage src={user.imageUrl} alt='유저 프로필 이미지' />
+              <UserImage src={user.imageUrl || '/images/logo.svg'} alt='유저 프로필 이미지' />
               <UserNameSpan>{user.name}</UserNameSpan>
             </UserInfoBox>
             <UserEmailSpan>{user.email}</UserEmailSpan>
@@ -57,7 +57,7 @@ export default function MemberInviteSearchForm({ initialValue, invitedUsers, but
         {data.map((user) => (
           <UserContainer key={user.id}>
             <UserInfoBox>
-              <UserImage src={user.imageUrl} alt='유저 프로필 이미지' />
+              <UserImage src={user.imageUrl || '/images/logo.svg'} alt='유저 프로필 이미지' />
               <UserNameSpan>{user.name}</UserNameSpan>
               <UserEmailSpan>{user.email}</UserEmailSpan>
             </UserInfoBox>
@@ -80,11 +80,12 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
+  height: 250px;
 `;
 
 const UserList = styled.section`
   width: 100%;
-  height: 168px;
+  height: 100%;
   overflow-y: scroll;
 `;
 
