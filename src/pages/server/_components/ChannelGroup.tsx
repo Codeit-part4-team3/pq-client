@@ -64,6 +64,9 @@ const Header = styled.div`
 const Body = styled.div`
   width: 100%;
   padding-left: 8px;
+
+  display: flex;
+  flex-direction: column;
 `;
 
 const DropDownButton = styled(ButtonIcon)`
