@@ -46,7 +46,6 @@ export const channelGroupMock: ChannelGroupData[] = [
 export const channelItemMock: ChannelData[] = [
   {
     id: 1,
-    serverId: 1,
     name: '일반1',
     groupId: 1,
     isVoice: false,
@@ -54,7 +53,6 @@ export const channelItemMock: ChannelData[] = [
   },
   {
     id: 2,
-    serverId: 1,
     name: '일반2',
     groupId: 1,
     isVoice: false,
@@ -62,7 +60,6 @@ export const channelItemMock: ChannelData[] = [
   },
   {
     id: 3,
-    serverId: 1,
     name: '일반3',
     groupId: 1,
     isVoice: false,
@@ -71,7 +68,6 @@ export const channelItemMock: ChannelData[] = [
 
   {
     id: 4,
-    serverId: 2,
     name: '스터디1',
     groupId: 2,
     isVoice: false,
@@ -79,7 +75,6 @@ export const channelItemMock: ChannelData[] = [
   },
   {
     id: 5,
-    serverId: 2,
     name: '스터디2',
     groupId: 2,
     isVoice: false,
@@ -87,7 +82,6 @@ export const channelItemMock: ChannelData[] = [
   },
   {
     id: 6,
-    serverId: 2,
     name: '스터디3',
     groupId: 2,
     isVoice: false,
@@ -95,7 +89,6 @@ export const channelItemMock: ChannelData[] = [
   },
   {
     id: 7,
-    serverId: 3,
     name: '음성1',
     groupId: 3,
     isVoice: true,
@@ -103,7 +96,6 @@ export const channelItemMock: ChannelData[] = [
   },
   {
     id: 8,
-    serverId: 3,
     name: '음성2',
     groupId: 3,
     isVoice: true,
@@ -111,7 +103,6 @@ export const channelItemMock: ChannelData[] = [
   },
   {
     id: 9,
-    serverId: 3,
     name: '음성3',
     groupId: 3,
     isVoice: true,

@@ -3,13 +3,20 @@ import styled from 'styled-components';
 import ServerItem from './_components/ServerItem';
 import { useEffect, useState } from 'react';
 import NotFoundServer from './_components/NotFoundServer';
-import { ServerData, ChannelGroupData, ChannelData } from './_types/type';
-import MemberButton from './_components/MemberButton';
-import { channelItemMock, channelGroupMock, serverMock } from './_test/server.mock';
+import {
+  ServerData,
+  ChannelGroupData,
+  ChannelData,
+  ServerResponse,
+  ChannelResponse,
+  IServer,
+  IChannel,
+} from './_types/type';
 import AddServerButton from './_components/AddServerButton';
 import ChannelGroup from './_components/ChannelGroup';
 import ChannelItem from './_components/ChannelItem';
 import CalendarContainer from './_components/CalendarContainer';
+import { useQueryGet } from 'src/apis/service/service';
 
 /**
  *
@@ -27,16 +34,11 @@ export default function Server() {
   const [channelGroupList, setChannelGroupList] = useState<ChannelGroupData[]>([]);
   const [channelItemList, setChannelItemList] = useState<ChannelData[]>([]);
 
-  const fetchChannelList = async () => {
-    setChannelItemList(channelItemMock);
-    setChannelGroupList(channelGroupMock);
-  };
-
-  const fetchServerList = async () => {
-    fetchChannelList();
-
-    setServerList(serverMock);
-  };
+  const { data: serverData } = useQueryGet<ServerResponse[]>('getAllServers', `/chat/v1/server/all?userId=${1}`);
+  const { data: channelData } = useQueryGet<ChannelResponse[]>(
+    'getAllChannels',
+    `/chat/v1/server/${28}/channel/all?userId=${1}`,
+  );
 
   /**
    * 이벤트 버블링으로 하위 버튼 컴포넌트들의 이벤트 처리를
@@ -66,10 +68,25 @@ export default function Server() {
   };
 
   useEffect(() => {
-    fetchServerList();
-
     setIsExist(true);
   }, []);
+
+  useEffect(() => {
+    if (serverData) {
+      const sData: IServer[] = serverData.filter((item): item is IServer => item !== null);
+      setServerList(sData);
+    }
+  }, [serverData]);
+
+  useEffect(() => {
+    if (channelData) {
+      const cData: IChannel[] = channelData.filter((item): item is IChannel => item !== null);
+      const groupList = cData.filter((item) => item.groupId === null);
+      const channelList = cData.filter((item) => item.groupId !== null);
+      setChannelGroupList(groupList);
+      setChannelItemList(channelList);
+    }
+  }, [channelData]);
 
   return (
     <Area>
@@ -83,11 +100,6 @@ export default function Server() {
           {createChannelGroupList(channelGroupList)}
         </ChannelContainer>
         {!isExist ? <NotFoundServer /> : <Outlet />}
-        <MemberContainer>
-          <MemberButton />
-          <MemberButton />
-          <MemberButton />
-        </MemberContainer>
       </Container>
     </Area>
   );
@@ -134,17 +146,4 @@ const ChannelContainer = styled.aside`
 
   font-size: 14px;
   background-color: #f1f8ff;
-`;
-
-const MemberContainer = styled.aside`
-  width: 200px;
-
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
-
-  background-color: #bedeff;
 `;

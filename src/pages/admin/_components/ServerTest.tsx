@@ -6,16 +6,16 @@ import { Area, ChatContainer, LogContainer } from './AdminChatServer';
 
 export default function ServerTest() {
   const [logs, setLogs] = useState<string>('');
+  const [userId, setUserId] = useState<string>('1');
   const [createServerName, setCreateServerName] = useState<string>('');
   const [createImageUrl, setCreateImageUrl] = useState<string>('');
-  const [currentServerId, setCurrentServerId] = useState<string>('');
   const [updateServerId, setUpdateServerId] = useState<string>('');
   const [updateServerName, setUpdateServerName] = useState<string>('');
   const [updateImageUrl, setUpdateImageUrl] = useState<string>('');
   const [deleteServerId, setDeleteServerId] = useState<string>('');
 
-  const { refetch } = useQueryGet<ServerResponse>('getAllServers', '/chat/v1/server/all');
-  const createMutation = useMutationPost<ServerResponse, ServerRequest>('/chat/v1/server');
+  const { refetch } = useQueryGet<ServerResponse[]>('getAllServers', `/chat/v1/server/all?userId=${userId}`);
+  const createMutation = useMutationPost<ServerResponse, ServerRequest>(`/chat/v1/server?userId=${userId}`);
   const updateMutation = useMutationPatch<ServerResponse, ServerRequest>(`/chat/v1/server/${updateServerId}`);
   const deleteMutation = useMutationDelete(`/chat/v1/server/${deleteServerId}`);
 
@@ -39,7 +39,10 @@ export default function ServerTest() {
     <Area>
       <ChatContainer>
         <strong>서버AI</strong>
-        <input value={currentServerId} onChange={(e) => setCurrentServerId(e.target.value)}></input>
+        <label>
+          유저ID
+          <input value={userId} onChange={(e) => setUserId(e.target.value)}></input>
+        </label>
         <div>
           <label>Get 전체서버</label>
           <button
