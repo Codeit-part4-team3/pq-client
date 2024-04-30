@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import styled from 'styled-components';
@@ -22,15 +21,6 @@ export default function AdminSocketServer() {
   const [inputValue, setInputValue] = useState<string>('');
   const socketRef = useRef<Socket | null>(null);
 
-  // message 데이터 socket-server에서 가져오기
-  useEffect(() => {
-    (async () => {
-      const response = await axios.get('https://api.pqsoft.net:3000/admin/messages');
-      const messageData = response.data[0].messages;
-      setMessages([...messageData]);
-    })();
-  }, []);
-
   // 채팅 메시지 전송
   const sendMessage = (message: string, roomName: string) => {
     socketRef.current?.emit('send_message', message, roomName);
@@ -47,8 +37,14 @@ export default function AdminSocketServer() {
     // 채팅 채널 입장
     socketRef.current.emit('join_chat_channel', roomName);
 
+    // 다른 유저가 들어왔을 때 다른 유저가 들어왔다고 로그 찍기
     socketRef.current.on('user_joined', (socketId) => {
       console.log(socketId + 'is joined');
+    });
+
+    socketRef.current.on('receive_message', (newMessage: Message) => {
+      console.log('new message data : ', newMessage);
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
     return () => {
