@@ -3,7 +3,7 @@ import { ButtonNormal } from 'src/GlobalStyles';
 
 export const Area = styled.section`
   width: 100%;
-  height: 100vh;
+  height: 100%;
 
   display: flex;
   flex-direction: column;
@@ -19,7 +19,7 @@ export const Container = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 150px;
+  padding: 150px 0 263px 0;
 `;
 
 export const Button = styled(ButtonNormal)`
