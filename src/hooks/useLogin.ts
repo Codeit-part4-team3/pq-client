@@ -26,6 +26,8 @@ export const useLogin = ({ setError }: UseLoginProps) => {
           type: 'custom',
           message: ERROR_MESSAGES.AUTH.PASSWORD_CHECK_FAILED,
         });
+        alert(ERROR_MESSAGES.AUTH.INVALID_LOGIN);
+        return;
       }
 
       alert(ERROR_MESSAGES.AUTH.LOGIN_FAILED);
