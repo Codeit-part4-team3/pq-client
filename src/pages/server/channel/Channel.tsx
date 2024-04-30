@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import ChatChannel from './chatChannel/ChatChannel';
 
 import { useParams } from 'react-router-dom';
-import VoiceChannel from './voiceChannel/VoiceChannel';
+import VoiceChannel from './asd/VoiceChannel';
 
 export default function Channel() {
   const { serverId, channeId } = useParams();
