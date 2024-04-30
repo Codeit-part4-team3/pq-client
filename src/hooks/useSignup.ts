@@ -4,7 +4,6 @@ import { ERROR_MESSAGES } from 'src/constants/error';
 import { FormValues } from 'src/pages/signup/_types/type';
 import { UseFormSetError } from 'react-hook-form';
 import { AxiosError } from 'axios';
-import Cookies from 'js-cookie';
 
 interface UseSignupProps {
   setError: UseFormSetError<FormValues>;
@@ -58,8 +57,8 @@ export const useSignup = ({ setError }: UseSignupProps) => {
       nickname: data.nickname,
     };
 
+    localStorage.set('email', data.email); // 임시
     mutate(userData);
-    Cookies.set('email', data.email, { expires: 1 }); // 임시
   };
 
   return { onSubmit, isLoading };

@@ -1,5 +1,4 @@
 import { AxiosError } from 'axios';
-import Cookies from 'js-cookie';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useMutationEmailVerify } from 'src/apis/service/userService';
@@ -44,7 +43,7 @@ export const useCheckEmail = ({ setError }: UseCheckEmailProps) => {
     }
 
     const verificationCode = Object.values(data).join('');
-    const email = Cookies.get('email'); // 임시
+    const email = localStorage.get('email'); // 임시
 
     const EmailVerifyData = {
       email: email as string,
