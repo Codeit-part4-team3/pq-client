@@ -48,7 +48,7 @@ export default function VoiceChannel() {
       };
 
       // ice connection state 변경
-      senderPCRef.current.oniceconnectionstatechange = (e) => {};
+      senderPCRef.current.oniceconnectionstatechange = () => {};
 
       // Create and send offer
       const offer = await senderPCRef.current.createOffer();
@@ -72,14 +72,12 @@ export default function VoiceChannel() {
       });
 
       socketRef.current?.on('existingParticipant_offer', async ({ offer, senderPCId, roomName }) => {
-        console.log('existingParticipant_offer :', offer);
         if (!receiverPCsRef.current[senderPCId]) {
           receiverPCsRef.current[senderPCId] = new RTCPeerConnection(pc_Config);
         }
 
         // ontrack 이벤트 핸들러
         receiverPCsRef.current[senderPCId].ontrack = (e) => {
-          console.log('ontrack :', e);
           setRemoteStreams((prev) => [...prev, e.streams[0]]);
         };
 
@@ -98,6 +96,44 @@ export default function VoiceChannel() {
         await receiverPCsRef.current[senderPCId].addIceCandidate(new RTCIceCandidate(candidate));
       });
 
+      // 새로운 참가자가 들어왔을 때 미디어 스트림을 받음
+      socketRef.current?.on('newParticipant_offer', async ({ offer, senderPCId }) => {
+        if (!receiverPCsRef.current[senderPCId]) {
+          receiverPCsRef.current[senderPCId] = new RTCPeerConnection(pc_Config);
+        }
+
+        console.log('receiverPCsRef.current[senderPCId]:', receiverPCsRef.current[senderPCId]);
+
+        // ontrack 이벤트 핸들러
+        receiverPCsRef.current[senderPCId].ontrack = (e) => {
+          setRemoteStreams((prev) => [...prev, e.streams[0]]);
+        };
+
+        await receiverPCsRef.current[senderPCId].setRemoteDescription(new RTCSessionDescription(offer));
+        const answer = await receiverPCsRef.current[senderPCId].createAnswer();
+        await receiverPCsRef.current[senderPCId].setLocalDescription(answer);
+        socketRef.current?.emit('newParticipant_answer', {
+          answer,
+          receiverPCId: socketRef.current?.id,
+          senderPCId,
+          roomName,
+        });
+      });
+
+      // 새로운 참가자의 미디어 스트림을 받기 위한 ice candidate 설정
+      socketRef.current?.on('newParticipant_ice_candidate', async ({ candidate, senderPCId }) => {
+        console.log('newParticipant_ice_candidate:', candidate, senderPCId);
+        if (receiverPCsRef.current[senderPCId]) {
+          await receiverPCsRef.current[senderPCId].addIceCandidate(new RTCIceCandidate(candidate));
+        }
+        console.log(receiverPCsRef.current[senderPCId].iceConnectionState);
+      });
+
+      // ice connection state 변경
+      socketRef.current?.on('iceConnectionStateChange', (iceConnectionState) => {
+        console.log('iceConnectionStateChange :', iceConnectionState);
+      });
+
       // 로컬 미디어 스트림 가져오기
       getLocalMediaStream();
     });
@@ -107,10 +143,26 @@ export default function VoiceChannel() {
     };
   }, []);
 
+  useEffect(() => {
+    console.log('remoteStreams:', remoteStreams);
+    return () => {
+      remoteStreams.forEach((stream) => {
+        stream.getTracks().forEach((track) => track.stop());
+      });
+    };
+  }, [remoteStreams]);
+
   return (
     <Wrapper>
       <ChannelHeader />
-
+      <button
+        type='button'
+        onClick={() => {
+          console.log('remoteStreams:', remoteStreams);
+        }}
+      >
+        remoteStreams
+      </button>
       <VideoContainer>
         <Video onVoice={true} />
         <video ref={localVideoRef} autoPlay playsInline width={600} height={338}></video>
