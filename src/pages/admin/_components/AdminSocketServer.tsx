@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import styled from 'styled-components';
@@ -21,15 +20,6 @@ export default function AdminSocketServer() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const socketRef = useRef<Socket | null>(null);
-
-  // message 데이터 socket-server에서 가져오기
-  useEffect(() => {
-    (async () => {
-      const response = await axios.get('https://api.pqsoft.net:3000/admin/messages');
-      const messageData = response.data[0].messages;
-      setMessages([...messageData]);
-    })();
-  }, []);
 
   // 채팅 메시지 전송
   const sendMessage = (message: string, roomName: string) => {

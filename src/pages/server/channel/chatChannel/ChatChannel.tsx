@@ -3,19 +3,52 @@ import styled from 'styled-components';
 import addSvg from '../../../../../public/images/add_FILL0_wght200_GRAD0_opsz24 3.svg';
 import ChannelHeader from '../../../../components/voiceChannel/ChannelHeader';
 import ChatMessages from './_components/ChatMessages';
-import { Message } from './_types';
+import { MessageItem } from './_types';
+import { useEffect, useRef, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
+
+const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 export default function ChatChannel() {
-  const generateMessageId = () => Math.random().toString(36).substr(2, 9);
+  const roomName = '1';
+  const socketRef = useRef<Socket | null>(null);
+  const [messages, setMessages] = useState<MessageItem[]>([]);
+  const [inputValue, setInputValue] = useState<string>('');
 
-  const messages: Message[] = Array.from({ length: 10 }, (_, i) => ({
-    messageId: generateMessageId(),
-    userId: '1',
-    message: `message ${i + 1}`,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    status: 'normal',
-  }));
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleSendMessageKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      socketRef.current?.emit('send_message', e.currentTarget.value, roomName);
+      setInputValue('');
+    }
+  };
+
+  useEffect(() => {
+    socketRef.current = io(SOCKET_SERVER_URL);
+
+    socketRef.current.emit('join_chat_channel', roomName);
+
+    socketRef.current.on('join_chat_channel_user_join', (socketId) => {
+      console.log(socketId + 'is joined');
+    });
+
+    socketRef.current.on('initial_chat_messages', (initialMessages: MessageItem[]) => {
+      console.log('initial messages data : ', initialMessages);
+      setMessages([...initialMessages]);
+    });
+
+    socketRef.current.on('receive_message', (newMessage: MessageItem) => {
+      console.log('new message data : ', newMessage);
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    });
+
+    return () => {
+      socketRef.current?.disconnect();
+    };
+  }, []);
 
   return (
     <Wrapper>
@@ -28,7 +61,13 @@ export default function ChatChannel() {
         <ChatMessages messages={messages} />
       </ChatContainer>
       <ChatInputBox>
-        <ChatInput type='text' placeholder={`${'#채팅방 이름'}에 메시지 보내기`} />
+        <ChatInput
+          type='text'
+          placeholder={`${'#채팅방 이름'}에 메시지 보내기`}
+          value={inputValue}
+          onChange={handleInputChange}
+          onKeyDown={handleSendMessageKeyDown}
+        />
         <NoTitleButton>
           <img src={addSvg} alt='add 이미지' width={24} height={24} />
         </NoTitleButton>

@@ -1,33 +1,35 @@
 import styled from 'styled-components';
 import profileImage from '../../../../../../public/images/videoProfile.jfif';
-import { Message } from '../_types';
+import { MessageItem } from '../_types';
 
 interface ChatMessagesProps {
-  messages: Message[];
+  messages: MessageItem[];
 }
 
 export default function ChatMessages({ messages }: ChatMessagesProps) {
   return (
     <>
-      {messages.map((message) => (
-        <>
-          <ChatDateHeaderWrapper>
-            <ChatDateHeader>{message.createdAt}</ChatDateHeader>
-          </ChatDateHeaderWrapper>
-          <ChatMessageWrapper>
-            <UserProfileImage>
-              <img src={profileImage} alt='유저 프로필 이미지' />
-            </UserProfileImage>
-            <ChatMessageContent>
-              <ChatMessageContentHeader>
-                <ChatMessageSender>{'김희연'}</ChatMessageSender>
-                <ChatMessageCreatedAt>{message.createdAt}</ChatMessageCreatedAt>
-              </ChatMessageContentHeader>
-              <ChatMessageText>{message.message}</ChatMessageText>
-            </ChatMessageContent>
-          </ChatMessageWrapper>
-        </>
-      ))}
+      {messages.length === 0
+        ? null
+        : messages.map((message) => (
+            <>
+              <ChatDateHeaderWrapper>
+                <ChatDateHeader>{message.message.createdAt}</ChatDateHeader>
+              </ChatDateHeaderWrapper>
+              <ChatMessageWrapper>
+                <UserProfileImage>
+                  <img src={profileImage} alt='유저 프로필 이미지' />
+                </UserProfileImage>
+                <ChatMessageContent>
+                  <ChatMessageContentHeader>
+                    <ChatMessageSender>{'김희연'}</ChatMessageSender>
+                    <ChatMessageCreatedAt>{message.message.createdAt}</ChatMessageCreatedAt>
+                  </ChatMessageContentHeader>
+                  <ChatMessageText>{message.message.message}</ChatMessageText>
+                </ChatMessageContent>
+              </ChatMessageWrapper>
+            </>
+          ))}
     </>
   );
 }
