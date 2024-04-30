@@ -6,11 +6,12 @@ import ChatMessages from './_components/ChatMessages';
 import { MessageItem } from './_types';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { useParams } from 'react-router-dom';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 export default function ChatChannel() {
-  const roomName = '1';
+  const { channelId: roomName } = useParams();
   const socketRef = useRef<Socket | null>(null);
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
@@ -48,7 +49,7 @@ export default function ChatChannel() {
     return () => {
       socketRef.current?.disconnect();
     };
-  }, []);
+  }, [roomName]);
 
   return (
     <Wrapper>

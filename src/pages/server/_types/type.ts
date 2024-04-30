@@ -12,9 +12,9 @@ export type ServerData = IServer;
 interface IChannel {
   id: number;
   name: string;
-  serverId: number;
-  groupId: number;
+  groupId?: number;
   isVoice: boolean;
+  isPrivate: boolean;
 }
 
 export type ChannelRequest = Omit<IChannel, 'id'>;
