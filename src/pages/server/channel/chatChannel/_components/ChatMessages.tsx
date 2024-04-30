@@ -1,38 +1,47 @@
 import styled from 'styled-components';
 import profileImage from '../../../../../../public/images/videoProfile.jfif';
-import { Message } from '../_types';
+import { MessageItem } from '../_types';
+import extractDate from 'src/utils/extractDate';
 
 interface ChatMessagesProps {
-  messages: Message[];
+  messages: MessageItem[];
 }
 
 export default function ChatMessages({ messages }: ChatMessagesProps) {
+  if (!messages || messages.length === 0) return null;
   return (
     <>
-      {messages.map((message) => (
-        <>
-          <ChatDateHeaderWrapper>
-            <ChatDateHeader>{message.createdAt}</ChatDateHeader>
-          </ChatDateHeaderWrapper>
-          <ChatMessageWrapper>
-            <UserProfileImage>
-              <img src={profileImage} alt='유저 프로필 이미지' />
-            </UserProfileImage>
-            <ChatMessageContent>
-              <ChatMessageContentHeader>
-                <ChatMessageSender>{'김희연'}</ChatMessageSender>
-                <ChatMessageCreatedAt>{message.createdAt}</ChatMessageCreatedAt>
-              </ChatMessageContentHeader>
-              <ChatMessageText>{message.message}</ChatMessageText>
-            </ChatMessageContent>
-          </ChatMessageWrapper>
-        </>
-      ))}
+      {messages.map((messageItem) => {
+        const { year, month, day, hour, minute } = extractDate(messageItem.message.createdAt);
+        //2024년 04월 22일 형태
+        const ChatDayDividerDay = `${year}년 ${month}월 ${day}일`;
+        //2024.04.22. 오후 9:31 형태
+        const messageCreatedAt = `${year}.${month}.${day}. ${hour >= 12 ? '오후' : '오전'} ${hour % 12}:${minute}`;
+        return (
+          <>
+            <ChatDayDividerWrapper>
+              <ChatDayDivider>{ChatDayDividerDay}</ChatDayDivider>
+            </ChatDayDividerWrapper>
+            <ChatMessageWrapper>
+              <UserProfileImage>
+                <img src={profileImage} alt='유저 프로필 이미지' />
+              </UserProfileImage>
+              <ChatMessageContent>
+                <ChatMessageContentHeader>
+                  <ChatMessageSender>{messageItem.message.userId}</ChatMessageSender>
+                  <ChatMessageCreatedAt>{messageCreatedAt}</ChatMessageCreatedAt>
+                </ChatMessageContentHeader>
+                <ChatMessageText>{messageItem.message.message}</ChatMessageText>
+              </ChatMessageContent>
+            </ChatMessageWrapper>
+          </>
+        );
+      })}
     </>
   );
 }
 
-const ChatDateHeader = styled.div`
+const ChatDayDivider = styled.div`
   width: 135px;
   height: 25px;
 
@@ -51,7 +60,7 @@ const ChatDateHeader = styled.div`
   border: 1px solid #ccc;
 `;
 
-const ChatDateHeaderWrapper = styled.div`
+const ChatDayDividerWrapper = styled.div`
   display: flex;
   justify-content: center;
 
