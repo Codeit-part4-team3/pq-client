@@ -12,7 +12,6 @@ export type ServerData = IServer;
 interface IChannel {
   id: number;
   name: string;
-  serverId: number;
   groupId?: number;
   isVoice: boolean;
   isPrivate: boolean;

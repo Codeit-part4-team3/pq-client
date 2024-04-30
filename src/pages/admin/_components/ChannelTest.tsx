@@ -5,9 +5,8 @@ import { Area, ChatContainer, LogContainer } from './AdminChatServer';
 
 export default function ChannelTest() {
   const [logs, setLogs] = useState<string>('');
-  const [currentChannelId, setCurrentChannelId] = useState<string>('');
+  const [serverId, setServerId] = useState<string>('1');
   const [createChannelName, setCreateChannelName] = useState<string>('');
-  const [createChannelServerId, setCreateChannelServerId] = useState<string>('');
   const [createChannelGroupId, setCreateChannelGroupId] = useState<string>('');
   const [createChannelVoice, setCreateChannelVoice] = useState<boolean>(false);
   const [createChannelPrivate, setCreateChannelPrivate] = useState<boolean>(false);
@@ -15,10 +14,12 @@ export default function ChannelTest() {
   const [updateChannelName, setUpdateChannelName] = useState<string>('');
   const [deleteChannelId, setDeleteChannelId] = useState<string>('');
 
-  const { refetch } = useQueryGet<ChannelResponse>('getAllChannels', '/chat/v1/channel/all');
-  const createMutation = useMutationPost<ChannelResponse, ChannelRequest>('/chat/v1/channel');
-  const updateMutation = useMutationPatch<ChannelResponse, ChannelRequest>(`/chat/v1/channel/${updateChannelId}`);
-  const deleteMutation = useMutationDelete(`/chat/v1/channel/${deleteChannelId}`);
+  const { refetch } = useQueryGet<ChannelResponse>('getAllChannels', `/chat/v1/server/${serverId}/channel/all`);
+  const createMutation = useMutationPost<ChannelResponse, ChannelRequest>(`/chat/v1/server/${serverId}/channel`);
+  const updateMutation = useMutationPatch<ChannelResponse, ChannelRequest>(
+    `/chat/v1/server/${serverId}/channel/${updateChannelId}`,
+  );
+  const deleteMutation = useMutationDelete(`/chat/v1/server/${serverId}/channel/${deleteChannelId}`);
 
   const updateLogs = (newLog: string) => {
     setLogs((prevLogs) => prevLogs + '\n' + newLog);
@@ -40,7 +41,10 @@ export default function ChannelTest() {
     <Area>
       <ChatContainer>
         <strong>체널API</strong>
-        <input value={currentChannelId} onChange={(e) => setCurrentChannelId(e.target.value)}></input>
+        <label>
+          서버 ID
+          <input value={serverId} onChange={(e) => setServerId(e.target.value)}></input>
+        </label>
         <div>
           <label>Get 전체체널</label>
           <button
@@ -54,11 +58,6 @@ export default function ChannelTest() {
         <div>
           <label>Create 체널</label>
           <input placeholder='name' value={createChannelName} onChange={(e) => setCreateChannelName(e.target.value)} />
-          <input
-            placeholder='serverId'
-            value={createChannelServerId}
-            onChange={(e) => setCreateChannelServerId(e.target.value)}
-          />
           <input
             placeholder='groupId'
             value={createChannelGroupId}
@@ -82,7 +81,6 @@ export default function ChannelTest() {
             onClick={() =>
               createMutation.mutate({
                 name: createChannelName,
-                serverId: Number(createChannelServerId),
                 isVoice: createChannelVoice,
                 isPrivate: createChannelPrivate,
               })
@@ -99,7 +97,6 @@ export default function ChannelTest() {
             onClick={() =>
               updateMutation.mutate({
                 name: updateChannelName,
-                serverId: Number(createChannelServerId),
                 groupId: Number(createChannelGroupId),
                 isVoice: createChannelVoice,
                 isPrivate: createChannelPrivate,
