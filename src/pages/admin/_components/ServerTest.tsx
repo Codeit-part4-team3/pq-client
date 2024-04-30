@@ -14,7 +14,7 @@ export default function ServerTest() {
   const [updateImageUrl, setUpdateImageUrl] = useState<string>('');
   const [deleteServerId, setDeleteServerId] = useState<string>('');
 
-  const { data } = useQueryGet<ServerResponse>('getAllServers', '/chat/v1/server/all');
+  const { refetch } = useQueryGet<ServerResponse>('getAllServers', '/chat/v1/server/all');
   const createMutation = useMutationPost<ServerResponse, ServerRequest>('/chat/v1/server');
   const updateMutation = useMutationPatch<ServerResponse, ServerRequest>(`/chat/v1/server/${updateServerId}`);
   const deleteMutation = useMutationDelete(`/chat/v1/server/${deleteServerId}`);
@@ -42,7 +42,15 @@ export default function ServerTest() {
         <input value={currentServerId} onChange={(e) => setCurrentServerId(e.target.value)}></input>
         <div>
           <label>Get 전체서버</label>
-          <button onClick={() => updateLogs(JSON.stringify(data))}>Get</button>
+          <button
+            onClick={() =>
+              refetch().then((result) => {
+                updateLogs(JSON.stringify(result.data));
+              })
+            }
+          >
+            Get
+          </button>
         </div>
         <div>
           <label>Create 서버</label>

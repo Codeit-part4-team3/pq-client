@@ -15,7 +15,7 @@ export default function ChannelTest() {
   const [updateChannelName, setUpdateChannelName] = useState<string>('');
   const [deleteChannelId, setDeleteChannelId] = useState<string>('');
 
-  const { data } = useQueryGet<ChannelResponse>('getAllChannels', '/chat/v1/channel/all');
+  const { refetch } = useQueryGet<ChannelResponse>('getAllChannels', '/chat/v1/channel/all');
   const createMutation = useMutationPost<ChannelResponse, ChannelRequest>('/chat/v1/channel');
   const updateMutation = useMutationPatch<ChannelResponse, ChannelRequest>(`/chat/v1/channel/${updateChannelId}`);
   const deleteMutation = useMutationDelete(`/chat/v1/channel/${deleteChannelId}`);
@@ -43,7 +43,13 @@ export default function ChannelTest() {
         <input value={currentChannelId} onChange={(e) => setCurrentChannelId(e.target.value)}></input>
         <div>
           <label>Get 전체체널</label>
-          <button onClick={() => updateLogs(JSON.stringify(data))}>Get</button>
+          <button
+            onClick={() => {
+              refetch().then((result) => updateLogs(JSON.stringify(result.data)));
+            }}
+          >
+            Get
+          </button>
         </div>
         <div>
           <label>Create 체널</label>
