@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useMutationPost, useMutationPatch, useMutationDelete, useQueryGet } from 'src/apis/service/chatService';
+import { useMutationPost, useMutationPatch, useMutationDelete, useQueryGet } from 'src/apis/service/service';
 import { ServerResponse, ServerRequest } from 'src/pages/server/_types/type';
 
 import { Area, ChatContainer, LogContainer } from './AdminChatServer';
