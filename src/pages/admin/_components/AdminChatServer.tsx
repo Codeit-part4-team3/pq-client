@@ -1,7 +1,8 @@
 import styled from 'styled-components';
-import { useMutationDelete, useMutationPatch, useMutationPost, useQueryGet } from 'src/apis/service/chatService';
+import { useMutationDelete, useMutationPatch, useMutationPost, useQueryGet } from 'src/apis/service/service';
 import { useEffect, useState } from 'react';
 import { ServerResponse, ServerRequest } from '../../server/_types/type';
+import { URL } from 'src/constants/apiUrl';
 
 // TODO : request api
 export default function AdminChatServer() {
@@ -13,12 +14,12 @@ export default function AdminChatServer() {
   const [updateImageUrl, setUpdateImageUrl] = useState<string>('');
   const [deleteId, setDeleteId] = useState<string>('');
 
-  const { data, error, isLoading } = useQueryGet<ServerResponse>('getAllServers', '/chat/v1/server/all');
+  const { data, error, isLoading } = useQueryGet<ServerResponse>('getAllServers', `${URL.SERVER}/all`);
   console.log(data, error, isLoading);
 
-  const createMutation = useMutationPost<ServerResponse, ServerRequest>('/chat/v1/server');
-  const updateMutation = useMutationPatch<ServerResponse, ServerRequest>(`/chat/v1/server/${updateId}`);
-  const deleteMutation = useMutationDelete(`/chat/v1/server/${deleteId}`);
+  const createMutation = useMutationPost<ServerResponse, ServerRequest>(`${URL.SERVER}`);
+  const updateMutation = useMutationPatch<ServerResponse, ServerRequest>(`${URL.SERVER}/${updateId}`);
+  const deleteMutation = useMutationDelete(`${URL.SERVER}/${deleteId}`);
 
   const updateLogs = (newLog: string) => {
     setLogs((prevLogs) => prevLogs + '\n' + newLog);
