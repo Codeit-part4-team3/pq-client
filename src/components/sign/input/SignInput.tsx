@@ -4,7 +4,7 @@ import { InputNormal } from 'src/GlobalStyles';
 import { FieldErrors } from 'react-hook-form';
 import { FormValues } from 'src/pages/signup/_types/type';
 import eyeOpenIcon from '/images/eye-open.png'; // 임시
-import eyeCloseIcon from '/images/eye-close.png';
+import eyeCloseIcon from '/images/eye-close.svg';
 
 interface SignInputProps {
   id: keyof FormValues;
