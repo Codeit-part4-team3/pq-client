@@ -7,17 +7,17 @@ interface Props {
 
 export default function InviteLinkInput({ link }: Props) {
   return (
-    <Container>
+    <Area>
       <ModalInputLabel>또는 링크로 초대</ModalInputLabel>
       <InputBox>
         <Input readOnly value={link} />
         <Button>복사</Button>
       </InputBox>
-    </Container>
+    </Area>
   );
 }
 
-const Container = styled.section`
+const Area = styled.section`
   width: 480px;
   display: flex;
   flex-direction: column;

@@ -9,16 +9,16 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export default function ModalButtons({ ctaText, closeClick, closeText = '취소', ...rest }: Props) {
   return (
-    <Container>
+    <Area>
       <CloseButton type='button' onClick={closeClick}>
         {closeText}
       </CloseButton>
       <CtaButton {...rest}>{ctaText}</CtaButton>
-    </Container>
+    </Area>
   );
 }
 
-const Container = styled.div`
+const Area = styled.div`
   display: flex;
   gap: 16px;
 `;

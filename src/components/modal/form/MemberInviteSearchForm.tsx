@@ -37,7 +37,7 @@ export default function MemberInviteSearchForm({ initialValue, invitedUsers, but
     }
   }, [debouncedSearchTerm]);
   return (
-    <Wrapper>
+    <Area>
       <ModalInputLabel>구성원 추가</ModalInputLabel>
       <NameInput
         placeholder='이름 또는 이메일 검색'
@@ -71,11 +71,11 @@ export default function MemberInviteSearchForm({ initialValue, invitedUsers, but
           </UserContainer>
         ))}
       </UserList>
-    </Wrapper>
+    </Area>
   );
 }
 
-const Wrapper = styled.div`
+const Area = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;

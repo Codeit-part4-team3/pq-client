@@ -8,7 +8,7 @@ interface Props {
 
 export default function PrivateToggleButton({ title, state, toggleClick }: Props) {
   return (
-    <Container>
+    <Area>
       <PrivateBox>
         {title}
         <ToggleButton onClick={toggleClick} type='button'>
@@ -20,9 +20,15 @@ export default function PrivateToggleButton({ title, state, toggleClick }: Props
         </ToggleButton>
       </PrivateBox>
       <Paragraph>초대를 받은 일부 사람만 참여할 수 있음</Paragraph>
-    </Container>
+    </Area>
   );
 }
+
+const Area = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
 
 const PrivateBox = styled.div`
   display: flex;
@@ -32,12 +38,6 @@ const PrivateBox = styled.div`
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-`;
-
-const Container = styled.section`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
 `;
 
 const Paragraph = styled.p`
