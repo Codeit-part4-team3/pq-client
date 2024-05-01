@@ -8,6 +8,10 @@ interface Prorps {
 
 export default function ServerDropDown({ toggleDropDown }: Prorps) {
   const { isOpen: isCategory, openModal: openCategory, closeModal: closeCategory } = useOpenModal();
+
+  // const serverId = useContext(ServerIdContext);
+  // const deleteMutation = useMutationDelete(`/chat/v1/server/${serverId}`);
+
   const closeCtegoryModal = async () => {
     await closeCategory();
     toggleDropDown();
@@ -18,6 +22,9 @@ export default function ServerDropDown({ toggleDropDown }: Prorps) {
       <Button type='button' onClick={openCategory}>
         카테고리 생성
       </Button>
+      {/* <Button type='button' onClick={() => deleteMutation.mutate()}>
+        서버 삭제
+      </Button> */}
 
       <CreateCategoryModal closeModal={closeCtegoryModal} isOpen={isCategory} />
     </Area>
