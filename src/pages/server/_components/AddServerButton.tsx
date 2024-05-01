@@ -1,9 +1,12 @@
 import styled from 'styled-components';
 import { scaleAnim } from 'src/GlobalStyles';
+import { ButtonHTMLAttributes } from 'react';
 
-export default function AddServerButton() {
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {}
+
+export default function AddServerButton({ ...rest }: Props) {
   return (
-    <Button>
+    <Button {...rest} type='button'>
       <strong>+</strong>
     </Button>
   );

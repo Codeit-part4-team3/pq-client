@@ -2,12 +2,22 @@ import '@testing-library/jest-dom';
 import { render, fireEvent, screen } from '@testing-library/react';
 import { ChannelGroupData } from '../_types/type';
 import ChannelGroup from '../_components/ChannelGroup';
+import { useMutationPost } from 'src/apis/service/service';
+
+// 모킹
+jest.mock('src/apis/service/service', () => ({
+  useMutationPost: jest.fn(),
+}));
 
 describe('toggles display style of Body on DropDownButton click', () => {
   let mockData: ChannelGroupData;
   let mockChild: React.ReactNode;
 
   beforeEach(() => {
+    (useMutationPost as jest.Mock).mockReturnValue([
+      jest.fn(),
+      { data: mockData, error: null, isLoading: false, isSuccess: true },
+    ]);
     mockData = {
       id: 1,
       name: 'Test Subject',
