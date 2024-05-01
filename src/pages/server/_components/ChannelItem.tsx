@@ -1,11 +1,14 @@
 import styled from 'styled-components';
 import { ChannelItemProps } from '../_types/props';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import tagSvg from '../../../../public/images/tag_FILL0_wght200_GRAD0_opsz24 3.svg';
 
 export default function ChannelItem({ data }: ChannelItemProps) {
+  const path = useLocation();
+  const serverId = path.pathname.split('/')[2];
+
   return (
-    <ChannelItemWrapper to={`/server/1/channel/${data.id}`}>
+    <ChannelItemWrapper to={`/server/${serverId}/channel/${data.id}`}>
       <img src={tagSvg} alt='채널 태그 이미지' />
       {data.name}
     </ChannelItemWrapper>

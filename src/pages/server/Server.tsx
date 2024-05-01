@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import ServerItem from './_components/ServerItem';
 import { useEffect, useState } from 'react';
@@ -30,14 +30,18 @@ import { useQueryGet } from 'src/apis/service/service';
 
 export default function Server() {
   const [isExist, setIsExist] = useState(false);
+  const [serverId, setServerId] = useState<number>(0);
   const [serverList, setServerList] = useState<ServerData[]>([]);
   const [channelGroupList, setChannelGroupList] = useState<ChannelGroupData[]>([]);
   const [channelItemList, setChannelItemList] = useState<ChannelData[]>([]);
+  const navigate = useNavigate();
 
-  const { data: serverData } = useQueryGet<ServerResponse[]>('getAllServers', `/chat/v1/server/all?userId=${1}`);
-  const { data: channelData } = useQueryGet<ChannelResponse[]>(
+  const userId = 1;
+
+  const { data: serverData } = useQueryGet<ServerResponse[]>('getAllServers', `/chat/v1/server/all?userId=${userId}`);
+  const { refetch: channelRefetch, data: channelData } = useQueryGet<ChannelResponse[]>(
     'getAllChannels',
-    `/chat/v1/server/${28}/channel/all?userId=${1}`,
+    `/chat/v1/server/${serverId}/channel/all?userId=${userId}`,
   );
 
   /**
@@ -68,13 +72,19 @@ export default function Server() {
   };
 
   useEffect(() => {
-    setIsExist(true);
-  }, []);
+    if (serverId) {
+      navigate(`/server/${serverId}`);
+      channelRefetch();
+    }
+  }, [serverId]);
 
   useEffect(() => {
     if (serverData) {
       const sData: IServer[] = serverData.filter((item): item is IServer => item !== null);
       setServerList(sData);
+
+      setIsExist(sData ? true : false);
+      setServerId(sData.length > 0 ? sData[0].id : 0);
     }
   }, [serverData]);
 
