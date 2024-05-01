@@ -1,7 +1,17 @@
 import styled from 'styled-components';
 import { ButtonEmphasis, ButtonNormal } from 'src/GlobalStyles';
+import { useOpenModal } from 'src/hooks/useOpenModal';
+import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
+import JoinServerModal from 'src/components/modal/contents/JoinServerModal';
 
-export default function NotFoundServer() {
+interface Props {
+  isCreateServer: boolean;
+  openCreateServer: () => void;
+  CloseCreateServer: () => void;
+}
+
+export default function NotFoundServer({ isCreateServer, openCreateServer, CloseCreateServer }: Props) {
+  const { isOpen: isJoinServer, openModal: openJoinServer, closeModal: closeJoinServer } = useOpenModal();
   return (
     <Area>
       <Body>
@@ -11,10 +21,12 @@ export default function NotFoundServer() {
           <p>초대 받은 서버에 참가하거나 직접 생성해보세요.</p>
         </Desc>
         <ButtonContainer>
-          <TopButton>서버 찾아보기</TopButton>
-          <BottomButton>서버 생성하기</BottomButton>
+          <TopButton onClick={openJoinServer}>서버 찾아보기</TopButton>
+          <BottomButton onClick={openCreateServer}>서버 생성하기</BottomButton>
         </ButtonContainer>
       </Body>
+      <CreateServerModal isOpen={isCreateServer} closeModal={CloseCreateServer} />
+      <JoinServerModal isOpen={isJoinServer} closeModal={closeJoinServer} />
     </Area>
   );
 }

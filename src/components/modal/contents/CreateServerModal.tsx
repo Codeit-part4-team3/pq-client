@@ -1,4 +1,4 @@
-import { ChangeEventHandler, FormEventHandler, useState } from 'react';
+import { ChangeEventHandler, FormEventHandler, useContext, useState } from 'react';
 import Modal from '../modal';
 import styled from 'styled-components';
 import ImageUploadBox from '../input/ImageUploadBox';
@@ -8,6 +8,7 @@ import { ModalContainer, ModalForm, ModalInputBox, ModalTitle } from './../Commo
 import EssentialInput from '../input/EssentialInput';
 import { useMutationPost } from 'src/apis/service/service';
 import { ServerRequest, ServerResponse } from 'src/pages/server/_types/type';
+import { UserIdContext } from 'src/pages/server/Server';
 
 interface Props extends ModalProps {}
 
@@ -15,7 +16,8 @@ export default function CreateServerModal({ closeModal, isOpen }: Props) {
   const [imagePreviewUrl, setImagePreviewUrl] = useState('');
   const [serverName, setServerName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const createMutation = useMutationPost<ServerResponse, ServerRequest>(`/chat/v1/server?userId=${1}`);
+  const userId = useContext<number>(UserIdContext);
+  const createMutation = useMutationPost<ServerResponse, ServerRequest>(`/chat/v1/server?userId=${userId}`);
 
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();

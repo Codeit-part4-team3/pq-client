@@ -32,6 +32,7 @@ import ServerMenu from './_components/ServerMenu';
  */
 
 export const ServerIdContext = React.createContext<number>(0);
+export const UserIdContext = React.createContext<number>(0);
 
 export default function Server() {
   const [isExist, setIsExist] = useState(false);
@@ -42,7 +43,7 @@ export default function Server() {
   const [serverName, setServerName] = useState<string>('');
   const navigate = useNavigate();
 
-  const userId = 1;
+  const userId = 2;
 
   const { refetch: serverRefetch, data: serverData } = useQueryGet<ServerResponse[]>(
     'getAllServers',
@@ -105,7 +106,7 @@ export default function Server() {
       const sData: IServer[] = serverData.filter((item): item is IServer => item !== null);
       setServerList(sData);
 
-      setIsExist(sData ? true : false);
+      setIsExist(sData.length > 0 ? true : false);
       setServerId(sData.length > 0 ? sData[0].id : 0);
     }
   }, [serverData]);
@@ -123,19 +124,29 @@ export default function Server() {
   return (
     <Area>
       <ServerIdContext.Provider value={serverId}>
-        <Container>
-          <ServerContainer onClick={onClickServer}>
-            {createServerItemList(serverList)}
-            <AddServerButton onClick={openModal} />
-            <CreateServerModal isOpen={isOpen} closeModal={closeModalHandler} />
-          </ServerContainer>
-          <ChannelContainer>
-            <ServerMenu serverName={serverName} />
-            <CalendarContainer />
-            {createChannelGroupList(channelGroupList)}
-          </ChannelContainer>
-          {!isExist ? <NotFoundServer /> : <Outlet />}
-        </Container>
+        <UserIdContext.Provider value={userId}>
+          <Container>
+            <ServerContainer onClick={onClickServer}>
+              {createServerItemList(serverList)}
+              <AddServerButton onClick={openModal} />
+              <CreateServerModal isOpen={isOpen} closeModal={closeModalHandler} />
+            </ServerContainer>
+            <ChannelContainer>
+              <ServerMenu serverName={serverName} />
+              <CalendarContainer />
+              {createChannelGroupList(channelGroupList)}
+            </ChannelContainer>
+            {!isExist ? (
+              <NotFoundServer
+                CloseCreateServer={closeModalHandler}
+                isCreateServer={isOpen}
+                openCreateServer={openModal}
+              />
+            ) : (
+              <Outlet />
+            )}
+          </Container>
+        </UserIdContext.Provider>
       </ServerIdContext.Provider>
     </Area>
   );
