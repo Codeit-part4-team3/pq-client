@@ -2,9 +2,13 @@ import styled from 'styled-components';
 import { useRef } from 'react';
 import { ButtonIcon } from '../../../GlobalStyles';
 import { ChannelGroupProps } from '../_types/props';
+import CreateChannelModal from 'src/components/modal/contents/CreateChannelModal';
+import { useOpenModal } from 'src/hooks/useOpenModal';
 
 export default function ChannelGroup({ data, children }: ChannelGroupProps) {
   const bodyRef = useRef<HTMLDivElement>(null);
+
+  const { isOpen, openModal, closeModal } = useOpenModal();
 
   const onClickDropDown = () => {
     const style = bodyRef.current?.style;
@@ -18,7 +22,8 @@ export default function ChannelGroup({ data, children }: ChannelGroupProps) {
           <DropDownButton data-testid='channel-dropdown' onClick={onClickDropDown} />
           <span>{data?.name}</span>
         </div>
-        <PlusButton />
+        <PlusButton type='button' onClick={openModal} />
+        <CreateChannelModal isOpen={isOpen} closeModal={closeModal} groupId={data.id} />
       </Header>
       <Body ref={bodyRef}>{children}</Body>
     </Area>

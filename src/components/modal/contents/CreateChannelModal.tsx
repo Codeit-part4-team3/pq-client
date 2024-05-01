@@ -6,9 +6,16 @@ import EssentialInput from '../input/EssentialInput';
 import PrivateToggleButton from '../button/PrivateToggleButton';
 import ModalButtons from '../button/ModalButtons';
 import { ModalProps } from 'src/types/modalType';
-import { FormEventHandler, useState } from 'react';
+import { FormEventHandler, useContext, useState } from 'react';
+import { useMutationPost } from 'src/apis/service/service';
+import { ChannelRequest, ChannelResponse } from 'src/pages/server/_types/type';
+import { ServerIdContext } from 'src/pages/server/Server';
 
-export default function CreateChannelModal({ closeModal, isOpen }: ModalProps) {
+interface Props extends ModalProps {
+  groupId: number;
+}
+
+export default function CreateChannelModal({ closeModal, isOpen, groupId }: Props) {
   const mockData = [
     { id: 1, name: '노진석', email: 'shwlstjr08@naver.com' },
     { id: 2, name: '고기호', email: 'sprint@codeit.kr', imageUrl: '/images/plus.svg' },
@@ -17,7 +24,7 @@ export default function CreateChannelModal({ closeModal, isOpen }: ModalProps) {
     { id: 5, name: '김희연', email: 'heeyeon8702@naver.com', imageUrl: '/images/plus.svg' },
   ];
 
-  const [categoryName, setCategoryName] = useState('');
+  const [channelName, setChannelName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
   const [isNextModal, setIsNextModal] = useState(false);
@@ -27,12 +34,18 @@ export default function CreateChannelModal({ closeModal, isOpen }: ModalProps) {
     setInvitedUsers([...invitedUsers, email]);
   };
 
+  const serverId = useContext<number>(ServerIdContext);
+
+  const createMutation = useMutationPost<ChannelResponse, ChannelRequest>(
+    `/chat/v1/server/${serverId}/channel?userId=${1}`,
+  );
+
   const handleToggle = () => {
     setIsPrivate(!isPrivate);
   };
   const handleNextModalClick = () => {
     setErrorMessage('');
-    if (categoryName === '') {
+    if (channelName === '') {
       setErrorMessage('이름은 필수입니다.');
       return;
     }
@@ -41,11 +54,12 @@ export default function CreateChannelModal({ closeModal, isOpen }: ModalProps) {
   const createChannel: FormEventHandler = (e) => {
     e.preventDefault();
     setErrorMessage('');
-    if (categoryName === '') {
+    if (channelName === '') {
       setErrorMessage('이름은 필수입니다.');
       return;
     }
     // 생성로직
+    createMutation.mutate({ name: channelName, isPrivate: isPrivate, isVoice: false, groupId });
     closeModal();
   };
 
@@ -73,8 +87,8 @@ export default function CreateChannelModal({ closeModal, isOpen }: ModalProps) {
               <EssentialInput
                 errorMessage={errorMessage}
                 labelName='채널 이름'
-                state={categoryName}
-                setState={setCategoryName}
+                state={channelName}
+                setState={setChannelName}
               />
               <PrivateToggleButton title='비공개 채널' state={isPrivate} toggleClick={handleToggle} />
               <ModalButtons

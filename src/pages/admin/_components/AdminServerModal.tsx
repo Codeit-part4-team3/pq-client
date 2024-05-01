@@ -20,7 +20,7 @@ export default function AdminServerModal() {
       <button onClick={openChannel} type='button'>
         채널 생성
       </button>
-      <CreateChannelModal closeModal={closeChannel} isOpen={isChennelOpen} />
+      <CreateChannelModal closeModal={closeChannel} isOpen={isChennelOpen} groupId={1} />
     </div>
   );
 }

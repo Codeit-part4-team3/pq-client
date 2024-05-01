@@ -1,4 +1,4 @@
-import { FormEventHandler, useState } from 'react';
+import { FormEventHandler, useContext, useState } from 'react';
 import { ModalProps } from '../../../types/modalType';
 import { ModalForm } from '../CommonStyles';
 import ModalButtons from '../button/ModalButtons';
@@ -8,6 +8,9 @@ import { ModalTitle, ModalContainer } from './../CommonStyles';
 import PrivateToggleButton from '../button/PrivateToggleButton';
 import InviteLinkInput from '../input/InviteLinkInput';
 import MemberInviteSearchForm from '../form/MemberInviteSearchForm';
+import { useMutationPost } from 'src/apis/service/service';
+import { ChannelRequest, ChannelResponse } from 'src/pages/server/_types/type';
+import { ServerIdContext } from 'src/pages/server/Server';
 
 export default function CreateCategoryModal({ closeModal, isOpen }: ModalProps) {
   const mockData = [
@@ -27,6 +30,11 @@ export default function CreateCategoryModal({ closeModal, isOpen }: ModalProps) 
   const handleInvite = (email: string) => {
     setInvitedUsers([...invitedUsers, email]);
   };
+  const serverId = useContext<number>(ServerIdContext);
+
+  const createMutation = useMutationPost<ChannelResponse, ChannelRequest>(
+    `/chat/v1/server/${serverId}/channel?userId=${1}`,
+  );
 
   const handleToggle = () => {
     setIsPrivate(!isPrivate);
@@ -46,7 +54,10 @@ export default function CreateCategoryModal({ closeModal, isOpen }: ModalProps) 
       setErrorMessage('이름은 필수입니다.');
       return;
     }
+    setCategoryName('');
+
     // 생성로직
+    createMutation.mutate({ name: categoryName, isPrivate: isPrivate, isVoice: false });
     closeModal();
   };
 

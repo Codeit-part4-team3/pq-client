@@ -28,6 +28,7 @@ const Overlay = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 9999;
 `;
 
 const Background = styled.div`
@@ -46,7 +47,6 @@ const ModalWrapper = styled.div`
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
-  z-index: 1;
 `;
 
 export default Modal;

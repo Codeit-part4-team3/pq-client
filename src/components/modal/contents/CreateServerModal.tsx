@@ -6,20 +6,27 @@ import ModalButtons from '../button/ModalButtons';
 import { ModalProps } from '../../../types/modalType';
 import { ModalContainer, ModalForm, ModalInputBox, ModalTitle } from './../CommonStyles';
 import EssentialInput from '../input/EssentialInput';
+import { useMutationPost } from 'src/apis/service/service';
+import { ServerRequest, ServerResponse } from 'src/pages/server/_types/type';
 
-export default function CreateServerModal({ closeModal, isOpen }: ModalProps) {
+interface Props extends ModalProps {}
+
+export default function CreateServerModal({ closeModal, isOpen }: Props) {
   const [imagePreviewUrl, setImagePreviewUrl] = useState('');
   const [serverName, setServerName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const createMutation = useMutationPost<ServerResponse, ServerRequest>(`/chat/v1/server?userId=${1}`);
 
-  const handleSubmit: FormEventHandler = (e) => {
+  const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
     setErrorMessage('');
     if (serverName === '') {
       setErrorMessage('이름은 필수입니다.');
       return;
     }
-    closeModal();
+    await createMutation.mutate({ name: serverName, imageUrl: imagePreviewUrl });
+    setServerName('');
+    await closeModal();
   };
 
   const handleImageChange: ChangeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {

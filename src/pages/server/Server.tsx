@@ -1,7 +1,7 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import ServerItem from './_components/ServerItem';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NotFoundServer from './_components/NotFoundServer';
 import {
   ServerData,
@@ -17,6 +17,9 @@ import ChannelGroup from './_components/ChannelGroup';
 import ChannelItem from './_components/ChannelItem';
 import CalendarContainer from './_components/CalendarContainer';
 import { useQueryGet } from 'src/apis/service/service';
+import { useOpenModal } from 'src/hooks/useOpenModal';
+import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
+import ServerMenu from './_components/ServerMenu';
 
 /**
  *
@@ -28,21 +31,34 @@ import { useQueryGet } from 'src/apis/service/service';
  *
  */
 
+export const ServerIdContext = React.createContext<number>(0);
+
 export default function Server() {
   const [isExist, setIsExist] = useState(false);
   const [serverId, setServerId] = useState<number>(0);
   const [serverList, setServerList] = useState<ServerData[]>([]);
   const [channelGroupList, setChannelGroupList] = useState<ChannelGroupData[]>([]);
   const [channelItemList, setChannelItemList] = useState<ChannelData[]>([]);
+  const [serverName, setServerName] = useState<string>('');
   const navigate = useNavigate();
 
   const userId = 1;
 
-  const { data: serverData } = useQueryGet<ServerResponse[]>('getAllServers', `/chat/v1/server/all?userId=${userId}`);
+  const { refetch: serverRefetch, data: serverData } = useQueryGet<ServerResponse[]>(
+    'getAllServers',
+    `/chat/v1/server/all?userId=${userId}`,
+  );
   const { refetch: channelRefetch, data: channelData } = useQueryGet<ChannelResponse[]>(
     'getAllChannels',
     `/chat/v1/server/${serverId}/channel/all?userId=${userId}`,
   );
+
+  const { isOpen, openModal, closeModal } = useOpenModal();
+
+  const closeModalHandler = () => {
+    closeModal();
+    serverRefetch();
+  };
 
   /**
    * 이벤트 버블링으로 하위 버튼 컴포넌트들의 이벤트 처리를
@@ -50,24 +66,29 @@ export default function Server() {
    */
   const onClickServer = (e: React.PointerEvent<HTMLElement>) => {
     const serverId = (e.target as HTMLElement).dataset.serverid;
+
     if (serverId) {
       setServerId(Number(serverId));
     }
   };
 
   const createServerItemList = (serverList: ServerData[]) => {
-    return serverList.map((server) => <ServerItem data={server} />);
+    return serverList.map((server) => <ServerItem key={server.id} data={server} />);
   };
 
   const createChannelItemList = (groupId: number) => {
     return channelItemList.map((channel) => {
-      if (channel.groupId === groupId) return <ChannelItem data={channel} />;
+      if (channel.groupId === groupId) return <ChannelItem key={channel.id} data={channel} />;
     });
   };
 
   const createChannelGroupList = (channelGroupList: ChannelGroupData[]) => {
     return channelGroupList.map((group) => {
-      return <ChannelGroup data={group}>{createChannelItemList(group.id)}</ChannelGroup>;
+      return (
+        <ChannelGroup key={group.id} data={group}>
+          {createChannelItemList(group.id)}
+        </ChannelGroup>
+      );
     });
   };
 
@@ -75,6 +96,7 @@ export default function Server() {
     if (serverId) {
       navigate(`/server/${serverId}`);
       channelRefetch();
+      setServerName(serverData?.find((server) => server?.id === serverId)?.name || '');
     }
   }, [serverId]);
 
@@ -100,17 +122,21 @@ export default function Server() {
 
   return (
     <Area>
-      <Container>
-        <ServerContainer onClick={onClickServer}>
-          {createServerItemList(serverList)}
-          <AddServerButton />
-        </ServerContainer>
-        <ChannelContainer>
-          <CalendarContainer />
-          {createChannelGroupList(channelGroupList)}
-        </ChannelContainer>
-        {!isExist ? <NotFoundServer /> : <Outlet />}
-      </Container>
+      <ServerIdContext.Provider value={serverId}>
+        <Container>
+          <ServerContainer onClick={onClickServer}>
+            {createServerItemList(serverList)}
+            <AddServerButton onClick={openModal} />
+            <CreateServerModal isOpen={isOpen} closeModal={closeModalHandler} />
+          </ServerContainer>
+          <ChannelContainer>
+            <ServerMenu serverName={serverName} />
+            <CalendarContainer />
+            {createChannelGroupList(channelGroupList)}
+          </ChannelContainer>
+          {!isExist ? <NotFoundServer /> : <Outlet />}
+        </Container>
+      </ServerIdContext.Provider>
     </Area>
   );
 }
