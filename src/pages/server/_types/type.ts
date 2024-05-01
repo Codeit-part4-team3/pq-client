@@ -1,4 +1,4 @@
-interface IServer {
+export interface IServer {
   id: number;
   name: string;
   imageUrl: string;
@@ -9,7 +9,7 @@ export type ServerResponse = IServer | null;
 
 export type ServerData = IServer;
 
-interface IChannel {
+export interface IChannel {
   id: number;
   name: string;
   groupId?: number;
