@@ -51,7 +51,7 @@ export default function Server() {
   const onClickServer = (e: React.PointerEvent<HTMLElement>) => {
     const serverId = (e.target as HTMLElement).dataset.serverid;
     if (serverId) {
-      console.log(`${serverId}번 서버 클릭`);
+      setServerId(Number(serverId));
     }
   };
 
