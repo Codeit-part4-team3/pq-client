@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 interface SignHeaderProps {
@@ -8,7 +9,9 @@ interface SignHeaderProps {
 export default function SignHeader({ children }: SignHeaderProps) {
   return (
     <Header>
-      <Logo src='/images/logo.svg' alt='pq 메인 로고' />
+      <Link to='/'>
+        <Logo src='/images/logo.svg' alt='pq 메인 로고' />
+      </Link>
       {children}
     </Header>
   );
