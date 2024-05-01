@@ -7,10 +7,16 @@ import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useParams } from 'react-router-dom';
 
-const SOCKET_SERVER_URL = 'http://localhost:3001';
+const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
-const pc_Config = {
-  iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+const pc_config = {
+  iceServers: [
+    {
+      urls: ['turn:54.180.127.213:3478'],
+      username: 'codeit', // 사용자 이름(username) 설정
+      credential: 'sprint101!', // 비밀번호(password) 설정
+    },
+  ],
 };
 
 /**@ToDo 매일 시간내서 RTC 고치기 */
@@ -31,7 +37,7 @@ export default function VoiceChannel() {
       if (localVideoRef.current) localVideoRef.current.srcObject = stream;
 
       // peer connection 생성
-      senderPCRef.current = new RTCPeerConnection(pc_Config);
+      senderPCRef.current = new RTCPeerConnection(pc_config);
 
       // localStream 추가
       stream.getTracks().forEach((track) => senderPCRef.current?.addTrack(track, stream));
@@ -73,7 +79,7 @@ export default function VoiceChannel() {
 
       socketRef.current?.on('existingParticipant_offer', async ({ offer, senderPCId, roomName }) => {
         if (!receiverPCsRef.current[senderPCId]) {
-          receiverPCsRef.current[senderPCId] = new RTCPeerConnection(pc_Config);
+          receiverPCsRef.current[senderPCId] = new RTCPeerConnection(pc_config);
         }
 
         // ontrack 이벤트 핸들러
@@ -99,7 +105,7 @@ export default function VoiceChannel() {
       // 새로운 참가자가 들어왔을 때 미디어 스트림을 받음
       socketRef.current?.on('newParticipant_offer', async ({ offer, senderPCId }) => {
         if (!receiverPCsRef.current[senderPCId]) {
-          receiverPCsRef.current[senderPCId] = new RTCPeerConnection(pc_Config);
+          receiverPCsRef.current[senderPCId] = new RTCPeerConnection(pc_config);
         }
 
         console.log('receiverPCsRef.current[senderPCId]:', receiverPCsRef.current[senderPCId]);
