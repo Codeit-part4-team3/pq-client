@@ -18,7 +18,7 @@ jobs:
 
       - name: .env.production setting
         run: |
-          echo "VITE_APP_ORIGIN=$VITE_APP_ORIGIN" >> .env.production
+          echo "VITE_APP_ORIGIN=${{ secrets.VITE_APP_ORIGIN }}" >> .env.production
         env:
           VITE_APP_ORIGIN: ${{ secrets.VITE_APP_ORIGIN }}
          
