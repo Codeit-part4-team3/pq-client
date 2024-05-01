@@ -11,6 +11,10 @@ jobs:
       - name: Git Checkout
         uses: actions/checkout@v2
 
+      - name: .env.production setting
+        run: |
+          echo "VITE_APP_ORIGIN=${{ secrets.VITE_APP_ORIGIN }}" >> .env.production
+
       - name: Use Node.js version 20.x
         uses: actions/setup-node@v2
         with:
