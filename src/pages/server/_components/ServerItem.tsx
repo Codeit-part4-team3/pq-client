@@ -14,11 +14,11 @@ import { ServerItemProps } from '../_types/props';
  *
  */
 
-export default function ServerItem({ data }: ServerItemProps) {
+export default function ServerItem({ data, ...rest }: ServerItemProps) {
   const lid = useId();
 
   return (
-    <Button key={`${lid}-${data.id}`}>
+    <Button key={`${lid}-${data.id}`} {...rest}>
       {data.imageUrl ? (
         <img src={data.imageUrl} alt='img' data-serverid={data.id} />
       ) : (
@@ -51,12 +51,14 @@ const Button = styled.button`
     cursor: pointer;
   }
 
-  > strong {
+  > * {
     width: 100%;
     height: 100%;
 
     display: flex;
     justify-content: center;
     align-items: center;
+
+    background-size: cover;
   }
 `;

@@ -1,15 +1,25 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import ServerItem from './_components/ServerItem';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NotFoundServer from './_components/NotFoundServer';
-import { ServerData, ChannelGroupData, ChannelData } from './_types/type';
-import MemberButton from './_components/MemberButton';
-import { channelItemMock, channelGroupMock, serverMock } from './_test/server.mock';
+import {
+  ServerData,
+  ChannelGroupData,
+  ChannelData,
+  ServerResponse,
+  ChannelResponse,
+  IServer,
+  IChannel,
+} from './_types/type';
 import AddServerButton from './_components/AddServerButton';
 import ChannelGroup from './_components/ChannelGroup';
 import ChannelItem from './_components/ChannelItem';
 import CalendarContainer from './_components/CalendarContainer';
+import { useQueryGet } from 'src/apis/service/service';
+import { useOpenModal } from 'src/hooks/useOpenModal';
+import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
+import ServerMenu from './_components/ServerMenu';
 
 /**
  *
@@ -21,21 +31,34 @@ import CalendarContainer from './_components/CalendarContainer';
  *
  */
 
+export const ServerIdContext = React.createContext<number>(0);
+export const UserIdContext = React.createContext<number>(0);
+
 export default function Server() {
   const [isExist, setIsExist] = useState(false);
+  const [serverId, setServerId] = useState<number>(0);
   const [serverList, setServerList] = useState<ServerData[]>([]);
   const [channelGroupList, setChannelGroupList] = useState<ChannelGroupData[]>([]);
   const [channelItemList, setChannelItemList] = useState<ChannelData[]>([]);
+  const [serverName, setServerName] = useState<string>('');
+  const navigate = useNavigate();
 
-  const fetchChannelList = async () => {
-    setChannelItemList(channelItemMock);
-    setChannelGroupList(channelGroupMock);
-  };
+  const userId = 2;
 
-  const fetchServerList = async () => {
-    fetchChannelList();
+  const { refetch: serverRefetch, data: serverData } = useQueryGet<ServerResponse[]>(
+    'getAllServers',
+    `/chat/v1/server/all?userId=${userId}`,
+  );
+  const { refetch: channelRefetch, data: channelData } = useQueryGet<ChannelResponse[]>(
+    'getAllChannels',
+    `/chat/v1/server/${serverId}/channel/all?userId=${userId}`,
+  );
 
-    setServerList(serverMock);
+  const { isOpen, openModal, closeModal } = useOpenModal();
+
+  const closeModalHandler = () => {
+    closeModal();
+    serverRefetch();
   };
 
   /**
@@ -44,51 +67,87 @@ export default function Server() {
    */
   const onClickServer = (e: React.PointerEvent<HTMLElement>) => {
     const serverId = (e.target as HTMLElement).dataset.serverid;
+
     if (serverId) {
-      console.log(`${serverId}번 서버 클릭`);
+      setServerId(Number(serverId));
     }
   };
 
   const createServerItemList = (serverList: ServerData[]) => {
-    return serverList.map((server) => <ServerItem data={server} />);
+    return serverList.map((server) => <ServerItem key={server.id} data={server} />);
   };
 
   const createChannelItemList = (groupId: number) => {
     return channelItemList.map((channel) => {
-      if (channel.groupId === groupId) return <ChannelItem data={channel} />;
+      if (channel.groupId === groupId) return <ChannelItem key={channel.id} data={channel} />;
     });
   };
 
   const createChannelGroupList = (channelGroupList: ChannelGroupData[]) => {
     return channelGroupList.map((group) => {
-      return <ChannelGroup data={group}>{createChannelItemList(group.id)}</ChannelGroup>;
+      return (
+        <ChannelGroup key={group.id} data={group}>
+          {createChannelItemList(group.id)}
+        </ChannelGroup>
+      );
     });
   };
 
   useEffect(() => {
-    fetchServerList();
+    if (serverId) {
+      navigate(`/server/${serverId}`);
+      channelRefetch();
+      setServerName(serverData?.find((server) => server?.id === serverId)?.name || '');
+    }
+  }, [serverId]);
 
-    setIsExist(true);
-  }, []);
+  useEffect(() => {
+    if (serverData) {
+      const sData: IServer[] = serverData.filter((item): item is IServer => item !== null);
+      setServerList(sData);
+
+      setIsExist(sData.length > 0 ? true : false);
+      setServerId(sData.length > 0 ? sData[0].id : 0);
+    }
+  }, [serverData]);
+
+  useEffect(() => {
+    if (channelData) {
+      const cData: IChannel[] = channelData.filter((item): item is IChannel => item !== null);
+      const groupList = cData.filter((item) => item.groupId === null);
+      const channelList = cData.filter((item) => item.groupId !== null);
+      setChannelGroupList(groupList);
+      setChannelItemList(channelList);
+    }
+  }, [channelData]);
 
   return (
     <Area>
-      <Container>
-        <ServerContainer onClick={onClickServer}>
-          {createServerItemList(serverList)}
-          <AddServerButton />
-        </ServerContainer>
-        <ChannelContainer>
-          <CalendarContainer />
-          {createChannelGroupList(channelGroupList)}
-        </ChannelContainer>
-        {!isExist ? <NotFoundServer /> : <Outlet />}
-        <MemberContainer>
-          <MemberButton />
-          <MemberButton />
-          <MemberButton />
-        </MemberContainer>
-      </Container>
+      <ServerIdContext.Provider value={serverId}>
+        <UserIdContext.Provider value={userId}>
+          <Container>
+            <ServerContainer onClick={onClickServer}>
+              {createServerItemList(serverList)}
+              <AddServerButton onClick={openModal} />
+              <CreateServerModal isOpen={isOpen} closeModal={closeModalHandler} />
+            </ServerContainer>
+            <ChannelContainer>
+              <ServerMenu serverName={serverName} />
+              <CalendarContainer />
+              {createChannelGroupList(channelGroupList)}
+            </ChannelContainer>
+            {!isExist ? (
+              <NotFoundServer
+                CloseCreateServer={closeModalHandler}
+                isCreateServer={isOpen}
+                openCreateServer={openModal}
+              />
+            ) : (
+              <Outlet />
+            )}
+          </Container>
+        </UserIdContext.Provider>
+      </ServerIdContext.Provider>
     </Area>
   );
 }
@@ -134,17 +193,4 @@ const ChannelContainer = styled.aside`
 
   font-size: 14px;
   background-color: #f1f8ff;
-`;
-
-const MemberContainer = styled.aside`
-  width: 200px;
-
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
-
-  background-color: #bedeff;
 `;
