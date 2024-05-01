@@ -51,12 +51,14 @@ const Button = styled.button`
     cursor: pointer;
   }
 
-  > strong {
+  > * {
     width: 100%;
     height: 100%;
 
     display: flex;
     justify-content: center;
     align-items: center;
+
+    background-size: cover;
   }
 `;

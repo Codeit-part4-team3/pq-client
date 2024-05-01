@@ -5,6 +5,7 @@ import { Area, ChatContainer, LogContainer } from './AdminChatServer';
 
 export default function ChannelTest() {
   const [logs, setLogs] = useState<string>('');
+  const [userId, setUserId] = useState<string>('1');
   const [serverId, setServerId] = useState<string>('1');
   const [createChannelName, setCreateChannelName] = useState<string>('');
   const [createChannelGroupId, setCreateChannelGroupId] = useState<string>('');
@@ -14,8 +15,13 @@ export default function ChannelTest() {
   const [updateChannelName, setUpdateChannelName] = useState<string>('');
   const [deleteChannelId, setDeleteChannelId] = useState<string>('');
 
-  const { refetch } = useQueryGet<ChannelResponse>('getAllChannels', `/chat/v1/server/${serverId}/channel/all`);
-  const createMutation = useMutationPost<ChannelResponse, ChannelRequest>(`/chat/v1/server/${serverId}/channel`);
+  const { refetch } = useQueryGet<ChannelResponse>(
+    'getAllChannels',
+    `/chat/v1/server/${serverId}/channel/all?userId=${userId}`,
+  );
+  const createMutation = useMutationPost<ChannelResponse, ChannelRequest>(
+    `/chat/v1/server/${serverId}/channel?userId=${userId}`,
+  );
   const updateMutation = useMutationPatch<ChannelResponse, ChannelRequest>(
     `/chat/v1/server/${serverId}/channel/${updateChannelId}`,
   );
@@ -41,6 +47,10 @@ export default function ChannelTest() {
     <Area>
       <ChatContainer>
         <strong>체널API</strong>
+        <label>
+          유저 ID
+          <input value={userId} onChange={(e) => setUserId(e.target.value)}></input>
+        </label>
         <label>
           서버 ID
           <input value={serverId} onChange={(e) => setServerId(e.target.value)}></input>
