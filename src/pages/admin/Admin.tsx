@@ -1,3 +1,4 @@
+import VoiceChannel from '../server/channel/voiceChannel/VoiceChannel';
 import AdminChatServer from './_components/AdminChatServer';
 import AdminSocketServer from './_components/AdminSocketServer';
 import styled from 'styled-components';
@@ -7,6 +8,7 @@ export default function Admin() {
     <Area>
       <AdminSocketServer />
       <AdminChatServer />
+      <VoiceChannel />
     </Area>
   );
 }
