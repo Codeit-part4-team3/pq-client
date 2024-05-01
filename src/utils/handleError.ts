@@ -49,7 +49,15 @@ const refreshAccessToken = async () => {
   }
 
   try {
-    const response = await axios.post(`${URL.AUTH}/token`, { refreshToken });
+    const response = await axios.post(
+      `${URL.AUTH}/token`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      },
+    );
     return response.data.accessToken;
   } catch (error) {
     console.error('Failed to refresh token', error);
