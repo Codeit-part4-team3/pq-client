@@ -1,13 +1,11 @@
 import { AxiosError } from 'axios';
 import { UseFormSetError } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { useMutationPost } from 'src/apis/service/service';
 import { URL } from 'src/constants/apiUrl';
 import { ERROR_MESSAGES } from 'src/constants/error';
 import { FormValues } from 'src/pages/signup/_types/type';
 
 export const useCheckEmail = (setError: UseFormSetError<FormValues>) => {
-  const navigate = useNavigate();
   const { mutate, isPending } = useMutationPost(`${URL.AUTH}/signup/confirm`, {
     onError: (error: unknown) => {
       const axiosError = error as AxiosError;
@@ -30,7 +28,7 @@ export const useCheckEmail = (setError: UseFormSetError<FormValues>) => {
     },
 
     onSuccess: () => {
-      navigate('/login');
+      location.replace('/login');
     },
   });
 
