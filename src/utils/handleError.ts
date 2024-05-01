@@ -15,7 +15,8 @@ export default async function handleError(error: unknown) {
       try {
         const newAccessToken = await refreshAccessToken();
         Cookies.set('accessToken', newAccessToken, { expires: 1, secure: true, sameSite: 'strict' });
-        refetch(error, newAccessToken);
+        await refetch(error, newAccessToken);
+        return;
       } catch (refreshError) {
         console.error('Refresh Token is not found');
         throw refreshError;
@@ -72,6 +73,12 @@ const refetch = (error: AxiosError, accessToken: string) => {
     throw error;
   }
 
-  axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-  return axios(error.config);
+  const newConfig = {
+    ...error.config,
+    headers: {
+      ...error.config.headers,
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  return axios(newConfig);
 };
