@@ -43,8 +43,8 @@ const dispatchAxiosErrorEvent = (errorMessage: string) => {
 const refreshAccessToken = async () => {
   const refreshToken = Cookies.get('refreshToken');
   if (!refreshToken) {
-    location.replace('/login');
     alert(ERROR_MESSAGES.AUTH.SESSION_EXPIRED);
+    location.replace('/login');
     throw new Error('Refresh Token is not found');
   }
 
