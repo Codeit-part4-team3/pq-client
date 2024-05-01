@@ -15,7 +15,7 @@ export default async function handleError(error: unknown) {
       try {
         const newAccessToken = await refreshAccessToken();
         Cookies.set('accessToken', newAccessToken, { expires: 1, secure: true, sameSite: 'strict' });
-        refetchWithNewToken(error, newAccessToken);
+        refetch(error, newAccessToken);
       } catch (refreshError) {
         console.error('Refresh Token is not found');
         throw refreshError;
@@ -58,7 +58,7 @@ const refreshAccessToken = async () => {
 };
 
 // 새로운 accessToken으로 요청 재시도
-const refetchWithNewToken = (error: AxiosError, accessToken: string) => {
+const refetch = (error: AxiosError, accessToken: string) => {
   if (!error.config) {
     console.error('Error configuration is undefined, cannot retry the request');
     throw error;
