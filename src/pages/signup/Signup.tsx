@@ -1,13 +1,27 @@
 import SocialButtons from './_components/SocialButtons';
 import EmailSignup from './EmailSignup';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Line from 'src/components/sign/Line';
 import Header from 'src/components/sign/Header';
 import { Area, Container, Button, Prompt } from 'src/components/sign/CommonStyles';
+import { USER_URL } from 'src/constants/apiUrl';
+import axios from 'axios';
 
 export default function Signup() {
   const [isEmailSignup, setIsEmailSignup] = useState(false);
+  useEffect(() => {
+    (async () => {
+      console.log('시작');
+      const code = new URL(window.location.href).searchParams.get('code');
+      if (!code) {
+        return;
+      }
+      const res = await axios.get(`${USER_URL.BASE}${USER_URL.AUTH}/kakao/signup?code=${code}`);
+      console.log(res);
+      // 여기에 이제 카카오 로그인 되었을 때 처리 (상태관리, 리다이렉트 등등)
+    })();
+  }, []);
 
   const renderContent = () => {
     if (isEmailSignup) {
