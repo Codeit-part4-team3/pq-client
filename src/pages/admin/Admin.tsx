@@ -1,13 +1,11 @@
-import ChatChannel from '../server/channel/chatChannel/ChatChannel';
 import AdminChatServer from './_components/AdminChatServer';
-// import AdminSocketServer from './_components/AdminSocketServer';
+import AdminSocketServer from './_components/AdminSocketServer';
 import styled from 'styled-components';
 
 export default function Admin() {
   return (
     <Area>
-      {/* <AdminSocketServer /> */}
-      <ChatChannel />
+      <AdminSocketServer />
       <AdminChatServer />
     </Area>
   );

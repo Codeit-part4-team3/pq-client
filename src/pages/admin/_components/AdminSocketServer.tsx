@@ -4,7 +4,7 @@ import addSvg from '../../../../public/images/add_FILL0_wght200_GRAD0_opsz24 3.s
 import ChannelHeader from 'src/components/channel/ChannelHeader';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { MessageItem } from 'src/pages/server/channel/chatChannel/_types';
+import { MessageItem } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';

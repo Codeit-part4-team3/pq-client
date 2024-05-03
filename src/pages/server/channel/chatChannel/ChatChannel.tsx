@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import addSvg from '../../../../../public/images/add_FILL0_wght200_GRAD0_opsz24 3.svg';
 import ChannelHeader from 'src/components/channel/ChannelHeader';
 import ChatMessages from './_components/ChatMessages';
-import { MessageItem } from './_types';
+import { MessageItem } from './_types/type';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useParams } from 'react-router-dom';
@@ -55,6 +55,7 @@ export default function ChatChannel() {
     <Wrapper>
       <ChannelHeader />
       <ChatContainer>
+        {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯 */}
         <ChatChannelIntro>
           <ChannelName>{'# 채팅 채널1'}의 첫 시작 부분이에요</ChannelName>
           <CreationDate>생성일 : {'2024년 04월 11일'}</CreationDate>
