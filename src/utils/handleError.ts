@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import axios, { AxiosError } from 'axios';
 import Cookies from 'js-cookie';
-import { URL } from 'src/constants/apiUrl';
+import { USER_URL } from 'src/constants/apiUrl';
 import { ERROR_MESSAGES } from 'src/constants/error';
 
 export default async function handleError(error: unknown) {
@@ -51,7 +51,7 @@ const refreshAccessToken = async () => {
 
   try {
     const response = await axios.post(
-      `${URL.AUTH}/token`,
+      `${USER_URL.AUTH}/token`,
       {},
       {
         headers: {
