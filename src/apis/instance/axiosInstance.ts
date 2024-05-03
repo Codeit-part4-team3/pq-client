@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { CHAT_URL } from 'src/constants/apiUrl';
 import useTokenStore from 'src/store/userStore';
-import handleError from 'src/utils/handleError';
+import handleHttpError from 'src/utils/handleHttpError';
 
 const getAccessToken = () => {
   const store = useTokenStore.getState();
@@ -33,7 +33,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    handleError(error);
+    handleHttpError(error);
     return Promise.reject(error);
   },
 );
