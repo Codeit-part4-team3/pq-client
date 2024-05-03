@@ -25,3 +25,9 @@ export type ChannelGroupResponse = IChannel | null;
 
 export type ChannelData = IChannel;
 export type ChannelGroupData = Pick<IChannel, 'id' | 'name'>;
+
+export interface IInviteLink {
+  inviteLink: string;
+}
+
+export type InviteLinkResponse = IInviteLink | null;
