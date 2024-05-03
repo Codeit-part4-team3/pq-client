@@ -9,9 +9,9 @@ interface SocialButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
 }
 
-export default function SocialButton({ variant, src, children }: SocialButtonProps) {
+export default function SocialButton({ variant, src, children, ...rest }: SocialButtonProps) {
   return (
-    <Button type='button' $variant={variant}>
+    <Button type='button' $variant={variant} {...rest}>
       <SocialLogo src={src} alt={`${variant} 아이콘`} />
       {children}
       <span></span>
