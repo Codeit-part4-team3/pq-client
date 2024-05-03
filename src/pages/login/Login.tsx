@@ -38,9 +38,9 @@ export default function Login() {
         }
         if (e.response?.status === 404) {
           alert('존재하지 않는 유저입니다.');
-          navigate('/login');
           return;
         }
+        navigate('/login');
       }
 
       // 여기에 이제 카카오 로그인 되었을 때 처리 (상태관리, 리다이렉트 등등)
