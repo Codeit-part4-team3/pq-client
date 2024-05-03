@@ -8,9 +8,13 @@ import { EmailInput, PasswordConfirmInput, PasswordInput, NicknameInput } from '
 import { useMutationPost } from 'src/apis/service/service';
 import { USER_URL } from 'src/constants/apiUrl';
 import { AxiosError } from 'axios';
-import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
+import useUserStore from 'src/store/userStore';
 
 export default function SignupForm() {
+  const navigate = useNavigate();
+  const { setEmail } = useUserStore();
+
   const {
     control,
     handleSubmit,
@@ -60,7 +64,7 @@ export default function SignupForm() {
     },
 
     onSuccess: () => {
-      location.replace('/check-email');
+      navigate('/check-email', { replace: true });
     },
   });
 
@@ -74,7 +78,7 @@ export default function SignupForm() {
     };
 
     mutate(userData);
-    Cookies.set('email', data.email, { expires: 1, secure: true, sameSite: 'strict' });
+    setEmail(data.email);
   };
 
   return (

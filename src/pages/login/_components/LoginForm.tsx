@@ -10,8 +10,10 @@ import { useMutationPost } from 'src/apis/service/service';
 import { LoginRequest, LoginResponse, LoginResponseBody } from '../_type/type';
 import { USER_URL } from 'src/constants/apiUrl';
 import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginForm() {
+  const navigate = useNavigate();
   const { setAccessToken } = useUserStore();
 
   const {
@@ -58,7 +60,7 @@ export default function LoginForm() {
 
       setAccessToken(accessToken);
       Cookies.set('refreshToken', refreshToken, { expires: 7, secure: true, sameSite: 'strict' });
-      location.replace('/server');
+      navigate('/server');
     },
   });
 

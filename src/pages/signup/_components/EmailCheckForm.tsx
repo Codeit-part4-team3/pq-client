@@ -8,9 +8,13 @@ import { useMutationPost } from 'src/apis/service/service';
 import { USER_URL } from 'src/constants/apiUrl';
 import { AxiosError } from 'axios';
 import { ERROR_MESSAGES } from 'src/constants/error';
-import Cookies from 'js-cookie';
+import useUserStore from 'src/store/userStore';
+import { useNavigate } from 'react-router-dom';
 
 export default function EmailCheckForm() {
+  const navigate = useNavigate();
+  const { email } = useUserStore();
+
   const {
     control,
     handleSubmit,
@@ -42,7 +46,7 @@ export default function EmailCheckForm() {
     },
 
     onSuccess: () => {
-      location.replace('/login');
+      navigate('/login');
     },
   });
 
@@ -52,7 +56,6 @@ export default function EmailCheckForm() {
     }
 
     const verificationCode = Object.values(data).join('');
-    const email = Cookies.get('email');
 
     const EmailVerifyData = {
       email: email,
