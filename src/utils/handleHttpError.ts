@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import axiosInstance from 'src/apis/instance/axiosInstance';
 import { USER_URL } from 'src/constants/apiUrl';
 import { ERROR_MESSAGES } from 'src/constants/error';
-import useTokenStore from 'src/store/userStore';
+import useUserStore from 'src/store/userStore';
 
 export default async function handleError(error: unknown) {
   if (axios.isAxiosError(error)) {
@@ -15,7 +15,7 @@ export default async function handleError(error: unknown) {
     if (error.response?.status === 401) {
       try {
         const newAccessToken = await refreshAccessToken();
-        useTokenStore.getState().setAccessToken(newAccessToken);
+        useUserStore.getState().setAccessToken(newAccessToken);
         return;
       } catch (refreshError) {
         console.error('Refresh Token is not found');
