@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import CreateCategoryModal from 'src/components/modal/contents/CreateCategoryModal';
 import InviteLinkModal from 'src/components/modal/contents/InviteLinkModal';
+import InviteMemberModal from 'src/components/modal/contents/InviteMemberModal';
 import { useOpenModal } from 'src/hooks/useOpenModal';
 import styled from 'styled-components';
 
@@ -11,7 +12,8 @@ interface Prorps {
 
 export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
   const { isOpen: isCategory, openModal: openCategory, closeModal: closeCategory } = useOpenModal();
-  const { isOpen: isInvite, openModal: openInvite, closeModal: closeInvite } = useOpenModal();
+  const { isOpen: isInviteLink, openModal: openInviteLink, closeModal: closeInviteLink } = useOpenModal();
+  const { isOpen: isInviteMember, openModal: openInviteMember, closeModal: closeInviteMember } = useOpenModal();
   const location = useLocation();
 
   const serverId = location.pathname.split('/')[2];
@@ -24,26 +26,35 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
     toggleDropDown();
   };
 
-  const closeInviteModal = async () => {
-    await closeInvite();
+  const closeInviteLinkModal = async () => {
+    await closeInviteLink();
+    toggleDropDown();
+  };
+
+  const closeInviteMemberModal = async () => {
+    await closeInviteMember();
     toggleDropDown();
   };
 
   return (
     <Area>
       <ButtonContainer isDown={isDropDown}>
-        <Button type='button' onClick={openInvite}>
-          초대코드 생성
-        </Button>
         <Button type='button' onClick={openCategory}>
           카테고리 생성
+        </Button>
+        <Button type='button' onClick={openInviteLink}>
+          초대코드 생성
+        </Button>
+        <Button type='button' onClick={openInviteMember}>
+          멤버 초대하기
         </Button>
         {/* <Button type='button' onClick={() => deleteMutation.mutate()}>
         서버 삭제
       </Button> */}
       </ButtonContainer>
       <CreateCategoryModal closeModal={closeCtegoryModal} isOpen={isCategory} />
-      <InviteLinkModal closeModal={closeInviteModal} isOpen={isInvite} serverId={Number(serverId)} />
+      <InviteLinkModal closeModal={closeInviteLinkModal} isOpen={isInviteLink} serverId={Number(serverId)} />
+      <InviteMemberModal closeModal={closeInviteMemberModal} isOpen={isInviteMember} />
     </Area>
   );
 }

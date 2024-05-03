@@ -1,6 +1,5 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { CHAT_URL } from 'src/constants/apiUrl';
 import handleError from 'src/utils/handleError';
 
 /**
@@ -8,7 +7,7 @@ import handleError from 'src/utils/handleError';
  */
 
 const axiosInstance = axios.create({
-  baseURL: CHAT_URL.BASE,
+  baseURL: import.meta.env.VITE_APP_ORIGIN_API,
   headers: {
     'Content-Type': 'application/json',
   },

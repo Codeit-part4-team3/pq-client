@@ -9,6 +9,7 @@ import Admin from 'src/pages/admin/Admin';
 import EmailCheck from 'src/pages/signup/EmailCheck.tsx/EmailCheck';
 import FindPassword from 'src/pages/login/findPassword/FindPassowrd';
 import ChangePassword from 'src/pages/login/changePassword/ChangePassword';
+import Invite from 'src/pages/invite/Invite';
 
 export default function Router() {
   return (
@@ -23,6 +24,8 @@ export default function Router() {
       <Route path='/server/:serverId' element={<Server />}>
         <Route path='channel/:channelId' element={<Channel />} />
       </Route>
+      <Route path='/invite' element={<Invite />} />
+      <Route path='/invite/:inviteId' element={<Invite />} />
       <Route path='*' element={<NotFound />} />
       <Route path='/admin' element={<Admin />} />
     </Routes>

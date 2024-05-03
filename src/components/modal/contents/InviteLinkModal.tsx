@@ -3,7 +3,7 @@ import Modal from '../modal';
 import { ModalContainer } from '../CommonStyles';
 import { InviteLinkResponse } from '../../../pages/server/_types/type';
 import { useQueryGet } from 'src/apis/service/service';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 interface Props extends ModalProps {
@@ -11,15 +11,22 @@ interface Props extends ModalProps {
 }
 
 export default function InviteLinkModal({ closeModal, isOpen, serverId }: Props) {
+  const [msg, setMsg] = useState<string>('');
   const { refetch, data } = useQueryGet<InviteLinkResponse>('inviteLink', `/chat/v1/server/${serverId}/inviteLink`, {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
-
   console.log(data);
+
+  const onClipBoard = () => {
+    navigator.clipboard.writeText(`${import.meta.env.VITE_APP_ORIGIN}/invite/${data?.inviteLink}`).then(() => {
+      setMsg('링크 복사 완료');
+    });
+  };
 
   useEffect(() => {
     refetch();
+    setMsg('');
   }, []);
 
   return (
@@ -28,10 +35,11 @@ export default function InviteLinkModal({ closeModal, isOpen, serverId }: Props)
         <Body>
           <Top>
             <strong>초대 링크</strong>
+            <span>{msg}</span>
           </Top>
           <LinkContainer>
-            <span>{data?.inviteLink}</span>
-            <button>복사</button>
+            <span>{`${import.meta.env.VITE_APP_ORIGIN}/invite/${data?.inviteLink}`}</span>
+            <button onClick={onClipBoard}>복사</button>
           </LinkContainer>
         </Body>
       </ModalContainer>
@@ -52,6 +60,11 @@ const Top = styled.div`
   display: flex;
   justify-content: space-between;
   font-size: 18px;
+
+  & > span {
+    font-size: 14px;
+    color: #007aff;
+  }
 `;
 
 const LinkContainer = styled.span`
