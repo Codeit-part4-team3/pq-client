@@ -1,15 +1,18 @@
 import SocialButtons from './_components/SocialButtons';
 import EmailSignup from './EmailSignup';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Line from 'src/components/sign/Line';
 import Header from 'src/components/sign/Header';
 import { Area, Container, Button, Prompt } from 'src/components/sign/CommonStyles';
 import { USER_URL } from 'src/constants/apiUrl';
-import axios from 'axios';
+
+import axiosInstance from 'src/apis/instance/axiosInstance';
+import { AxiosError } from 'axios';
 
 export default function Signup() {
   const [isEmailSignup, setIsEmailSignup] = useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
     (async () => {
       console.log('시작');
@@ -17,9 +20,22 @@ export default function Signup() {
       if (!code) {
         return;
       }
-      const res = await axios.get(`${USER_URL.BASE}${USER_URL.AUTH}/kakao/signup?code=${code}`);
-      console.log(res);
-      // 여기에 이제 카카오 로그인 되었을 때 처리 (상태관리, 리다이렉트 등등)
+      try {
+        const res = await axiosInstance.get(`${USER_URL.AUTH}/kakao/signup?code=${code}`);
+        //이메일 넣기
+        const email = res.data.email;
+        console.log(email);
+        navigate('/checkEmail');
+      } catch (error) {
+        const e = error as AxiosError;
+        console.log(e);
+        if (e.response?.status === 409) {
+          alert('이미 가입된 회원입니다.');
+          navigate('/login');
+          return;
+        }
+        navigate('/signup');
+      }
     })();
   }, []);
 
