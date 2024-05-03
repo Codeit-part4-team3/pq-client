@@ -15,7 +15,9 @@ export default function AuthInput({ control, setValue, errors }: AuthInputProps)
     setValue('otp', pin);
   };
 
-  console.log('Errors on otp:', errors?.otp);
+  if (errors?.otp) {
+    console.log('Errors on otp:', errors?.otp);
+  }
 
   return (
     <AuthInputContainer>

@@ -1,12 +1,19 @@
 import styled from 'styled-components';
 import { SubmitButton } from 'src/components/sign/button/SignSubmitButton';
-import SignInput from 'src/components/sign/input/SignInput';
 import { FormValues } from 'src/pages/signup/_types/type';
-import { Control, Controller, FieldErrors, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { ERROR_MESSAGES } from 'src/constants/error';
-import { useLogin } from 'src/hooks/useLogin';
+import { EmailInput, PasswordInput } from './LoginInputs';
+import useUserStore from 'src/store/userStore';
+import { AxiosError } from 'axios';
+import { useMutationPost } from 'src/apis/service/service';
+import { LoginRequest, LoginResponse, LoginResponseBody } from '../_type/type';
+import { URL } from 'src/constants/apiUrl';
+import Cookies from 'js-cookie';
 
 export default function LoginForm() {
+  const { setAccessToken } = useUserStore();
+
   const {
     control,
     handleSubmit,
@@ -20,9 +27,42 @@ export default function LoginForm() {
     },
   });
 
-  const { mutate, isPending } = useLogin(setError);
+  const { mutate, isPending } = useMutationPost<LoginResponse, LoginRequest>(`${URL.AUTH}/login`, {
+    onError: (error: unknown) => {
+      const axiosError = error as AxiosError;
+      const status = axiosError?.response?.status;
 
-  const onSubmit = async (data: FormValues) => {
+      if (status === 400) {
+        setError('email', {
+          type: 'custom',
+          message: ERROR_MESSAGES.AUTH.EMAIL_CHECK_FAILED,
+        });
+        setError('password', {
+          type: 'custom',
+          message: ERROR_MESSAGES.AUTH.PASSWORD_CHECK_FAILED,
+        });
+        alert(ERROR_MESSAGES.AUTH.INVALID_LOGIN);
+        return;
+      }
+
+      alert(ERROR_MESSAGES.AUTH.LOGIN_FAILED);
+    },
+
+    onSuccess: (data: LoginResponseBody) => {
+      const { accessToken, refreshToken } = data.token;
+
+      if (!accessToken || !refreshToken) {
+        alert(ERROR_MESSAGES.AUTH.NO_TOKEN);
+        throw new Error(ERROR_MESSAGES.AUTH.NO_TOKEN);
+      }
+
+      setAccessToken(accessToken);
+      Cookies.set('refreshToken', refreshToken, { expires: 7, secure: true, sameSite: 'strict' });
+      location.replace('/server');
+    },
+  });
+
+  const onSubmit = (data: FormValues) => {
     if (isPending) {
       return;
     }
@@ -46,55 +86,6 @@ export default function LoginForm() {
     </form>
   );
 }
-
-interface InputProps {
-  control: Control<FormValues>;
-  errors: FieldErrors<FormValues>;
-}
-
-const EmailInput = ({ control, errors }: InputProps) => {
-  return (
-    <Controller
-      control={control}
-      name='email'
-      rules={{
-        required: ERROR_MESSAGES.AUTH.EMAIL_REQUIRED,
-      }}
-      render={({ field }) => (
-        <SignInput
-          {...field}
-          id='email'
-          type='text'
-          placeholder={ERROR_MESSAGES.AUTH.EMAIL_REQUIRED}
-          label='이메일'
-          errors={errors}
-        />
-      )}
-    />
-  );
-};
-
-const PasswordInput = ({ control, errors }: InputProps) => {
-  return (
-    <Controller
-      control={control}
-      name='password'
-      rules={{
-        required: ERROR_MESSAGES.AUTH.PASSWORD_REQUIRED,
-      }}
-      render={({ field }) => (
-        <SignInput
-          {...field}
-          id='password'
-          type='password'
-          label='비밀번호'
-          placeholder={ERROR_MESSAGES.AUTH.PASSWORD_REQUIRED}
-          errors={errors}
-        />
-      )}
-    />
-  );
-};
 
 const InputContainer = styled.div`
   display: flex;

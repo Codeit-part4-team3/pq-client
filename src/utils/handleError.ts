@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import Cookies from 'js-cookie';
 import { URL } from 'src/constants/apiUrl';
 import { ERROR_MESSAGES } from 'src/constants/error';
+import useTokenStore from 'src/store/userStore';
 
 export default async function handleError(error: unknown) {
   if (axios.isAxiosError(error)) {
@@ -14,8 +15,7 @@ export default async function handleError(error: unknown) {
     if (error.response?.status === 401) {
       try {
         const newAccessToken = await refreshAccessToken();
-        Cookies.set('accessToken', newAccessToken, { expires: 1, secure: true, sameSite: 'strict' });
-        await refetch(error, newAccessToken);
+        useTokenStore.getState().setAccessToken(newAccessToken);
         return;
       } catch (refreshError) {
         console.error('Refresh Token is not found');
@@ -43,6 +43,7 @@ const dispatchAxiosErrorEvent = (errorMessage: string) => {
 // refreshToken 사용해 accessToken 갱신
 const refreshAccessToken = async () => {
   const refreshToken = Cookies.get('refreshToken');
+
   if (!refreshToken) {
     alert(ERROR_MESSAGES.AUTH.SESSION_EXPIRED);
     location.replace('/login');
@@ -50,35 +51,14 @@ const refreshAccessToken = async () => {
   }
 
   try {
-    const response = await axios.post(
-      `${URL.AUTH}/token`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${refreshToken}`,
-        },
+    const response = await axios.get(`${import.meta.env.VITE_APP_ORIGIN}${URL.AUTH}/token`, {
+      headers: {
+        Authorization: `Bearer ${refreshToken}`,
       },
-    );
+    });
     return response.data.accessToken;
   } catch (error) {
     console.error('Failed to refresh token', error);
     throw error;
   }
-};
-
-// 새로운 accessToken으로 요청 재시도
-const refetch = (error: AxiosError, accessToken: string) => {
-  if (!error.config) {
-    console.error('Error configuration is undefined, cannot retry the request');
-    throw error;
-  }
-
-  const newConfig = {
-    ...error.config,
-    headers: {
-      ...error.config.headers,
-      Authorization: `Bearer ${accessToken}`,
-    },
-  };
-  return axios(newConfig);
 };
