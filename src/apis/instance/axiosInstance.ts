@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { CHAT_URL } from 'src/constants/apiUrl';
-import useTokenStore from 'src/store/userStore';
+import useUserStore from 'src/store/userStore';
 import handleHttpError from 'src/utils/handleHttpError';
 
 const getAccessToken = () => {
-  const store = useTokenStore.getState();
+  const store = useUserStore.getState();
   return store.accessToken;
 };
 
