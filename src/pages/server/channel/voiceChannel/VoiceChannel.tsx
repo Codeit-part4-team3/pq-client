@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useParams } from 'react-router-dom';
 
-const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
+const SOCKET_SERVER_URL = 'https://pqsoft.net:3000';
 
 const pc_config = {
   iceServers: [
@@ -132,7 +132,6 @@ export default function VoiceChannel() {
         if (receiverPCsRef.current[senderPCId]) {
           await receiverPCsRef.current[senderPCId].addIceCandidate(new RTCIceCandidate(candidate));
         }
-        console.log(receiverPCsRef.current[senderPCId].iceConnectionState);
       });
 
       // ice connection state 변경

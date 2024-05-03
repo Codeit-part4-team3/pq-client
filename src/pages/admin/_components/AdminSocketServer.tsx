@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import styled from 'styled-components';
 
-const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
+const SOCKET_SERVER_URL = 'https://pqsoft.net:3000';
 
 // @ToDo: 데이터 베이스에 채팅 메시지를 어떤 구조로 저장할지 정해야함
 interface Message {
