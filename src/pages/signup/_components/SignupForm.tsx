@@ -1,14 +1,20 @@
 import styled from 'styled-components';
 import { SubmitButton } from 'src/components/sign/button/SignSubmitButton';
 import TermOfUse from './TermOfUse';
-import { FormValues } from '../_types/type';
-import SignInput from 'src/components/sign/input/SignInput';
-import { Control, Controller, FieldErrors, useForm } from 'react-hook-form';
+import { FormValues, SignupRequest, SignupResponse } from '../_types/type';
+import { useForm } from 'react-hook-form';
 import { ERROR_MESSAGES } from 'src/constants/error';
-import { EMAIL_REGEX, PASSWORD_REGEX } from 'src/constants/regex';
-import { useSignup } from 'src/hooks/useSignup';
+import { EmailInput, PasswordConfirmInput, PasswordInput, NicknameInput } from './SignupInputs';
+import { useMutationPost } from 'src/apis/service/service';
+import { USER_URL } from 'src/constants/apiUrl';
+import { AxiosError } from 'axios';
+import { useNavigate } from 'react-router-dom';
+import useUserStore from 'src/store/userStore';
 
 export default function SignupForm() {
+  const navigate = useNavigate();
+  const { setEmail } = useUserStore();
+
   const {
     control,
     handleSubmit,
@@ -25,7 +31,42 @@ export default function SignupForm() {
     },
   });
 
-  const { mutate, isPending } = useSignup(setError);
+  const { mutate, isPending } = useMutationPost<SignupResponse, SignupRequest>(`${USER_URL.AUTH}/signup`, {
+    onError: (error: unknown) => {
+      const axiosError = error as AxiosError;
+      const status = axiosError?.response?.status;
+
+      if (status === 400) {
+        setError('email', {
+          type: 'custom',
+          message: ERROR_MESSAGES.AUTH.EMAIL_CHECK_FAILED,
+        });
+        setError('password', {
+          type: 'custom',
+          message: ERROR_MESSAGES.AUTH.PASSWORD_CHECK_FAILED,
+        });
+        setError('passwordConfirm', {
+          type: 'custom',
+          message: ERROR_MESSAGES.AUTH.PASSWORD_CONFIRM_CHECK_FAILED,
+        });
+        return;
+      }
+
+      if (status === 409) {
+        setError('email', {
+          type: 'custom',
+          message: ERROR_MESSAGES.AUTH.DUPLICATE_EMAIL,
+        });
+        return;
+      }
+
+      alert(ERROR_MESSAGES.AUTH.SIGN_UP_FAILED);
+    },
+
+    onSuccess: () => {
+      navigate('/check-email', { replace: true });
+    },
+  });
 
   const onSubmit = (data: FormValues) => {
     if (isPending) return;
@@ -36,8 +77,8 @@ export default function SignupForm() {
       nickname: data.nickname,
     };
 
-    localStorage.setItem('email', data.email); // 임시
     mutate(userData);
+    setEmail(data.email);
   };
 
   return (
@@ -53,112 +94,6 @@ export default function SignupForm() {
     </form>
   );
 }
-
-interface InputProps {
-  control: Control<FormValues>;
-  errors: FieldErrors<FormValues>;
-  watch?: (field: keyof FormValues) => string;
-}
-
-const EmailInput = ({ control, errors }: InputProps) => {
-  return (
-    <Controller
-      control={control}
-      name='email'
-      rules={{
-        required: ERROR_MESSAGES.AUTH.EMAIL_REQUIRED,
-        pattern: {
-          value: EMAIL_REGEX,
-          message: ERROR_MESSAGES.AUTH.INVALID_EMAIL,
-        },
-      }}
-      render={({ field }) => (
-        <SignInput
-          {...field}
-          id='email'
-          type='text'
-          placeholder={ERROR_MESSAGES.AUTH.EMAIL_REQUIRED}
-          label='이메일'
-          errors={errors}
-        />
-      )}
-    />
-  );
-};
-
-const PasswordInput = ({ control, errors }: InputProps) => {
-  return (
-    <Controller
-      control={control}
-      name='password'
-      rules={{
-        required: ERROR_MESSAGES.AUTH.PASSWORD_REQUIRED,
-        pattern: {
-          value: PASSWORD_REGEX,
-          message: ERROR_MESSAGES.AUTH.INVALID_PASSWORD,
-        },
-      }}
-      render={({ field }) => (
-        <SignInput
-          {...field}
-          id='password'
-          type='password'
-          label='비밀번호'
-          placeholder={ERROR_MESSAGES.AUTH.PASSWORD_REQUIRED}
-          errors={errors}
-        />
-      )}
-    />
-  );
-};
-
-const PasswordConfirmInput = ({ control, errors, watch }: InputProps) => {
-  return (
-    <Controller
-      control={control}
-      name='passwordConfirm'
-      rules={{
-        required: ERROR_MESSAGES.AUTH.PASSWORD_CONFIRM_REQUIRED,
-        validate: (value) => {
-          const password = watch ? watch('password') : '';
-          return value === password || ERROR_MESSAGES.AUTH.INVALID_PASSWORD_CONFIRM;
-        },
-      }}
-      render={({ field }) => (
-        <SignInput
-          {...field}
-          id='passwordConfirm'
-          type='password'
-          label='비밀번호 확인'
-          placeholder={ERROR_MESSAGES.AUTH.PASSWORD_CONFIRM_REQUIRED}
-          errors={errors}
-        />
-      )}
-    />
-  );
-};
-
-const NicknameInput = ({ control, errors }: InputProps) => {
-  return (
-    <Controller
-      control={control}
-      name='nickname'
-      rules={{
-        required: ERROR_MESSAGES.AUTH.NICKNAME_REQUIRED,
-      }}
-      render={({ field }) => (
-        <SignInput
-          {...field}
-          id='nickname'
-          type='text'
-          label='사용자명'
-          placeholder={ERROR_MESSAGES.AUTH.NICKNAME_REQUIRED}
-          errors={errors}
-        />
-      )}
-    />
-  );
-};
 
 const InputContainer = styled.div`
   display: flex;
