@@ -7,3 +7,8 @@ export interface MessageItem {
   updatedAt: number;
   status: string;
 }
+
+export interface lastKey {
+  channelId: string;
+  createdAt: number;
+}

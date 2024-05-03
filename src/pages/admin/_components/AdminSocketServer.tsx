@@ -4,18 +4,19 @@ import addSvg from '../../../../public/images/add_FILL0_wght200_GRAD0_opsz24 3.s
 import ChannelHeader from 'src/components/channel/ChannelHeader';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { MessageItem } from 'src/pages/server/channel/chatChannel/_types/type';
+import { lastKey, MessageItem } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
-export default function ChatChannel() {
+export default function AdminSocketServer() {
+  const userId = '1';
   const roomName = '1';
   const socketRef = useRef<Socket | null>(null);
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
-  const [lastKey, setLastKey] = useState<string | null>(null);
-
+  const [lastKey, setLastKey] = useState<lastKey | null>(null);
+  const [isNoMoreMessages, setIsNoMoreMessages] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,8 +24,9 @@ export default function ChatChannel() {
   };
 
   const handleSendMessageKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (inputValue === '') return;
     if (e.key === 'Enter') {
-      socketRef.current?.emit('send_message', e.currentTarget.value, roomName);
+      socketRef.current?.emit('send_message', { message: e.currentTarget.value, roomName, userId });
       setInputValue('');
     }
   };
@@ -44,7 +46,7 @@ export default function ChatChannel() {
 
     socketRef.current.on(
       'initial_chat_messages',
-      ({ initialMessages, lastKey }: { initialMessages: MessageItem[]; lastKey: any }) => {
+      ({ initialMessages, lastKey }: { initialMessages: MessageItem[]; lastKey: lastKey }) => {
         console.log('initial messages data : ', initialMessages);
         setMessages([...initialMessages]);
         setLastKey(lastKey);
@@ -53,16 +55,27 @@ export default function ChatChannel() {
 
     socketRef.current.on('receive_message', (newMessage: MessageItem) => {
       console.log('new message data : ', newMessage);
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setMessages((prevMessages) => [newMessage, ...prevMessages]);
     });
 
     // 인피니티 스크롤을 위한 이벤트
     socketRef.current.on(
       'more_messages',
-      ({ moreMessages, lastKey }: { moreMessages: MessageItem[]; lastKey: any }) => {
+      ({
+        moreMessages,
+        lastKey,
+        isNoMoreMessages,
+      }: {
+        moreMessages: MessageItem[];
+        lastKey: lastKey;
+        isNoMoreMessages: boolean;
+      }) => {
         console.log('more messages data : ', moreMessages);
         setMessages((prevMessages) => [...prevMessages, ...moreMessages]);
         setLastKey(lastKey);
+        if (isNoMoreMessages) {
+          setIsNoMoreMessages(true);
+        }
       },
     );
 
@@ -82,14 +95,15 @@ export default function ChatChannel() {
     <Wrapper>
       <button onClick={handleMoreMessageButton}>메시지 더보기</button>
       <ChannelHeader />
-
       <ChatContainer ref={chatContainerRef}>
-        {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯
-        <ChatChannelIntro>
-          <ChannelName>{'# 채팅 채널1'}의 첫 시작 부분이에요</ChannelName>
-          <CreationDate>생성일 : {'2024년 04월 11일'}</CreationDate>
-        </ChatChannelIntro> */}
         <ChatMessages messages={messages} />
+        {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯 */}
+        {isNoMoreMessages ? (
+          <ChatChannelIntro>
+            <ChannelName>{'# 채팅 채널1'}의 첫 시작 부분이에요</ChannelName>
+            <CreationDate>생성일 : {'2024년 04월 11일'}</CreationDate>
+          </ChatChannelIntro>
+        ) : null}
       </ChatContainer>
       <ChatInputBox>
         <ChatInput
@@ -127,27 +141,27 @@ const ChatContainer = styled.div`
   margin-right: 20px;
 `;
 
-// const ChatChannelIntro = styled.div``;
+const ChatChannelIntro = styled.div``;
 
-// const ChannelName = styled.h1`
-//   color: #000;
-//   font-family: Pretendard;
-//   font-size: 20px;
-//   font-style: normal;
-//   font-weight: 700;
-//   line-height: 160%; /* 32px */
-//   margin: 0;
-// `;
+const ChannelName = styled.h1`
+  color: #000;
+  font-family: Pretendard;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 160%; /* 32px */
+  margin: 0;
+`;
 
-// const CreationDate = styled.p`
-//   color: #666;
-//   font-family: Pretendard;
-//   font-size: 14px;
-//   font-style: normal;
-//   font-weight: 400;
-//   line-height: 160%; /* 22.4px */
-//   margin: 0;
-// `;
+const CreationDate = styled.p`
+  color: #666;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 160%; /* 22.4px */
+  margin: 0;
+`;
 
 const ChatInputBox = styled.div`
   display: flex;

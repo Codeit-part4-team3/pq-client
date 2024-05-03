@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import profileImage from '../../../../../../public/images/videoProfile.jfif';
+import profileImage from '../../../../../../public/images/minji-profile-image.png';
 import { MessageItem } from '../_types/type';
 import extractDate from 'src/utils/extractDate';
 import ChatDayDivider from './ChatDayDivider';
@@ -75,9 +75,10 @@ const UserProfileImage = styled.div`
   height: 40px;
 
   img {
+    border-radius: 4px;
+    border: 1px solid #eee;
     width: 100%;
     height: 100%;
-    border-radius: 50%;
     object-fit: cover;
   }
 `;
