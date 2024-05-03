@@ -73,7 +73,15 @@ describe('OTPInput Component', () => {
 });
 
 describe('AuthInput Component', () => {
-  const setup = () => {
+  beforeAll(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+  });
+
+  afterAll(() => {
+    (console.log as jest.Mock).mockRestore();
+  });
+
+  const setup = (errors = {}) => {
     const Wrapper = () => {
       const methods = useForm<FormValues>({
         defaultValues: {
@@ -83,7 +91,7 @@ describe('AuthInput Component', () => {
 
       return (
         <FormProvider {...methods}>
-          <AuthInput control={methods.control} setValue={methods.setValue} errors={{}} />
+          <AuthInput control={methods.control} setValue={methods.setValue} errors={errors} />
         </FormProvider>
       );
     };
@@ -99,5 +107,14 @@ describe('AuthInput Component', () => {
       fireEvent.change(input, { target: { value: String(index + 1) } });
       expect(input.value).toBe(String(index + 1));
     });
+  });
+
+  test('AuthInput 에러 메시지 표시 테스트', () => {
+    const errors = {
+      otp: { message: '인증번호가 유효하지 않습니다.' },
+    };
+    setup(errors);
+    const errorMessage = screen.getByText('인증번호가 유효하지 않습니다.');
+    expect(errorMessage).toBeInTheDocument();
   });
 });

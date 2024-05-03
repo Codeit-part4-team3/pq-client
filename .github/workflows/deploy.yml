@@ -7,19 +7,17 @@ on:
 jobs:
   continuous-deployment:
     runs-on: ubuntu-latest
+    env:
+      VITE_APP_ORIGIN: ${{ secrets.VITE_APP_ORIGIN }}
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2
-
-      - name: .env.production setting
-        run: |
-          echo "VITE_APP_ORIGIN=${{ secrets.VITE_APP_ORIGIN }}" >> .env.production
-
+         
       - name: Use Node.js version 20.x
         uses: actions/setup-node@v2
         with:
           node-version: 20.x
-
+        
       - name: Build
         run: |
           npm install

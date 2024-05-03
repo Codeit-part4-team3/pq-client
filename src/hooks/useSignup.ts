@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { ERROR_MESSAGES } from 'src/constants/error';
 import { FormValues, SignupRequest, SignupResponse } from 'src/pages/signup/_types/type';
 import { UseFormSetError } from 'react-hook-form';
@@ -7,7 +6,6 @@ import { useMutationPost } from 'src/apis/service/service';
 import { USER_URL } from 'src/constants/apiUrl';
 
 export const useSignup = (setError: UseFormSetError<FormValues>) => {
-  const navigate = useNavigate();
   const { mutate, isPending } = useMutationPost<SignupResponse, SignupRequest>(`${USER_URL.AUTH}/signup`, {
     onError: (error: unknown) => {
       const axiosError = error as AxiosError;
@@ -41,7 +39,7 @@ export const useSignup = (setError: UseFormSetError<FormValues>) => {
     },
 
     onSuccess: () => {
-      navigate('/checkEmail');
+      location.replace('/checkEmail');
     },
   });
 

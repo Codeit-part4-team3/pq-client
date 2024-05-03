@@ -24,5 +24,8 @@ export const ERROR_MESSAGES = {
 
     DUPLICATE_EMAIL: '이미 존재하는 유저입니다.',
     INVALID_LOGIN: '로그인 정보가 일치하지 않습니다.',
+
+    NO_TOKEN: '토큰이 존재하지 않습니다.',
+    SESSION_EXPIRED: '세션이 만료되었습니다.',
   },
 } as const;
