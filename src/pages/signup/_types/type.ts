@@ -27,3 +27,10 @@ interface EmailVerifyStatus {
 
 export type EmailVerifyRequest = EmailVerify;
 export type EmailVerifyResponse = EmailVerifyStatus | null;
+
+export interface KakaoSignupRequest {
+  id: number;
+  email: string;
+  nickname: string;
+  state?: string;
+}

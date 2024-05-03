@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { URL } from 'src/constants/apiUrl';
+import { USER_URL } from 'src/constants/apiUrl';
 import { ERROR_MESSAGES } from 'src/constants/error';
 import useTokenStore from 'src/store/userStore';
 
@@ -51,7 +51,7 @@ const refreshAccessToken = async () => {
   }
 
   try {
-    const response = await axios.get(`${import.meta.env.VITE_APP_ORIGIN}${URL.AUTH}/token`, {
+    const response = await axios.get(`${import.meta.env.VITE_APP_ORIGIN}${USER_URL.AUTH}/token`, {
       headers: {
         Authorization: `Bearer ${refreshToken}`,
       },

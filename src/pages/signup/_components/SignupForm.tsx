@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { ERROR_MESSAGES } from 'src/constants/error';
 import { EmailInput, PasswordConfirmInput, PasswordInput, NicknameInput } from './SignupInputs';
 import { useMutationPost } from 'src/apis/service/service';
-import { URL } from 'src/constants/apiUrl';
+import { USER_URL } from 'src/constants/apiUrl';
 import { AxiosError } from 'axios';
 import Cookies from 'js-cookie';
 
@@ -27,7 +27,7 @@ export default function SignupForm() {
     },
   });
 
-  const { mutate, isPending } = useMutationPost<SignupResponse, SignupRequest>(`${URL.AUTH}/signup`, {
+  const { mutate, isPending } = useMutationPost<SignupResponse, SignupRequest>(`${USER_URL.AUTH}/signup`, {
     onError: (error: unknown) => {
       const axiosError = error as AxiosError;
       const status = axiosError?.response?.status;

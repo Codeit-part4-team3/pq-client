@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { URL } from 'src/constants/apiUrl';
-import useUserStore from 'src/store/userStore';
+import { CHAT_URL } from 'src/constants/apiUrl';
+import useTokenStore from 'src/store/userStore';
 import handleError from 'src/utils/handleError';
 
 const getAccessToken = () => {
-  const store = useUserStore.getState();
+  const store = useTokenStore.getState();
   return store.accessToken;
 };
 
@@ -13,7 +13,7 @@ const getAccessToken = () => {
  */
 
 const axiosInstance = axios.create({
-  baseURL: URL.BASE,
+  baseURL: CHAT_URL.BASE,
   headers: {
     'Content-Type': 'application/json',
   },

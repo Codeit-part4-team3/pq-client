@@ -8,7 +8,7 @@ import useUserStore from 'src/store/userStore';
 import { AxiosError } from 'axios';
 import { useMutationPost } from 'src/apis/service/service';
 import { LoginRequest, LoginResponse, LoginResponseBody } from '../_type/type';
-import { URL } from 'src/constants/apiUrl';
+import { USER_URL } from 'src/constants/apiUrl';
 import Cookies from 'js-cookie';
 
 export default function LoginForm() {
@@ -27,7 +27,7 @@ export default function LoginForm() {
     },
   });
 
-  const { mutate, isPending } = useMutationPost<LoginResponse, LoginRequest>(`${URL.AUTH}/login`, {
+  const { mutate, isPending } = useMutationPost<LoginResponse, LoginRequest>(`${USER_URL.AUTH}/login`, {
     onError: (error: unknown) => {
       const axiosError = error as AxiosError;
       const status = axiosError?.response?.status;

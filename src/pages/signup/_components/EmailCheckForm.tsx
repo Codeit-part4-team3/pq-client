@@ -5,7 +5,7 @@ import { ButtonNormal } from 'src/GlobalStyles';
 import AuthInput from 'src/components/sign/input/AuthInput';
 import { FormValues } from '../_types/type';
 import { useMutationPost } from 'src/apis/service/service';
-import { URL } from 'src/constants/apiUrl';
+import { USER_URL } from 'src/constants/apiUrl';
 import { AxiosError } from 'axios';
 import { ERROR_MESSAGES } from 'src/constants/error';
 import Cookies from 'js-cookie';
@@ -20,7 +20,7 @@ export default function EmailCheckForm() {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const { mutate, isPending } = useMutationPost(`${URL.AUTH}/signup/confirm`, {
+  const { mutate, isPending } = useMutationPost(`${USER_URL.AUTH}/signup/confirm`, {
     onError: (error: unknown) => {
       const axiosError = error as AxiosError;
       const status = axiosError?.response?.status;
