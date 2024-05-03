@@ -16,6 +16,8 @@ export default function ChatChannel() {
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
 
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
@@ -25,6 +27,10 @@ export default function ChatChannel() {
       socketRef.current?.emit('send_message', e.currentTarget.value, roomName);
       setInputValue('');
     }
+  };
+
+  const handleMoreMessageButton = () => {
+    socketRef.current?.emit('more_message', roomName);
   };
 
   useEffect(() => {
@@ -51,10 +57,18 @@ export default function ChatChannel() {
     };
   }, [roomName]);
 
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   return (
     <Wrapper>
+      <button onClick={handleMoreMessageButton}>메시지 더보기</button>
       <ChannelHeader />
-      <ChatContainer>
+
+      <ChatContainer ref={chatContainerRef}>
         {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯 */}
         <ChatChannelIntro>
           <ChannelName>{'# 채팅 채널1'}의 첫 시작 부분이에요</ChannelName>

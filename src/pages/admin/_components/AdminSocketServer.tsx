@@ -9,12 +9,14 @@ import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatM
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
-export default function AdminSocketServer() {
+export default function ChatChannel() {
   const roomName = '1';
-  console.log(roomName);
   const socketRef = useRef<Socket | null>(null);
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
+  const [lastKey, setLastKey] = useState<string | null>(null);
+
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -27,38 +29,66 @@ export default function AdminSocketServer() {
     }
   };
 
+  const handleMoreMessageButton = () => {
+    socketRef.current?.emit('more_messages', { roomName, userSocketId: socketRef.current?.id, lastKey });
+  };
+
   useEffect(() => {
     socketRef.current = io(SOCKET_SERVER_URL);
-    if (socketRef.current) {
-      socketRef.current.emit('join_chat_channel', roomName);
 
-      socketRef.current.on('join_chat_channel_user_join', (socketId) => {
-        console.log(socketId + 'is joined');
-      });
+    socketRef.current.emit('join_chat_channel', roomName);
 
-      socketRef.current.on('initial_chat_messages', (initialMessages: MessageItem[]) => {
+    socketRef.current.on('join_chat_channel_user_join', (socketId) => {
+      console.log(socketId + 'is joined');
+    });
+
+    socketRef.current.on(
+      'initial_chat_messages',
+      ({ initialMessages, lastKey }: { initialMessages: MessageItem[]; lastKey: any }) => {
         console.log('initial messages data : ', initialMessages);
         setMessages([...initialMessages]);
-      });
+        setLastKey(lastKey);
+      },
+    );
 
-      socketRef.current.on('receive_message', (newMessage: MessageItem) => {
-        console.log('new message data : ', newMessage);
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-      });
-    }
+    socketRef.current.on('receive_message', (newMessage: MessageItem) => {
+      console.log('new message data : ', newMessage);
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    });
+
+    // 인피니티 스크롤을 위한 이벤트
+    socketRef.current.on(
+      'more_messages',
+      ({ moreMessages, lastKey }: { moreMessages: MessageItem[]; lastKey: any }) => {
+        console.log('more messages data : ', moreMessages);
+        setMessages((prevMessages) => [...prevMessages, ...moreMessages]);
+        setLastKey(lastKey);
+      },
+    );
+
     return () => {
       socketRef.current?.disconnect();
     };
   }, [roomName]);
 
+  useEffect(() => {
+    // 채팅이 추가될 때마다 스크롤을 맨 아래로 내려준다
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   return (
     <Wrapper>
+      <button onClick={handleMoreMessageButton}>메시지 더보기</button>
       <ChannelHeader />
-      <ChatContainer>
+
+      <ChatContainer ref={chatContainerRef}>
+        {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯
         <ChatChannelIntro>
           <ChannelName>{'# 채팅 채널1'}의 첫 시작 부분이에요</ChannelName>
           <CreationDate>생성일 : {'2024년 04월 11일'}</CreationDate>
-        </ChatChannelIntro>
+        </ChatChannelIntro> */}
         <ChatMessages messages={messages} />
       </ChatContainer>
       <ChatInputBox>
@@ -91,33 +121,33 @@ const ChatContainer = styled.div`
   flex-grow: 1;
   overflow-y: scroll;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
 
   margin-left: 20px;
   margin-right: 20px;
 `;
 
-const ChatChannelIntro = styled.div``;
+// const ChatChannelIntro = styled.div``;
 
-const ChannelName = styled.h1`
-  color: #000;
-  font-family: Pretendard;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 160%; /* 32px */
-  margin: 0;
-`;
+// const ChannelName = styled.h1`
+//   color: #000;
+//   font-family: Pretendard;
+//   font-size: 20px;
+//   font-style: normal;
+//   font-weight: 700;
+//   line-height: 160%; /* 32px */
+//   margin: 0;
+// `;
 
-const CreationDate = styled.p`
-  color: #666;
-  font-family: Pretendard;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 160%; /* 22.4px */
-  margin: 0;
-`;
+// const CreationDate = styled.p`
+//   color: #666;
+//   font-family: Pretendard;
+//   font-size: 14px;
+//   font-style: normal;
+//   font-weight: 400;
+//   line-height: 160%; /* 22.4px */
+//   margin: 0;
+// `;
 
 const ChatInputBox = styled.div`
   display: flex;

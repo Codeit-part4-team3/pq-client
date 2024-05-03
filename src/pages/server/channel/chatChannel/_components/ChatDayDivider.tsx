@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 
-export default function ChatDayDivider({ ChatDayDividerDay }: { ChatDayDividerDay: string }) {
+interface ChatDayDividerProps {
+  ChatDayDividerDay: string;
+}
+
+export default function ChatDayDivider({ ChatDayDividerDay }: ChatDayDividerProps) {
   return (
     <>
       <Wrapper>
@@ -18,20 +22,12 @@ const Wrapper = styled.div`
 `;
 
 const ChatDayDividerText = styled.div`
-  width: 135px;
-  height: 25px;
+  border-radius: 12px;
+  border: 1px solid #eee;
 
   display: flex;
+  padding: 4px 13px;
   justify-content: center;
   align-items: center;
-  flex-shrink: 0;
-  color: #000;
-  font-family: Pretendard;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 160%; /* 19.2px */
-
-  border-radius: 12px;
-  border: 1px solid #ccc;
+  gap: 10px;
 `;

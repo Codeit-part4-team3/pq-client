@@ -14,28 +14,27 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
   return (
     <>
       {messages.map((messageItem, index) => {
-        // 이전 유저와 현재 유저가 같다면 메시지만 렌더링한다
-        isDifferentUser = messages[index - 1]?.message.userId !== messageItem.message.userId;
+        // 다음 메시지의 유저와 현재 메시지의 유저가 다르면 true로 변경
+        isDifferentUser = messages[index + 1]?.userId !== messageItem.userId;
 
         // createdAt에서 날짜 데이터 추출
-        const { year, month, day, hour, minute } = extractDate(messageItem.message.createdAt);
+        const { year, month, day, hour, minute } = extractDate(messageItem.createdAt);
         //2024.04.22. 오후 9:31 형태
-        const messageCreatedAt = `${year}.${month}.${day}. ${hour >= 12 ? '오후' : '오전'} ${hour % 12}:${minute}`;
+        const messageCreatedAt = `${year}.${month < 10 ? '0' + String(month) : month}.${day < 10 ? '0' + String(day) : day}. ${hour >= 12 ? '오후' : '오전'} ${hour % 12}:${minute}`;
 
-        // 이전 날짜와 현재 날짜가 다르다면 날짜를 표시해주는 ChatDayDivider를 ChatMessageWrapper위에 렌더링
-        const { day: prevDay } = extractDate(messages[index - 1]?.message.createdAt);
-        const isDifferentDay = prevDay !== day;
-        // 이전 날짜와 현재 날짜가 다르다면 isDifferentUser을 true로 변경하고 다시 프로필 사진들을 보여준다
+        // 다음 날짜와 현재 날짜가 다르다면 ChatDayDivider를 보여준다
+        const { day: nextDay } = extractDate(messages[index + 1]?.createdAt);
+        const isDifferentDay = nextDay !== day;
+        // 다음 날짜와 현재 날짜가 다르면 isDifferentUser를 true로 변경해서 사용자 프로필 이미지를 보여준다
         if (isDifferentDay) {
           isDifferentUser = true;
         }
 
-        //2024년 04월 22일 형태
-        const ChatDayDividerDay = `${year}년 ${month}월 ${day}일`;
+        // 2024년 04월 22일 (화) 헝태
+        const ChatDayDividerDay = `${year}년 ${month < 10 ? '0' + String(month) : month}월 ${day < 10 ? '0' + String(day) : day}일 (${'일월화수목금토'[new Date(`${year}-${month}-${day}`).getDay()]})`;
 
         return (
           <>
-            {isDifferentDay ? <ChatDayDivider ChatDayDividerDay={ChatDayDividerDay} /> : null}
             {isDifferentUser ? (
               <>
                 <ChatMessageWrapper>
@@ -44,18 +43,19 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
                   </UserProfileImage>
                   <ChatMessageContent>
                     <ChatMessageContentHeader>
-                      <ChatMessageSender>{messageItem.message.userId}</ChatMessageSender>
+                      <ChatMessageSender>{messageItem.userId}</ChatMessageSender>
                       <ChatMessageCreatedAt>{messageCreatedAt}</ChatMessageCreatedAt>
                     </ChatMessageContentHeader>
-                    <ChatMessageText>{messageItem.message.message}</ChatMessageText>
+                    <ChatMessageText>{messageItem.message}</ChatMessageText>
                   </ChatMessageContent>
                 </ChatMessageWrapper>
               </>
             ) : (
               <SameUserMessage>
-                <ChatMessageText>{messageItem.message.message}</ChatMessageText>
+                <ChatMessageText>{messageItem.message}</ChatMessageText>
               </SameUserMessage>
             )}
+            {isDifferentDay ? <ChatDayDivider ChatDayDividerDay={ChatDayDividerDay} /> : null}
           </>
         );
       })}
