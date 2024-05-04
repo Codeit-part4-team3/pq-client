@@ -15,10 +15,10 @@ export default function Router() {
     <Routes>
       <Route path='/' element={<Landing />} />
       <Route path='/login' element={<Login />} />
-      <Route path='/findPassword' element={<FindPassword />} />
-      <Route path='/changePassword' element={<ChangePassword />} />
+      <Route path='/find-password' element={<FindPassword />} />
+      <Route path='/change-password' element={<ChangePassword />} />
       <Route path='/signup' element={<Signup />} />
-      <Route path='/checkEmail' element={<EmailCheck />} />
+      <Route path='/check-email' element={<EmailCheck />} />
       <Route path='/server' element={<Server />} />
       <Route path='/server/:serverId' element={<Server />}>
         <Route path='channel/:channelId' element={<Channel />} />

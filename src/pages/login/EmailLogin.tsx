@@ -12,7 +12,7 @@ export default function EmailLogin() {
         <Header>로그인</Header>
         <LoginForm />
         <Prompt>
-          비밀번호를 잊으셨나요? <Link to='/findPassword'>PW 찾기</Link>
+          비밀번호를 잊으셨나요? <Link to='/find-password'>PW 찾기</Link>
         </Prompt>
         <Line />
         <SocialButtons />

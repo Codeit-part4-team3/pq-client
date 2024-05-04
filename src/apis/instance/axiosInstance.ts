@@ -1,7 +1,12 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import { CHAT_URL } from 'src/constants/apiUrl';
-import handleError from 'src/utils/handleError';
+import useUserStore from 'src/store/userStore';
+import handleHttpError from 'src/utils/handleHttpError';
+
+const getAccessToken = () => {
+  const store = useUserStore.getState();
+  return store.accessToken;
+};
 
 /**
  * axios instance 속성 추가
@@ -16,7 +21,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const accessToken = Cookies.get('accessToken');
+    const accessToken = getAccessToken();
     if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
@@ -28,7 +33,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    handleError(error);
+    handleHttpError(error);
     return Promise.reject(error);
   },
 );
