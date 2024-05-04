@@ -8,7 +8,7 @@ export default function FindPasswordForm() {
   const navigate = useNavigate();
   const { handleSubmit } = useForm();
   const onSubmit = () => {
-    navigate('/changePassword');
+    navigate('/change-password');
   };
 
   return (

@@ -7,6 +7,12 @@ on:
 jobs:
   continuous-deployment:
     runs-on: ubuntu-latest
+    env:
+      VITE_APP_ORIGIN_USER: ${{ secrets.VITE_APP_ORIGIN_USER }}
+      VITE_APP_ORIGIN_CHAT: ${{ secrets.VITE_APP_ORIGIN_CHAT }}
+      VITE_APP_KAKAO_CLIENT_ID: ${{ secrets.VITE_APP_KAKAO_CLIENT_ID }}
+      VITE_APP_LOGIN_REDIRECT_URI: ${{ secrets.VITE_APP_LOGIN_REDIRECT_URI }}
+      VITE_APP_SIGNUP_REDIRECT_URI: ${{ secrets.VITE_APP_SIGNUP_REDIRECT_URI }}
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2

@@ -14,11 +14,11 @@ import { ServerItemProps } from '../_types/props';
  *
  */
 
-export default function ServerItem({ data }: ServerItemProps) {
+export default function ServerItem({ data, ...rest }: ServerItemProps) {
   const lid = useId();
 
   return (
-    <Button key={`${lid}-${data.id}`}>
+    <Button key={`${lid}-${data.id}`} {...rest}>
       {data.imageUrl ? (
         <img src={data.imageUrl} alt='img' data-serverid={data.id} />
       ) : (
