@@ -28,7 +28,7 @@ export default function InviteMemberModal({ closeModal, isOpen }: ModalProps) {
     setMemberEmail('');
 
     // 생성로직
-    mutation.mutate({ inviterId: 1, inviteeEmail: memberEmail });
+    mutation.mutate({ inviterId: 2, inviteeEmail: memberEmail });
     closeModal();
   };
 
