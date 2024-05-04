@@ -1,17 +1,28 @@
 import styled from 'styled-components';
 import profileImage from '../../../../../../public/images/videoProfile.jfif';
 import micOffSvg from '../../../../../../public/images/mic_off_FILL0_wght200_GRAD0_opsz24.svg';
+import { useEffect, useRef } from 'react';
 
 interface OtherVideoProps {
   // stream: MediaStream;
   onVoice: boolean;
+  userId: string;
+  stream: MediaStream;
 }
 
-export default function Video({ onVoice }: OtherVideoProps) {
+export default function Video({ onVoice, userId, stream }: OtherVideoProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [stream]);
+
   return (
     <>
-      {/* <video ref={videoRef} autoPlay playsInline width={200} height={200} />; */}
-      <Media onVoice={onVoice}>
+      <video ref={videoRef} autoPlay playsInline width={200} height={200} />;
+      {/* <Media onVoice={onVoice}>
         <ProfileImage src={profileImage} alt='프로필 이미지' />
         <NameTag>{'참여자 이름'}</NameTag>
         {onVoice ? null : (
@@ -19,7 +30,7 @@ export default function Video({ onVoice }: OtherVideoProps) {
             <img src={micOffSvg} alt='마이크 off 이미지' width={24} height={24} />
           </MicOff>
         )}
-      </Media>
+      </Media> */}
     </>
   );
 }

@@ -11,7 +11,8 @@ import Admin from './pages/admin/Admin';
 import EmailCheck from './pages/signup/EmailCheck.tsx/EmailCheck';
 import FindPassword from './pages/login/findPassword/FindPassowrd';
 import ChangePassword from './pages/login/changePassword/ChangePassword';
-import AdminSocketServer from './pages/admin/_components/AdminSocketServer';
+// import AdminSocketServer from './pages/admin/_components/AdminSocketServer';
+import VoiceChannel from './pages/server/channel/voiceChannel/VoiceChannel';
 
 function App() {
   const queryClient = new QueryClient();
@@ -31,7 +32,7 @@ function App() {
           <Route path='/server/:serverId' element={<Server />}>
             <Route path='channel/:channelId' element={<Channel />} />
           </Route>
-          <Route path='/chatTest' element={<AdminSocketServer />} />
+          <Route path='/chatTest' element={<VoiceChannel />} />
           <Route path='*' element={<NotFound />} />
           <Route path='/admin' element={<Admin />} />
         </Routes>
