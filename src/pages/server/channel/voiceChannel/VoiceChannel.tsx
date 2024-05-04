@@ -1,10 +1,12 @@
 import styled from 'styled-components';
 
-import MyMediaControlPanel from './_components/MyMediaControlPanel';
-import Video from './_components/Video';
+import MediaControlPanel from './_components/MediaControlPanel';
 import ChannelHeader from 'src/components/channel/ChannelHeader';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import LocalMedia from './_components/LocalMedia';
+import RemoteMedia from './_components/RemoteMedia';
+
 // import { useParams } from 'react-router-dom';
 
 const SOCKET_SERVER_URL = 'http://localhost:3000';
@@ -38,12 +40,64 @@ export default function VoiceChannel() {
       socketId: string;
       userId: string;
       stream: MediaStream;
+      showVideo: boolean;
     }[]
   >([]);
 
+  // localMediaControl
+  const [isMutedAllRemoteStreams, setIsMutedAllRemoteStreams] = useState<boolean>(false);
+  const [isMutedLocalStream, setIsMutedLocalStream] = useState<boolean>(false);
+  const [showLocalVideo, setShowLocalVideo] = useState<boolean>(true);
+
+  const localMediaData = {
+    userId,
+    stream: localStreamRef.current,
+    isMutedLocalStream,
+    showLocalVideo,
+  };
+
+  /**
+   * audioTrack.enabled의 경우 소리 생산 자체를 관여해서 들리지 않게 한다.
+   * audio, video태그의 muted 경우 audio또는 video 태그의 소리를 끄는 것이다.
+   * 따라서 다른 사람에게 나의 소리를 들리게 하지 않으려면 audioTrack.enabled를 false로 해야한다.
+   * 그리고 다른 사람의 소리를 듣지 않으려면 audio, video태그의 muted를 true로 해야한다.
+   */
+  const handleMuteLocalStream = () => {
+    if (localStreamRef.current) {
+      const audioTrack = localStreamRef.current.getAudioTracks()[0];
+      console.log(audioTrack);
+      if (audioTrack) {
+        audioTrack.enabled = !audioTrack.enabled;
+      }
+    }
+    setIsMutedLocalStream((prev) => !prev);
+  };
+
+  // 나의 카메라 끄기
+  const handleOffLocalCamera = () => {
+    if (localStreamRef.current) {
+      const videoTrack = localStreamRef.current.getVideoTracks()[0];
+      console.log(videoTrack);
+      if (videoTrack) {
+        videoTrack.enabled = !videoTrack.enabled;
+        socketRef.current?.emit('video_track_enabled_changed', {
+          enabled: videoTrack.enabled,
+          userSocketId: socketRef.current.id,
+          roomName,
+        });
+      }
+    }
+    setShowLocalVideo((prev) => !prev);
+  };
+
+  // 다른 사람들의 소리 끄기
+  const handleMuteAllRemoteStreams = () => {
+    setIsMutedAllRemoteStreams((prev) => !prev);
+  };
+
   const getLocalStream = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
@@ -90,7 +144,7 @@ export default function VoiceChannel() {
           setUsers((prevUsers) => prevUsers.filter((user) => user.socketId !== participant.socketId));
           setUsers((prevUsers) => [
             ...prevUsers,
-            { socketId: participant.socketId, userId: participant.userId, stream: e.streams[0] },
+            { socketId: participant.socketId, userId: participant.userId, stream: e.streams[0], showVideo: true },
           ]);
         };
 
@@ -146,7 +200,7 @@ export default function VoiceChannel() {
         setUsers((prevUsers) => prevUsers.filter((user) => user.socketId !== offerSenderSocketId));
         setUsers((prevUsers) => [
           ...prevUsers,
-          { socketId: offerSenderSocketId, userId: offerSenderId, stream: e.streams[0] },
+          { socketId: offerSenderSocketId, userId: offerSenderId, stream: e.streams[0], showVideo: true },
         ]);
       };
 
@@ -188,7 +242,6 @@ export default function VoiceChannel() {
     });
 
     socketRef.current.on('get_candidate', async ({ candidate, candidateSenderId }) => {
-      console.log('get_candidate : ', candidate);
       const pc: RTCPeerConnection = pcsRef.current[candidateSenderId];
       if (pc) {
         try {
@@ -200,6 +253,16 @@ export default function VoiceChannel() {
       }
     });
 
+    socketRef.current.on('video_track_enabled_changed', ({ enabled, userSocketId }) => {
+      setUsers((prevUsers) => {
+        const user = prevUsers.find((user) => user.socketId === userSocketId);
+        if (user) {
+          user.showVideo = enabled;
+        }
+        return [...prevUsers];
+      });
+    });
+
     socketRef.current.on('user_exit', ({ socketId }) => {
       pcsRef.current[socketId].close();
       delete pcsRef.current[socketId];
@@ -207,18 +270,24 @@ export default function VoiceChannel() {
     });
 
     getLocalStream();
-  }, [getLocalStream]);
+  }, [roomName, userId, getLocalStream]);
 
   return (
     <Wrapper>
       <ChannelHeader />
       <VideoContainer>
-        <video ref={localVideoRef} autoPlay playsInline muted width={200} height={200}></video>
+        {/* myVideo */}
+        <LocalMedia {...localMediaData} />
+        {/* otherVideos */}
+        {users.map((user) => (
+          <RemoteMedia key={user.socketId} {...user} isMutedAllRemoteStreams={isMutedAllRemoteStreams} />
+        ))}
       </VideoContainer>
-      {users.map((user) => (
-        <Video key={user.socketId} onVoice userId={user.userId} stream={user.stream} />
-      ))}
-      <MyMediaControlPanel />
+      <MediaControlPanel
+        onMuteLocalStreamButtonClick={handleMuteLocalStream}
+        onOffLocalCameraButtonClick={handleOffLocalCamera}
+        onHandleMuteAllRemoteStreamsButtonClick={handleMuteAllRemoteStreams}
+      />
     </Wrapper>
   );
 }
