@@ -4,9 +4,17 @@ import { SubmitButton } from 'src/components/sign/button/SignSubmitButton';
 import { ButtonNormal } from 'src/GlobalStyles';
 import AuthInput from 'src/components/sign/input/AuthInput';
 import { FormValues } from '../_types/type';
-import { useCheckEmail } from 'src/hooks/useCheckEmail';
+import { useMutationPost } from 'src/apis/service/service';
+import { USER_URL } from 'src/constants/apiUrl';
+import { AxiosError } from 'axios';
+import { ERROR_MESSAGES } from 'src/constants/error';
+import useUserStore from 'src/store/userStore';
+import { useNavigate } from 'react-router-dom';
 
 export default function EmailCheckForm() {
+  const navigate = useNavigate();
+  const { email } = useUserStore();
+
   const {
     control,
     handleSubmit,
@@ -16,18 +24,41 @@ export default function EmailCheckForm() {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const { mutate, isPending } = useCheckEmail(setError);
+  const { mutate, isPending } = useMutationPost(`${USER_URL.AUTH}/signup/confirm`, {
+    onError: (error: unknown) => {
+      const axiosError = error as AxiosError;
+      const status = axiosError?.response?.status;
 
-  const onSubmit = async (data: FormValues) => {
+      if (status === 400) {
+        setError('otp', {
+          type: 'custom',
+          message: ERROR_MESSAGES.AUTH.EMAIL_VERIFY_CHECK_FAILED,
+        });
+
+        return;
+      }
+
+      setError('otp', {
+        type: 'custom',
+        message: ERROR_MESSAGES.AUTH.EMAIL_VERIFY_FAILED,
+      });
+      alert(ERROR_MESSAGES.AUTH.EMAIL_VERIFY_FAILED);
+    },
+
+    onSuccess: () => {
+      navigate('/login');
+    },
+  });
+
+  const onSubmit = (data: FormValues) => {
     if (isPending) {
       return;
     }
 
     const verificationCode = Object.values(data).join('');
-    const email = localStorage.getItem('email'); // 임시
 
     const EmailVerifyData = {
-      email: email as string,
+      email: email,
       code: verificationCode,
     };
 
