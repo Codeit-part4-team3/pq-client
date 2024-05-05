@@ -10,16 +10,17 @@ import UtilityButton from './_components/UtilityButton';
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 export default function ChatChannel() {
-  const userId = '민지';
+  const userId = 'minji';
   const roomName = '1';
   // const { serverId, channelId: roomName } = useParams();
   const socketRef = useRef<Socket | null>(null);
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
-  const [lastKey, setLastKey] = useState<lastKey | null>(null);
   const [isNoMoreMessages, setIsNoMoreMessages] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const [isClickedUtilityButton, setIsClickedUtilityButton] = useState<boolean>(false);
+  const infiniteScrollTriggerRef = useRef<HTMLDivElement | null>(null);
+  const [lastKey, setLastKey] = useState<lastKey | null>(null);
 
   const handleUiilityButtonClick = () => {
     setIsClickedUtilityButton(!isClickedUtilityButton);
@@ -37,8 +38,25 @@ export default function ChatChannel() {
     }
   };
 
-  const handleMoreMessageButton = () => {
-    socketRef.current?.emit('more_messages', { roomName, userSocketId: socketRef.current?.id, lastKey });
+  // infinite scroll : InfiniteScrollTrigger에 닿으면 추가로 메시지를 가져온다.
+  const infiniteScroll = async () => {
+    console.log('infiniteScroll');
+    if (infiniteScrollTriggerRef.current) {
+      const infiniteScrollTriggerIo = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(async (entry) => {
+            if (entry.isIntersecting && infiniteScrollTriggerRef.current && lastKey) {
+              socketRef.current?.emit('more_messages', { roomName, userSocketId: socketRef.current?.id, lastKey });
+
+              infiniteScrollTriggerIo.disconnect();
+            }
+          });
+        },
+        { threshold: 0.3 },
+      );
+
+      infiniteScrollTriggerIo.observe(infiniteScrollTriggerRef.current);
+    }
   };
 
   useEffect(() => {
@@ -92,16 +110,21 @@ export default function ChatChannel() {
 
   useEffect(() => {
     // 채팅이 추가될 때마다 스크롤을 맨 아래로 내려준다
-    if (chatContainerRef.current) {
+    if (inputValue === '' && chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [inputValue]);
+
+  useEffect(() => {
+    infiniteScroll();
+  }, [lastKey]);
 
   return (
     <Wrapper>
-      <button onClick={handleMoreMessageButton}>메시지 더보기</button>
       <ChannelHeader />
       <ChatContainer ref={chatContainerRef}>
+        {/* flex: column-reverse상태 */}
+        {/* 가장 아래쪽 */}
         <ChatMessages messages={messages} />
         {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯, 서버 데이터 필요 */}
         {isNoMoreMessages ? (
@@ -110,6 +133,11 @@ export default function ChatChannel() {
             <CreationDate>생성일 : {'2024년 04월 11일'}</CreationDate>
           </ChatChannelIntro>
         ) : null}
+        {lastKey ? (
+          <InfinityScrollTrigger ref={infiniteScrollTriggerRef}>infiniteScrollTrigger</InfinityScrollTrigger>
+        ) : null}
+
+        {/* 가장 위쪽 */}
       </ChatContainer>
       <ChatInputBox>
         <ChatInput
@@ -135,6 +163,11 @@ const Wrapper = styled.div`
   justify-content: space-between;
 
   position: relative;
+`;
+
+const InfinityScrollTrigger = styled.div`
+  width: 100%;
+  height: 100px;
 `;
 
 const ChatContainer = styled.div`
