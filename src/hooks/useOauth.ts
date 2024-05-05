@@ -1,7 +1,11 @@
 import { AxiosError } from 'axios';
+import Cookies from 'js-cookie';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'src/apis/instance/axiosInstance';
+import { ERROR_MESSAGES } from 'src/constants/error';
+import useUserStore from 'src/store/userStore';
+import { ResponseUserData } from 'src/types/userType';
 
 interface OauthProps {
   googleUrl: string;
@@ -11,6 +15,7 @@ interface OauthProps {
 
 export function useOauth({ googleUrl, kakaoUrl, redirectUri }: OauthProps) {
   const navigate = useNavigate();
+  const { setEmail, setAccessToken, setUserInfo } = useUserStore();
 
   useEffect(() => {
     (async () => {
@@ -25,30 +30,28 @@ export function useOauth({ googleUrl, kakaoUrl, redirectUri }: OauthProps) {
         let res;
         if (state === 'kakao') {
           res = await axiosInstance.get(`${kakaoUrl}?code=${code}`);
-          console.log(res);
         }
 
         if (state === 'google') {
           res = await axiosInstance.get(`${googleUrl}?code=${code}`);
-          console.log(res);
         }
 
         // 로그인 성공
         if (res?.status === 200) {
           // 데이터 가공
-
+          const data: ResponseUserData = res.data;
+          setAccessToken(data.token.accessToken);
+          setUserInfo(data.userInfo);
+          Cookies.set('refreshToken', data.token.refreshToken, { expires: 7, secure: true, sameSite: 'strict' });
           navigate('/server');
           return;
         }
 
         // 회원가입 성공
         if (res?.status === 201) {
-          console.log(res);
           const email = res.data;
-          console.log(email);
-          // 이메일 저장할 수 있도록 어딘가에 저장
-          localStorage.setItem('email', email);
-          navigate('/checkEmail');
+          setEmail(email);
+          navigate('/check-email', { replace: true });
         }
       } catch (error) {
         const e = error as AxiosError;
@@ -56,22 +59,20 @@ export function useOauth({ googleUrl, kakaoUrl, redirectUri }: OauthProps) {
         // 이메일 인증 필요
         if (e.response?.status === 403) {
           const email = (e.response.data as { email: string })['email'];
-          console.log(email);
-
-          localStorage.setItem('email', email);
-          alert('인증해주세요.');
-          navigate('/checkEmail');
+          setEmail(email);
+          alert(ERROR_MESSAGES.AUTH.EMAIL_VERIFY_REQUIRED);
+          navigate('/check-email', { replace: true });
           return;
         }
 
         // 존재하지 않는 유저
         if (e.response?.status === 404) {
-          alert('존재하지 않는 유저입니다.');
+          alert(ERROR_MESSAGES.AUTH.USER_NOT_FOUND);
         }
 
         // 이미 가입된 유저
         if (e.response?.status === 409) {
-          alert('이미 가입된 회원입니다.');
+          alert(ERROR_MESSAGES.AUTH.DUPLICATE_EMAIL);
           navigate('/login');
           return;
         }

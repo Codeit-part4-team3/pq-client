@@ -7,14 +7,15 @@ import { EmailInput, PasswordInput } from './LoginInputs';
 import useUserStore from 'src/store/userStore';
 import { AxiosError } from 'axios';
 import { useMutationPost } from 'src/apis/service/service';
-import { LoginRequest, LoginResponse, LoginResponseBody } from '../_type/type';
+import { LoginRequest, LoginResponse } from '../_type/type';
 import { USER_URL } from 'src/constants/apiUrl';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import { ResponseUserData } from 'src/types/userType';
 
 export default function LoginForm() {
   const navigate = useNavigate();
-  const { setAccessToken } = useUserStore();
+  const { setAccessToken, setUserInfo } = useUserStore();
 
   const {
     control,
@@ -47,17 +48,23 @@ export default function LoginForm() {
         return;
       }
 
+      if (status === 403) {
+        alert(ERROR_MESSAGES.AUTH.EMAIL_VERIFY_REQUIRED);
+        navigate('/check-email');
+        return;
+      }
+
       alert(ERROR_MESSAGES.AUTH.LOGIN_FAILED);
     },
 
-    onSuccess: (data: LoginResponseBody) => {
+    onSuccess: (data: ResponseUserData) => {
       const { accessToken, refreshToken } = data.token;
 
       if (!accessToken || !refreshToken) {
         alert(ERROR_MESSAGES.AUTH.NO_TOKEN);
         throw new Error(ERROR_MESSAGES.AUTH.NO_TOKEN);
       }
-
+      setUserInfo(data.userInfo);
       setAccessToken(accessToken);
       Cookies.set('refreshToken', refreshToken, { expires: 7, secure: true, sameSite: 'strict' });
       navigate('/server');
