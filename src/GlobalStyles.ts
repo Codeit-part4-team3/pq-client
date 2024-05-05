@@ -30,7 +30,7 @@ export const GlobalStyles = createGlobalStyle`
 
     // blue
     --blue_5534DA: #5534DA;
-    // 이름에 %를 사용할 수 없음
+    // 이름에 %를 사용할 수 없음, 수정해야할듯
     /* --blue_10%: #EDF5FD; */
   }
 
