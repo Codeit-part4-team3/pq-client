@@ -5,7 +5,6 @@ import EmailCheck from './pages/signup/EmailCheck.tsx/EmailCheck';
 import FindPassword from './pages/login/findPassword/FindPassowrd';
 import ChangePassword from './pages/login/changePassword/ChangePassword';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Router from './routes/routes';
 import { Route, Routes } from 'react-router-dom';
 import Landing from './pages/landing/Landing';
 import Login from './pages/login/Login';
@@ -38,7 +37,6 @@ function App() {
           <Route path='*' element={<NotFound />} />
           <Route path='/admin' element={<Admin />} />
         </Routes>
-        <Router />
       </QueryClientProvider>
     </>
   );
