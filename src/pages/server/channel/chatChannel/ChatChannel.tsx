@@ -182,23 +182,23 @@ const ChatContainer = styled.div`
   margin-right: 20px;
 `;
 
-const ChatChannelIntro = styled.div``;
+const ChatChannelIntro = styled.div`
+  margin-top: 495px;
+`;
 
 const ChannelName = styled.h1`
-  color: #000;
+  color: var(--black_000000);
   font-family: Pretendard;
   font-size: 20px;
-  font-style: normal;
   font-weight: 700;
   line-height: 160%; /* 32px */
   margin: 0;
 `;
 
 const CreationDate = styled.p`
-  color: #666;
+  color: var(--gray_666666);
   font-family: Pretendard;
   font-size: 14px;
-  font-style: normal;
   font-weight: 400;
   line-height: 160%; /* 22.4px */
   margin: 0;
@@ -216,12 +216,12 @@ const ChatInputBox = styled.div`
 
 const ChatInput = styled.input`
   border-radius: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--gray_CCCCCC);
   width: 100%;
   height: 48px;
 
   flex-shrink: 0;
-  background: #fff;
+  background: var(--white_FFFFFF);
   padding-left: 16px;
   padding-right: 12px;
 

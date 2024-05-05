@@ -9,12 +9,29 @@ export const GlobalStyles = createGlobalStyle`
     width: 100%;
     min-height: 100vh;
 
-    background-color: #fff0f0;
+    background-color: #FFF;
   }
 
   #root {
     width: 100%;
     min-height: 100vh;
+
+    // black - gray - white
+    --black_000000: #000000;
+    --black_1A1A1A: #1A1A1A;
+    --black_333333: #333333;
+    --blcak_4D4D4D: #4D4D4D;
+    --gray_666666: #666666;
+    --gray_999999: #999999;
+    --gray_CCCCCC: #CCCCCC;
+    --gray_EEEEEE: #EEEEEE;
+    --gray_FAFAFA: #FAFAFA;
+    --white_FFFFFF: #FFFFFF;
+
+    // blue
+    --blue_5534DA: #5534DA;
+    // 이름에 %를 사용할 수 없음
+    /* --blue_10%: #EDF5FD; */
   }
 
   * {

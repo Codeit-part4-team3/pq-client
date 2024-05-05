@@ -1,18 +1,6 @@
 import { GlobalStyles } from './GlobalStyles';
-import Channel from './pages/server/channel/Channel';
-import Admin from './pages/admin/Admin';
-import EmailCheck from './pages/signup/EmailCheck.tsx/EmailCheck';
-import FindPassword from './pages/login/findPassword/FindPassowrd';
-import ChangePassword from './pages/login/changePassword/ChangePassword';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Route, Routes } from 'react-router-dom';
-import Landing from './pages/landing/Landing';
-import Login from './pages/login/Login';
-import Signup from './pages/signup/Signup';
-import Server from './pages/server/Server';
-import NotFound from './pages/notfound/NotFound';
-import ChatChannel from './pages/server/channel/chatChannel/ChatChannel';
-import VoiceChannel from './pages/server/channel/voiceChannel/VoiceChannel';
+import Router from './routes/routes';
 
 function App() {
   const queryClient = new QueryClient();
@@ -21,22 +9,7 @@ function App() {
     <>
       <GlobalStyles />
       <QueryClientProvider client={queryClient}>
-        <Routes>
-          <Route path='/' element={<Landing />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/findPassword' element={<FindPassword />} />
-          <Route path='/changePassword' element={<ChangePassword />} />
-          <Route path='/signup' element={<Signup />} />
-          <Route path='/checkEmail' element={<EmailCheck />} />
-          <Route path='/server' element={<Server />} />
-          <Route path='/server/:serverId' element={<Server />}>
-            <Route path='channel/:channelId' element={<Channel />} />
-          </Route>
-          <Route path='chatTest' element={<ChatChannel />} />
-          <Route path='voiceTest' element={<VoiceChannel />} />
-          <Route path='*' element={<NotFound />} />
-          <Route path='/admin' element={<Admin />} />
-        </Routes>
+        <Router />
       </QueryClientProvider>
     </>
   );

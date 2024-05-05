@@ -23,7 +23,7 @@ const Wrapper = styled.div`
 
 const ChatDayDividerText = styled.div`
   border-radius: 12px;
-  border: 1px solid #eee;
+  border: 1px solid var(--gray_CCCCCC);
 
   display: flex;
   padding: 4px 13px;

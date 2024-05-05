@@ -88,19 +88,17 @@ const ProfileImage = styled.img`
 
 const NameTag = styled.div`
   border-radius: 4px;
-  border: 0.1px solid #ccc;
+  border: 0.1px solid var(--gray_CCCCCC);
 
   display: inline-flex;
   padding: 6px 12px;
   justify-content: center;
   align-items: center;
   gap: 10px;
-  background: #fff;
-  color: #000;
+  background: var(--white_FFFFFF);
+  color: var(--black_000000);
   font-family: Pretendard;
   font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
   line-height: 160%; /* 19.2px */
 
   position: absolute;
@@ -116,8 +114,7 @@ const MicOff = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-shrink: 0;
-  background: #fff;
+  background: var(--white_FFFFFF);
 
   position: absolute;
   right: 10px;

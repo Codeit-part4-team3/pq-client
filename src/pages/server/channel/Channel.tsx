@@ -21,7 +21,7 @@ const Area = styled.section`
   width: 100%;
   height: 100vh;
 
-  background-color: #ffffff;
+  background-color: var(--white_FFFFFF);
 
   position: relative;
 `;

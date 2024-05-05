@@ -69,6 +69,10 @@ const ChatMessageWrapper = styled.div`
   gap: 12px;
 
   margin-top: 20px;
+
+  &:hover {
+    background-color: #fafafa;
+  }
 `;
 
 const UserProfileImage = styled.div`
@@ -77,7 +81,7 @@ const UserProfileImage = styled.div`
 
   img {
     border-radius: 4px;
-    border: 1px solid #eee;
+    border: 1px solid var(--gray_EEEEEE);
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -95,20 +99,17 @@ const ChatMessageContentHeader = styled.div`
 `;
 
 const ChatMessageSender = styled.div`
-  color: #000;
+  color: var(--black_000000);
   font-family: Pretendard;
   font-size: 16px;
-  font-style: normal;
   font-weight: 700;
   line-height: 160%; /* 25.6px */
 `;
 
 const ChatMessageCreatedAt = styled.div`
-  color: #666;
+  color: var(--gray_666666);
   font-family: Pretendard;
   font-size: 10px;
-  font-style: normal;
-  font-weight: 400;
   line-height: 160%; /* 16px */
 
   display: flex;
@@ -116,11 +117,9 @@ const ChatMessageCreatedAt = styled.div`
 `;
 
 const ChatMessageText = styled.p`
-  color: #000;
+  color: var(--black_000000);
   font-family: Pretendard;
   font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
   line-height: 160%; /* 25.6px */
   margin: 0;
 `;
@@ -128,4 +127,8 @@ const ChatMessageText = styled.p`
 const SameUserMessage = styled.div`
   display: flex;
   padding-left: 52px;
+
+  &:hover {
+    background-color: #fafafa;
+  }
 `;

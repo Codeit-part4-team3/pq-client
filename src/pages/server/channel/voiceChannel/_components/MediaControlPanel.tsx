@@ -40,19 +40,18 @@ const Wrapper = styled.div`
 
 const Button = styled.button`
   border-radius: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--gray_CCCCCC);
   width: 60px;
   height: 60px;
 
-  background: #fff;
+  background: var(--white_FFFFFF);
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-shrink: 0;
 
   cursor: pointer;
 
   &:hover {
-    background: #ccc;
+    background: var(--gray_CCCCCC);
   }
 `;

@@ -27,10 +27,10 @@ export default function UtilityMenu() {
 
 const Wrapper = styled.div`
   border-radius: 8px;
-  border-bottom: 0.5px solid #eee;
+  border-bottom: 0.5px solid var(--gray_EEEEEE);
 
   gap: 10px;
-  background: var(--material-theme-ref-secondary-secondary100, #fff);
+  background: var(--material-theme-ref-secondary-secondary100, --white_FFFFFF);
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
 
   position: absolute;
