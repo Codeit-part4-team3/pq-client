@@ -6,18 +6,26 @@ import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { lastKey, MessageItem } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
+import UtilityMenu from './_components/UtilityMenu';
+// import { useParams } from 'react-router-dom';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 export default function ChatChannel() {
-  const userId = '1';
+  const userId = '민지';
   const roomName = '1';
+  // const { serverId, channelId: roomName } = useParams();
   const socketRef = useRef<Socket | null>(null);
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [lastKey, setLastKey] = useState<lastKey | null>(null);
   const [isNoMoreMessages, setIsNoMoreMessages] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
+  const [isClickedUtilityButton, setIsClickedUtilityButton] = useState<boolean>(false);
+
+  const handleUiilityButtonClick = () => {
+    setIsClickedUtilityButton(!isClickedUtilityButton);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -97,7 +105,7 @@ export default function ChatChannel() {
       <ChannelHeader />
       <ChatContainer ref={chatContainerRef}>
         <ChatMessages messages={messages} />
-        {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯 */}
+        {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯, 서버 데이터 필요 */}
         {isNoMoreMessages ? (
           <ChatChannelIntro>
             <ChannelName>{'# 채팅 채널1'}의 첫 시작 부분이에요</ChannelName>
@@ -113,9 +121,10 @@ export default function ChatChannel() {
           onChange={handleInputChange}
           onKeyDown={handleSendMessageKeyDown}
         />
-        <NoTitleButton>
+        <UtilityButton isClickedUtilityButton={isClickedUtilityButton} onClick={handleUiilityButtonClick}>
           <img src={addSvg} alt='add 이미지' width={24} height={24} />
-        </NoTitleButton>
+          {isClickedUtilityButton ? <UtilityMenu /> : null}
+        </UtilityButton>
       </ChatInputBox>
     </Wrapper>
   );
@@ -190,15 +199,16 @@ const ChatInput = styled.input`
   }
 `;
 
-const NoTitleButton = styled.button`
+const UtilityButton = styled.button<{ isClickedUtilityButton: boolean }>`
   border: none;
+  border-radius: 4px;
   width: 24px;
   height: 24px;
 
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: transparent;
+  background-color: ${({ isClickedUtilityButton }) => (isClickedUtilityButton ? '#d8e2ff' : 'transparent')};
 
   position: absolute;
   top: 12px;
@@ -206,4 +216,8 @@ const NoTitleButton = styled.button`
   bottom: 12px;
 
   cursor: pointer;
+
+  &:hover {
+    background-color: #d8e2ff;
+  }
 `;

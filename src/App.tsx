@@ -12,6 +12,7 @@ import Login from './pages/login/Login';
 import Signup from './pages/signup/Signup';
 import Server from './pages/server/Server';
 import NotFound from './pages/notfound/NotFound';
+import ChatChannel from './pages/server/channel/chatChannel/ChatChannel';
 
 function App() {
   const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ function App() {
           <Route path='/server/:serverId' element={<Server />}>
             <Route path='channel/:channelId' element={<Channel />} />
           </Route>
+          <Route path='chatTest' element={<ChatChannel />} />
           <Route path='*' element={<NotFound />} />
           <Route path='/admin' element={<Admin />} />
         </Routes>
