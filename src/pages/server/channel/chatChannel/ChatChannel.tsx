@@ -117,6 +117,7 @@ export default function ChatChannel() {
 
   useEffect(() => {
     infiniteScroll();
+    // eslint-disable-next-line
   }, [lastKey]);
 
   return (

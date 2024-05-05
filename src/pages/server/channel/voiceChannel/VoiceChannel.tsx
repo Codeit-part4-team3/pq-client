@@ -9,7 +9,7 @@ import RemoteMedia from './_components/RemoteMedia';
 
 // import { useParams } from 'react-router-dom';
 
-const SOCKET_SERVER_URL = 'http://localhost:3000';
+const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 const pc_config = {
   iceServers: [
@@ -253,6 +253,7 @@ export default function VoiceChannel() {
       }
     });
 
+    // 다른 유저가 자신의 비디오를 껐을 때
     socketRef.current.on('video_track_enabled_changed', ({ enabled, userSocketId }) => {
       setUsers((prevUsers) => {
         const user = prevUsers.find((user) => user.socketId === userSocketId);
@@ -263,13 +264,22 @@ export default function VoiceChannel() {
       });
     });
 
-    socketRef.current.on('user_exit', ({ socketId }) => {
-      pcsRef.current[socketId].close();
-      delete pcsRef.current[socketId];
-      setUsers((prevUsers) => prevUsers.filter((user) => user.socketId !== socketId));
+    // 다른 유저가 나갔을 때
+    socketRef.current.on('user_exit', ({ exitSocketId }) => {
+      console.log('user_exit', exitSocketId);
+      // 해당 유저의 RTCPeerConnection을 종료하고 users에서 제거
+      pcsRef.current[exitSocketId].close();
+      delete pcsRef.current[exitSocketId];
+      setUsers((prevUsers) => prevUsers.filter((user) => user.socketId !== exitSocketId));
     });
 
     getLocalStream();
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
   }, [roomName, userId, getLocalStream]);
 
   return (
