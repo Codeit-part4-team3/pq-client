@@ -27,5 +27,8 @@ export const ERROR_MESSAGES = {
 
     NO_TOKEN: '토큰이 존재하지 않습니다.',
     SESSION_EXPIRED: '세션이 만료되었습니다.',
+
+    EMAIL_VERIFY_REQUIRED: '이메일 인증을 해주세요.',
+    USER_NOT_FOUND: '존재하지 않는 유저입니다.',
   },
 } as const;
