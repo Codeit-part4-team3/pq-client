@@ -99,7 +99,7 @@ export default function VoiceChannel() {
   const getLocalStream = useCallback(async () => {
     console.log('getLocalStream');
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
