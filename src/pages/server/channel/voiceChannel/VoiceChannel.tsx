@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import LocalMedia from './_components/LocalMedia';
 import RemoteMedia from './_components/RemoteMedia';
+import MeetingNote from './_components/MeetingNote';
 
 // import { useParams } from 'react-router-dom';
 
@@ -13,19 +14,16 @@ const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 const pc_config = {
   iceServers: [
-    {
-      urls: ['stun:stun.l.google.com:19302'],
-    },
     // {
-    //   urls: ['turn:54.180.127.213:3478'],
-    //   username: 'codeit', // 사용자 이름(username) 설정
-    //   credential: 'sprint101!', // 비밀번호(password) 설정
+    //   urls: ['stun:stun.l.google.com:19302'],
     // },
+    { urls: 'turn:43.200.40.206', username: 'codeit', credential: 'sprint101!' }, // TURN 서버 설정
   ],
 };
 
 /**@ToDo 매일 시간내서 RTC 고치기 */
 export default function VoiceChannel() {
+  console.log('VoiceChannel');
   // const { channelId: roomName } = useParams();
   const roomName = 'voiceTestRoom';
   const userId = '1';
@@ -55,6 +53,9 @@ export default function VoiceChannel() {
     isMutedLocalStream,
     showLocalVideo,
   };
+
+  // 회의록
+  const showMeetingNote = true;
 
   /**
    * audioTrack.enabled의 경우 소리 생산 자체를 관여해서 들리지 않게 한다.
@@ -96,6 +97,7 @@ export default function VoiceChannel() {
   };
 
   const getLocalStream = useCallback(async () => {
+    console.log('getLocalStream');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       if (localVideoRef.current) {
@@ -112,6 +114,7 @@ export default function VoiceChannel() {
   }, []);
 
   useEffect(() => {
+    console.log('useEffect');
     socketRef.current = io(SOCKET_SERVER_URL);
 
     socketRef.current.on('participants_list', async ({ participants }) => {
@@ -285,26 +288,38 @@ export default function VoiceChannel() {
   return (
     <Wrapper>
       <ChannelHeader />
-      <VideoContainer>
-        {/* myVideo */}
-        <LocalMedia {...localMediaData} />
-        {/* otherVideos */}
-        {users.map((user) => (
-          <RemoteMedia key={user.socketId} {...user} isMutedAllRemoteStreams={isMutedAllRemoteStreams} />
-        ))}
-      </VideoContainer>
-      <MediaControlPanel
-        onMuteLocalStreamButtonClick={handleMuteLocalStream}
-        onOffLocalCameraButtonClick={handleOffLocalCamera}
-        onHandleMuteAllRemoteStreamsButtonClick={handleMuteAllRemoteStreams}
-      />
+      <button
+        onClick={() => {
+          console.log('localStreamRef.current', localStreamRef.current?.getTracks());
+        }}
+      >
+        getLocalStream
+      </button>
+      <ContentBox>
+        <MediaBox>
+          <VideoContainer>
+            {/* myVideo */}
+            <LocalMedia {...localMediaData} />
+            {/* otherVideos */}
+            {users.map((user) => (
+              <RemoteMedia key={user.socketId} {...user} isMutedAllRemoteStreams={isMutedAllRemoteStreams} />
+            ))}
+          </VideoContainer>
+          <MediaControlPanel
+            onMuteLocalStreamButtonClick={handleMuteLocalStream}
+            onOffLocalCameraButtonClick={handleOffLocalCamera}
+            onHandleMuteAllRemoteStreamsButtonClick={handleMuteAllRemoteStreams}
+          />
+        </MediaBox>
+        {showMeetingNote ? <MeetingNote /> : null}
+      </ContentBox>
     </Wrapper>
   );
 }
-//
+
 const Wrapper = styled.div`
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background-color: var(--white_FFFFFF);
   display: flex;
   flex-direction: column;
@@ -317,4 +332,15 @@ const VideoContainer = styled.div`
   gap: 20px;
   padding-top: 80px;
   padding-bottom: 125px;
+`;
+
+const ContentBox = styled.div`
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+`;
+
+const MediaBox = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
