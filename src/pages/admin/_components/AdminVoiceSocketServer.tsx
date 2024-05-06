@@ -1,13 +1,12 @@
 import styled from 'styled-components';
 
-import MediaControlPanel from './_components/MediaControlPanel';
 import ChannelHeader from 'src/components/channel/ChannelHeader';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import LocalMedia from './_components/LocalMedia';
-import RemoteMedia from './_components/RemoteMedia';
-import MeetingNote from './_components/MeetingNote';
-import { useParams } from 'react-router-dom';
+import LocalMedia from 'src/pages/server/channel/voiceChannel/_components/LocalMedia';
+import MediaControlPanel from 'src/pages/server/channel/voiceChannel/_components/MediaControlPanel';
+import RemoteMedia from 'src/pages/server/channel/voiceChannel/_components/RemoteMedia';
+import MeetingNote from 'src/pages/server/channel/voiceChannel/_components/MeetingNote';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
@@ -21,10 +20,9 @@ const pc_config = {
 };
 
 /**@ToDo 매일 시간내서 RTC 고치기 */
-export default function VoiceChannel() {
-  const { channelId } = useParams();
-  const roomName = channelId || 'test';
-  const userId = 'userId';
+export default function AdminVoiceSocketServer() {
+  const roomName = 'admin_voice_room';
+  const userId = 'admin_user_id';
 
   // socket
   const socketRef = useRef<Socket | null>(null);
@@ -109,7 +107,7 @@ export default function VoiceChannel() {
     } catch (error) {
       console.error('failed to get user media :', error);
     }
-  }, [roomName]);
+  }, []);
 
   useEffect(() => {
     console.log('useEffect');

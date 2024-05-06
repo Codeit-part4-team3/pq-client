@@ -5,14 +5,14 @@ import { io, Socket } from 'socket.io-client';
 import { lastKey, MessageItem } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
 import UtilityButton from './_components/UtilityButton';
-// import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 export default function ChatChannel() {
   const userId = 'minji';
-  const roomName = '1';
-  // const { serverId, channelId: roomName } = useParams();
+  const { channelId } = useParams();
+  const roomName = channelId || 'test';
   const socketRef = useRef<Socket | null>(null);
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
