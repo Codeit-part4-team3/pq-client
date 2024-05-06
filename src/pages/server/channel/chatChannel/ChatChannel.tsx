@@ -9,18 +9,22 @@ import { useParams } from 'react-router-dom';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
+/**@Todo Channel 컴포넌트로 부터 channel date를 prop로 받고 데이터 바인딩 예정
+ * 유저 데이터들 처리하는 로직 짜야함
+ */
 export default function ChatChannel() {
   const userId = 'minji';
-  const { channelId } = useParams();
+  const { serverId, channelId } = useParams();
+  console.log('serverId', serverId, 'channelId', channelId);
   const roomName = channelId || 'test';
   const socketRef = useRef<Socket | null>(null);
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [isNoMoreMessages, setIsNoMoreMessages] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
-  const [isClickedUtilityButton, setIsClickedUtilityButton] = useState<boolean>(false);
   const infiniteScrollTriggerRef = useRef<HTMLDivElement | null>(null);
   const [lastKey, setLastKey] = useState<lastKey | null>(null);
+  const [isClickedUtilityButton, setIsClickedUtilityButton] = useState<boolean>(false);
 
   const handleUiilityButtonClick = () => {
     setIsClickedUtilityButton(!isClickedUtilityButton);
@@ -40,7 +44,6 @@ export default function ChatChannel() {
 
   // infinite scroll : InfiniteScrollTrigger에 닿으면 추가로 메시지를 가져온다.
   const infiniteScroll = async () => {
-    console.log('infiniteScroll');
     if (infiniteScrollTriggerRef.current) {
       const infiniteScrollTriggerIo = new IntersectionObserver(
         (entries) => {

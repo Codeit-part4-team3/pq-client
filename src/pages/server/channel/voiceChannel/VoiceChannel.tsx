@@ -20,9 +20,13 @@ const pc_config = {
   ],
 };
 
-/**@ToDo 매일 시간내서 RTC 고치기 */
+/**@ToDo
+ * 1. 유저 데이터들 처리하는 로직 짜야함
+ * 2. Channel 컴포넌트로 부터 channel date를 prop로 받고 데이터 바인딩 예정 */
+
 export default function VoiceChannel() {
-  const { channelId } = useParams();
+  const { serverId, channelId } = useParams();
+  console.log('serverId', serverId, 'channelId', channelId);
   const roomName = channelId || 'test';
   const userId = 'userId';
 
