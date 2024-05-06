@@ -9,8 +9,6 @@ import Admin from 'src/pages/admin/Admin';
 import EmailCheck from 'src/pages/signup/EmailCheck.tsx/EmailCheck';
 import FindPassword from 'src/pages/login/findPassword/FindPassowrd';
 import ChangePassword from 'src/pages/login/changePassword/ChangePassword';
-import ChatChannel from 'src/pages/server/channel/chatChannel/ChatChannel';
-import VoiceChannel from 'src/pages/server/channel/voiceChannel/VoiceChannel';
 
 export default function Router() {
   return (
@@ -25,8 +23,6 @@ export default function Router() {
       <Route path='/server/:serverId' element={<Server />}>
         <Route path='channel/:channelId' element={<Channel />} />
       </Route>
-      <Route path='chatTest' element={<ChatChannel />} />
-      <Route path='voiceTest' element={<VoiceChannel />} />
       <Route path='*' element={<NotFound />} />
       <Route path='/admin' element={<Admin />} />
     </Routes>
