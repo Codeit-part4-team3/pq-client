@@ -14,19 +14,16 @@ const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 const pc_config = {
   iceServers: [
-    {
-      urls: ['stun:stun.l.google.com:19302'],
-    },
     // {
-    //   urls: ['turn:54.180.127.213:3478'],
-    //   username: 'codeit', // 사용자 이름(username) 설정
-    //   credential: 'sprint101!', // 비밀번호(password) 설정
+    //   urls: ['stun:stun.l.google.com:19302'],
     // },
+    { urls: 'turn:43.200.40.206', username: 'codeit', credential: 'sprint101!' }, // TURN 서버 설정
   ],
 };
 
 /**@ToDo 매일 시간내서 RTC 고치기 */
 export default function VoiceChannel() {
+  console.log('VoiceChannel');
   // const { channelId: roomName } = useParams();
   const roomName = 'voiceTestRoom';
   const userId = '1';
@@ -100,8 +97,9 @@ export default function VoiceChannel() {
   };
 
   const getLocalStream = useCallback(async () => {
+    console.log('getLocalStream');
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
@@ -116,6 +114,7 @@ export default function VoiceChannel() {
   }, []);
 
   useEffect(() => {
+    console.log('useEffect');
     socketRef.current = io(SOCKET_SERVER_URL);
 
     socketRef.current.on('participants_list', async ({ participants }) => {
@@ -289,6 +288,13 @@ export default function VoiceChannel() {
   return (
     <Wrapper>
       <ChannelHeader />
+      <button
+        onClick={() => {
+          console.log('localStreamRef.current', localStreamRef.current?.getTracks());
+        }}
+      >
+        getLocalStream
+      </button>
       <ContentBox>
         <MediaBox>
           <VideoContainer>
