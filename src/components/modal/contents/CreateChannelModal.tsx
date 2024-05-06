@@ -10,6 +10,7 @@ import { FormEventHandler, useContext, useState } from 'react';
 import { useMutationPost } from 'src/apis/service/service';
 import { ChannelRequest, ChannelResponse } from 'src/pages/server/_types/type';
 import { ServerIdContext, UserIdContext } from 'src/pages/server/Server';
+import ChannelModeInput from '../input/ChannelModeInput';
 
 interface Props extends ModalProps {
   groupId: number;
@@ -28,10 +29,14 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
   const [errorMessage, setErrorMessage] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
   const [isNextModal, setIsNextModal] = useState(false);
-
+  const [channelMode, setChannelMode] = useState(false);
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
   const handleInvite = (email: string) => {
     setInvitedUsers([...invitedUsers, email]);
+  };
+
+  const toggleClick = () => {
+    setChannelMode(!channelMode);
   };
 
   const serverId = useContext<number>(ServerIdContext);
@@ -60,7 +65,7 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
       return;
     }
     // 생성로직
-    createMutation.mutate({ name: channelName, isPrivate: isPrivate, isVoice: false, groupId });
+    createMutation.mutate({ name: channelName, isPrivate: isPrivate, isVoice: channelMode, groupId });
     closeModal();
   };
 
@@ -85,6 +90,7 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
           <>
             <ModalTitle>채널 만들기</ModalTitle>
             <ModalForm onSubmit={createChannel}>
+              <ChannelModeInput checked={channelMode} onChange={toggleClick} />
               <EssentialInput
                 errorMessage={errorMessage}
                 labelName='채널 이름'

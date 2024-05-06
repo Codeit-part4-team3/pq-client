@@ -52,3 +52,12 @@ export const NameInput = styled.input`
     border: 1px solid #258dff;
   }
 `;
+
+export const EssentialSpan = styled.span`
+  color: #258dff;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+`;
