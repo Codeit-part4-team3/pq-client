@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { CHAT_URL } from 'src/constants/apiUrl';
+import { CHAT_URL, USER_URL } from 'src/constants/apiUrl';
 import useUserStore from 'src/store/userStore';
 import handleHttpError from 'src/utils/handleHttpError';
 
@@ -13,7 +13,7 @@ const getAccessToken = () => {
  */
 
 const axiosInstance = axios.create({
-  baseURL: CHAT_URL.BASE,
+  baseURL: USER_URL.BASE,
   headers: {
     'Content-Type': 'application/json',
   },

@@ -7,6 +7,7 @@ export const USER_URL = {
   BASE: import.meta.env.VITE_APP_ORIGIN_USER,
   USER: '/user/v1/user',
   AUTH: '/user/v1/auth',
+  PAYMENTS: '/user/v1/payments',
 };
 
 export const LOGIN_REDIRECT = import.meta.env.VITE_APP_LOGIN_REDIRECT_URI;
