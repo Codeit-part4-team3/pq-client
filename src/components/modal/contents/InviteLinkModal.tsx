@@ -19,7 +19,7 @@ export default function InviteLinkModal({ closeModal, isOpen, serverId }: Props)
   console.log(data);
 
   const onClipBoard = () => {
-    navigator.clipboard.writeText(`${import.meta.env.VITE_APP_ORIGIN}/invite/${data?.inviteLink}`).then(() => {
+    navigator.clipboard.writeText(`${process.env.VITE_APP_ORIGIN}/invite/${data?.inviteLink}`).then(() => {
       setMsg('링크 복사 완료');
     });
   };
@@ -38,7 +38,7 @@ export default function InviteLinkModal({ closeModal, isOpen, serverId }: Props)
             <span>{msg}</span>
           </Top>
           <LinkContainer>
-            <span>{`${import.meta.env.VITE_APP_ORIGIN}/invite/${data?.inviteLink}`}</span>
+            <span>{`${process.env.VITE_APP_ORIGIN}/invite/${data?.inviteLink}`}</span>
             <button onClick={onClipBoard}>복사</button>
           </LinkContainer>
         </Body>
