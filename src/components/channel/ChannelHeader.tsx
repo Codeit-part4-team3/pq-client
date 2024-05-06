@@ -29,7 +29,7 @@ export default function ChannelHeader() {
 }
 
 const Wrapper = styled.div`
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--gray_CCCCCC);
   width: 100%;
   height: 48px;
 
@@ -50,20 +50,16 @@ const ChannelName = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #000;
+  color: var(--black_000000);
   font-family: Pretendard;
   font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
   line-height: 160%; /* 25.6px */
 `;
 
 const ChannelDescription = styled.div`
-  color: #999;
+  color: var(--gray_666666);
   font-family: Pretendard;
   font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
   line-height: 160%; /* 25.6px */
 `;
 
@@ -73,21 +69,18 @@ const RightBox = styled.div`
 
 const ChannelParticipants = styled.button`
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--gray_CCCCCC);
   width: 66px;
   height: 30px;
 
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-shrink: 0;
   gap: 8px;
-  background-color: #fff;
-  color: #666;
+  background-color: var(--white_FFFFFF);
+  color: var(--gray_666666);
   font-family: Pretendard;
   font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
   line-height: 160%; /* 22.4px */
 
   cursor: pointer;
