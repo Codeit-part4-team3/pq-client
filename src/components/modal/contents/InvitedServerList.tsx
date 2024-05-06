@@ -3,15 +3,11 @@ import Modal from '../modal';
 import { ModalContainer, ModalForm, ModalTitle } from '../CommonStyles';
 import { useMutationPost, useQueryGet } from 'src/apis/service/service';
 import { InvitedServerRequest, InvitedServerResponse } from 'src/pages/server/_types/type';
-import { useLocation } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 
 export default function InvitedServerList({ closeModal, isOpen }: ModalProps) {
-  const location = useLocation();
-  const serverId = location.pathname.split('/')[2];
-
   const { userInfo } = useUserStore();
   const userId = userInfo.id;
 
@@ -21,8 +17,21 @@ export default function InvitedServerList({ closeModal, isOpen }: ModalProps) {
   );
 
   const mutation = useMutationPost<InvitedServerResponse, InvitedServerRequest>(
-    `/chat/v1/server/${serverId}/invitedServer`,
+    `/chat/v1/server/invitedServer?userId=${userId}`,
+    {
+      onSuccess: () => {
+        refetch();
+      },
+    },
   );
+
+  const onInvite = async (inviteId: number, isAccept: boolean) => {
+    mutation.mutate({ inviteId, isAccept });
+  };
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
 
   useEffect(() => {
     refetch();
@@ -31,7 +40,7 @@ export default function InvitedServerList({ closeModal, isOpen }: ModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
       <ModalContainer>
-        <ModalForm>
+        <ModalForm onSubmit={onSubmit}>
           <ModalTitle>초대받은 서버목록</ModalTitle>
           <InviteList>
             <InviteItem>
@@ -41,15 +50,16 @@ export default function InvitedServerList({ closeModal, isOpen }: ModalProps) {
               </TextContainer>
             </InviteItem>
             {data?.map((server) => {
+              if (!server) return null;
               return (
                 <InviteItem>
                   <TextContainer>
-                    <div>{`🔺 ${server?.serverName}`}</div>
-                    <div>{`✉️ ${server?.inviterName}`}</div>
+                    <div>{`▪️ ${server.serverName}`}</div>
+                    <div>{`✉️ ${server.inviterName}`}</div>
                   </TextContainer>
                   <ButtonContainer>
-                    <Button>수락</Button>
-                    <Button>거절</Button>
+                    <Button onClick={() => onInvite(server.inviteId, true)}>수락</Button>
+                    <Button onClick={() => onInvite(server.inviteId, false)}>거절</Button>
                   </ButtonContainer>
                 </InviteItem>
               );
@@ -72,6 +82,8 @@ const InviteItem = styled.div`
 const InviteList = styled.div`
   display: flex;
   flex-direction: column;
+
+  gap: 10px;
 `;
 
 const TextContainer = styled.div`

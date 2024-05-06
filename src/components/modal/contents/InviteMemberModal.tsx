@@ -7,12 +7,15 @@ import ModalButtons from '../button/ModalButtons';
 import { useMutationPost } from 'src/apis/service/service';
 import { InviteMemberRequest, InviteMemberResponse } from 'src/pages/server/_types/type';
 import { useLocation } from 'react-router-dom';
+import useUserStore from 'src/store/userStore';
 
 export default function InviteMemberModal({ closeModal, isOpen }: ModalProps) {
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [memberEmail, setMemberEmail] = useState<string>('');
   const location = useLocation();
   const serverId = location.pathname.split('/')[2];
+  const { userInfo } = useUserStore();
+  const userId = userInfo.id;
 
   const mutation = useMutationPost<InviteMemberResponse, InviteMemberRequest>(
     `/chat/v1/server/${serverId}/inviteMember`,
@@ -28,7 +31,7 @@ export default function InviteMemberModal({ closeModal, isOpen }: ModalProps) {
     setMemberEmail('');
 
     // 생성로직
-    mutation.mutate({ inviterId: 2, inviteeEmail: memberEmail });
+    mutation.mutate({ inviterId: userId, inviteeEmail: memberEmail });
     closeModal();
   };
 

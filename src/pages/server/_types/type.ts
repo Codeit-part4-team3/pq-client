@@ -43,11 +43,12 @@ interface IInviteMember {
 export type InviteMemberRequest = IInviteMember;
 export type InviteMemberResponse = IInviteMember | null;
 
-interface IInvitee {
-  id: number;
+interface IInvite {
+  inviteId: number;
+  isAccept: boolean;
 }
 
-export type InvitedServerRequest = IInvitee;
+export type InvitedServerRequest = IInvite;
 
 interface IInvitedServer {
   inviteId: number;
