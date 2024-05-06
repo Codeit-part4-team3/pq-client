@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import CreateCategoryModal from 'src/components/modal/contents/CreateCategoryModal';
+import InvitedServerList from 'src/components/modal/contents/InvitedServerList';
 import InviteLinkModal from 'src/components/modal/contents/InviteLinkModal';
 import InviteMemberModal from 'src/components/modal/contents/InviteMemberModal';
 import { useOpenModal } from 'src/hooks/useOpenModal';
@@ -14,6 +15,11 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
   const { isOpen: isCategory, openModal: openCategory, closeModal: closeCategory } = useOpenModal();
   const { isOpen: isInviteLink, openModal: openInviteLink, closeModal: closeInviteLink } = useOpenModal();
   const { isOpen: isInviteMember, openModal: openInviteMember, closeModal: closeInviteMember } = useOpenModal();
+  const {
+    isOpen: isInvitedServerList,
+    openModal: openInvitedServerList,
+    closeModal: closeInvitedServerList,
+  } = useOpenModal();
   const location = useLocation();
 
   const serverId = location.pathname.split('/')[2];
@@ -48,6 +54,9 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
         <Button type='button' onClick={openInviteMember}>
           멤버 초대하기
         </Button>
+        <Button type='button' onClick={openInvitedServerList}>
+          초대받은 서버목록
+        </Button>
         {/* <Button type='button' onClick={() => deleteMutation.mutate()}>
         서버 삭제
       </Button> */}
@@ -55,6 +64,7 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
       <CreateCategoryModal closeModal={closeCtegoryModal} isOpen={isCategory} />
       <InviteLinkModal closeModal={closeInviteLinkModal} isOpen={isInviteLink} serverId={Number(serverId)} />
       <InviteMemberModal closeModal={closeInviteMemberModal} isOpen={isInviteMember} />
+      <InvitedServerList closeModal={closeInvitedServerList} isOpen={isInvitedServerList} />
     </Area>
   );
 }

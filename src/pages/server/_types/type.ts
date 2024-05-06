@@ -42,3 +42,17 @@ interface IInviteMember {
 
 export type InviteMemberRequest = IInviteMember;
 export type InviteMemberResponse = IInviteMember | null;
+
+interface IInvitee {
+  id: number;
+}
+
+export type InvitedServerRequest = IInvitee;
+
+interface IInvitedServer {
+  inviteId: number;
+  serverName: string;
+  inviterName: string;
+}
+
+export type InvitedServerResponse = IInvitedServer | null;

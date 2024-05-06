@@ -13,6 +13,7 @@ jobs:
       VITE_APP_KAKAO_CLIENT_ID: ${{ secrets.VITE_APP_KAKAO_CLIENT_ID }}
       VITE_APP_LOGIN_REDIRECT_URI: ${{ secrets.VITE_APP_LOGIN_REDIRECT_URI }}
       VITE_APP_SIGNUP_REDIRECT_URI: ${{ secrets.VITE_APP_SIGNUP_REDIRECT_URI }}
+      VITE_APP_GOOGLE_CLIENT_ID: ${{ secrets.VITE_APP_GOOGLE_CLIENT_ID }}
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2

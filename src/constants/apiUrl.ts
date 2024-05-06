@@ -11,3 +11,5 @@ export const USER_URL = {
 
 export const LOGIN_REDIRECT = import.meta.env.VITE_APP_LOGIN_REDIRECT_URI;
 export const SIGNUP_REDIRECT = import.meta.env.VITE_APP_SIGNUP_REDIRECT_URI;
+
+export const GOOGLE_CLIENT_ID = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
