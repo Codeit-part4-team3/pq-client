@@ -61,3 +61,15 @@ export const EssentialSpan = styled.span`
   font-weight: 400;
   line-height: normal;
 `;
+
+export const DeleteParagraph = styled.p`
+  margin: 0;
+  max-width: 480px;
+  color: var(--black-1a1a1a, #1a1a1a);
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 130%;
+`;
