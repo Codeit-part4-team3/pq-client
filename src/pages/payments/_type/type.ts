@@ -1,37 +1,14 @@
-export interface PaymentData {
+export interface TempOrderData {
   orderName: string;
-  pointAmount: number;
-  couponAmount: number;
   totalAmount: number;
 }
 
-export interface TempOrderResponsebody extends PaymentData {
+export interface TempOrderResponsebody extends TempOrderData {
   tempOrderId: string;
 }
 
-export type TempOrderRequest = PaymentData;
+export type TempOrderRequest = TempOrderData;
 export type TempOrderResponse = TempOrderResponsebody | null;
-
-export interface Payment {
-  orderName: string;
-  approvedAt: string;
-  receipt: {
-    url: string;
-  };
-  totalAmount: number;
-  method: '카드' | '가상계좌' | '계좌이체';
-  paymentKey: string;
-  orderId: string;
-  status:
-    | 'READY'
-    | 'IN_PROGRESS'
-    | 'WAITING_FOR_DEPOSIT'
-    | 'DONE'
-    | 'CANCELED'
-    | 'PARTIAL_CANCELED'
-    | 'ABORTED'
-    | 'EXPIRED';
-}
 
 export interface PaymentMethodsWidget {
   updateAmount: (amount: number, reason?: string | string[]) => void;
@@ -50,9 +27,28 @@ export interface PaymentMethodsWidget {
   };
 }
 
+interface PlanData {
+  id: number;
+  type: string;
+  price: number;
+  duration: number;
+}
+
+export type PlanResponse = PlanData | null;
+interface PaymentData {
+  userId: number;
+  planId: number;
+  subscriptionId: number;
+  amount: number;
+  status: string;
+  createdAt: string;
+  paymentMethodId: number;
+}
+
 export interface ConfirmResponseBody {
   title: string;
   paymentMethod: string;
+  payment: PaymentData;
   data: object;
 }
 

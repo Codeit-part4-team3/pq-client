@@ -1,20 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { PaymentWidgetInstance, loadPaymentWidget } from '@tosspayments/payment-widget-sdk';
 import useUserStore from 'src/store/userStore';
-import usePaymentStore from 'src/store/paymentStore';
+import { useTempOrderStore } from 'src/store/paymentStore';
 import { PaymentMethodsWidget } from './_type/type';
 import { Outlet } from 'react-router-dom';
 
 const widgetClientKey = import.meta.env.VITE_APP_TOSS_CLIENT_KEY;
-const customerKey = 'pIXRyIQovcExXgOPApWUP';
+const customerKey = 'pIXRyIQovcExXgOPApWUP'; // TODO:  유저 ID로 변경
 
 export default function Checkout() {
   const [paymentWidget, setPaymentWidget] = useState<PaymentWidgetInstance | null>(null);
   const paymentMethodsWidgetRef = useRef<PaymentMethodsWidget | null>(null);
-  const { amount } = usePaymentStore();
-
   const { email } = useUserStore();
-  const { tempOrderId } = usePaymentStore();
+  const { tempOrderId, amount } = useTempOrderStore();
 
   // 결제 위젯 불러오기
   useEffect(() => {
