@@ -20,7 +20,8 @@ import { useQueryGet } from 'src/apis/service/service';
 import { useOpenModal } from 'src/hooks/useOpenModal';
 import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
 import ServerMenu from './_components/ServerMenu';
-import useUserStore from 'src/store/userStore';
+
+import { useGetUserInfo } from 'src/hooks/useGetUserInfo';
 
 /**
  *
@@ -43,10 +44,9 @@ export default function Server() {
   const [channelItemList, setChannelItemList] = useState<ChannelData[]>([]);
   const [serverName, setServerName] = useState<string>('');
   const navigate = useNavigate();
+  const userInfo = useGetUserInfo();
 
-  const { userInfo } = useUserStore();
-
-  const userId = userInfo.id;
+  const userId = userInfo.id || 0;
 
   const { refetch: serverRefetch, data: serverData } = useQueryGet<ServerResponse[]>(
     'getAllServers',

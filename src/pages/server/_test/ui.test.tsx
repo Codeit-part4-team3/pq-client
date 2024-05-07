@@ -2,11 +2,19 @@ import '@testing-library/jest-dom';
 import { render, fireEvent, screen } from '@testing-library/react';
 import { ChannelGroupData } from '../_types/type';
 import ChannelGroup from '../_components/ChannelGroup';
-import { useMutationPost } from 'src/apis/service/service';
+import { useMutationDelete, useMutationPatch, useMutationPost, useQueryGet } from 'src/apis/service/service';
+import { useGetUserInfo } from 'src/hooks/useGetUserInfo';
 
 // 모킹
 jest.mock('src/apis/service/service', () => ({
   useMutationPost: jest.fn(),
+  useMutationDelete: jest.fn(),
+  useMutationPatch: jest.fn(),
+  useQueryGet: jest.fn(),
+}));
+
+jest.mock('src/hooks/useGetUserInfo', () => ({
+  useGetUserInfo: jest.fn(),
 }));
 
 describe('toggles display style of Body on DropDownButton click', () => {
@@ -18,6 +26,20 @@ describe('toggles display style of Body on DropDownButton click', () => {
       jest.fn(),
       { data: mockData, error: null, isLoading: false, isSuccess: true },
     ]);
+    (useMutationDelete as jest.Mock).mockReturnValue([
+      jest.fn(),
+      { data: mockData, error: null, isLoading: false, isSuccess: true },
+    ]);
+    (useMutationPatch as jest.Mock).mockReturnValue([
+      jest.fn(),
+      { data: mockData, error: null, isLoading: false, isSuccess: true },
+    ]);
+    (useQueryGet as jest.Mock).mockReturnValue({
+      refetch: jest.fn(),
+      data: mockData,
+    });
+    (useGetUserInfo as jest.Mock).mockReturnValue({ id: 1, nickname: '', email: '', state: '' });
+
     mockData = {
       id: 1,
       name: 'Test Subject',
