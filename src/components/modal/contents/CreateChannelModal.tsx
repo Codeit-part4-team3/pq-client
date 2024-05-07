@@ -9,7 +9,7 @@ import { ModalProps } from 'src/types/modalType';
 import { FormEventHandler, useContext, useState } from 'react';
 import { useMutationPost } from 'src/apis/service/service';
 import { ChannelRequest, ChannelResponse } from 'src/pages/server/_types/type';
-import { ServerIdContext, UserIdContext } from 'src/pages/server/Server';
+import { ServerIdContext } from 'src/pages/server/Server';
 
 interface Props extends ModalProps {
   groupId: number;
@@ -35,11 +35,8 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
   };
 
   const serverId = useContext<number>(ServerIdContext);
-  const userId = useContext<number>(UserIdContext);
 
-  const createMutation = useMutationPost<ChannelResponse, ChannelRequest>(
-    `/chat/v1/server/${serverId}/channel?userId=${userId}`,
-  );
+  const createMutation = useMutationPost<ChannelResponse, ChannelRequest>(`/chat/v1/server/${serverId}/channel`);
 
   const handleToggle = () => {
     setIsPrivate(!isPrivate);

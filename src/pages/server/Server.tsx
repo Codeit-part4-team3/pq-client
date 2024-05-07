@@ -51,10 +51,16 @@ export default function Server() {
   const { refetch: serverRefetch, data: serverData } = useQueryGet<ServerResponse[]>(
     'getAllServers',
     `/chat/v1/server/all?userId=${userId}`,
+    {
+      staleTime: 5000,
+    },
   );
   const { refetch: channelRefetch, data: channelData } = useQueryGet<ChannelResponse[]>(
     'getAllChannels',
-    `/chat/v1/server/${serverId}/channel/all?userId=${userId}`,
+    `/chat/v1/server/${serverId}/channel/all`,
+    {
+      staleTime: 5000,
+    },
   );
 
   const { isOpen, openModal, closeModal } = useOpenModal();
