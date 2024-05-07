@@ -141,7 +141,7 @@ export default function Server() {
             </ChannelContainer>
             {!isExist ? (
               <NotFoundServer
-                CloseCreateServer={closeModalHandler}
+                closeCreateServer={closeModalHandler}
                 isCreateServer={isOpen}
                 openCreateServer={openModal}
               />
@@ -166,7 +166,7 @@ const Area = styled.section`
 const Container = styled.main`
   height: 100%;
   display: flex;
-  background-color: #ffe0e0;
+  background-color: #ffffff;
 `;
 
 const ServerContainer = styled.aside`

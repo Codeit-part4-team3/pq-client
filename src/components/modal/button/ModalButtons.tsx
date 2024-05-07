@@ -36,7 +36,11 @@ const CloseButton = styled.button`
   border-radius: 10px;
   border: 1px solid #e7e7e7;
   background: #fff;
-  cursor: pointer;
+
+  &:hover {
+    cursor: pointer;
+    background: #d9d9d9;
+  }
 `;
 
 const CtaButton = styled.button<{ $bgColor: string }>`
@@ -51,5 +55,9 @@ const CtaButton = styled.button<{ $bgColor: string }>`
   background: ${(props) => props.$bgColor};
   border: 1px solid ${(props) => props.$bgColor};
   outline: none;
-  cursor: pointer;
+
+  &:hover {
+    cursor: pointer;
+    background: #0056b3;
+  }
 `;
