@@ -36,13 +36,13 @@ interface PlanData {
 
 export type PlanResponse = PlanData | null;
 interface PaymentData {
+  id: number;
   userId: number;
   planId: number;
   subscriptionId: number;
   amount: number;
   status: string;
   createdAt: string;
-  paymentMethodId: number;
 }
 
 export interface ConfirmResponseBody {
@@ -59,6 +59,8 @@ export interface ErrorResponse {
 }
 
 export interface ConfirmRequest {
+  userId: number | null;
+  planId: number | null;
   orderId: string | null;
   amount: number | null;
   paymentKey: string | null;

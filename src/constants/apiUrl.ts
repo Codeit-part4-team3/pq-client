@@ -7,6 +7,7 @@ export const USER_URL = {
   BASE: import.meta.env.VITE_APP_ORIGIN_API,
   USER: '/user/v1/user',
   AUTH: '/user/v1/auth',
+  PLANS: '/user/v1/plans',
   PAYMENTS: '/user/v1/payments',
 };
 

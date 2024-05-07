@@ -3,13 +3,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ErrorResponse, ConfirmRequest, ConfirmResponse } from './_type/type';
 import { useMutationPost } from 'src/apis/service/service';
 import { USER_URL } from 'src/constants/apiUrl';
-import { usePaymentStore } from 'src/store/paymentStore';
 
 export function SuccessPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const basicAuth = btoa(`${import.meta.env.VITE_APP_TOSS_SECRET_KEY}:`);
-  const { planId } = usePaymentStore();
 
   const { mutate, data } = useMutationPost<ConfirmResponse, ConfirmRequest>(`${USER_URL.PAYMENTS}/confirm`, {
     onSuccess: () => {
@@ -31,18 +28,27 @@ export function SuccessPage() {
   });
 
   useEffect(() => {
-    console.log(basicAuth);
-    // 쿼리 파라미터 값이 결제 요청할 때 보낸 데이터와 동일한지 반드시 확인하세요.
-    // 클라이언트에서 결제 금액을 조작하는 행위를 방지할 수 있습니다.
-    const requestData = {
-      userId: 1,
+    const userId = Number(searchParams.get('userId'));
+    const planId = Number(searchParams.get('planId'));
+    const orderId = searchParams.get('orderId');
+    const amount = Number(searchParams.get('amount'));
+    const paymentKey = searchParams.get('paymentKey');
+
+    if (!orderId || !amount || !paymentKey || userId === 0 || planId === 0) {
+      console.error('Invalid payment data', { userId, planId, orderId, amount, paymentKey });
+      navigate('/payments/fail?code=INVALID_PAYMENT_DATA&message=결제 정보가 올바르지 않습니다.');
+      return;
+    }
+
+    const payment = {
+      userId: userId,
       planId: planId,
-      orderId: searchParams.get('orderId'),
-      amount: Number(searchParams.get('amount')),
-      paymentKey: searchParams.get('paymentKey'),
+      orderId: orderId,
+      amount: amount,
+      paymentKey: paymentKey,
     };
 
-    mutate(requestData);
+    mutate(payment);
   }, [mutate, searchParams]);
 
   return (

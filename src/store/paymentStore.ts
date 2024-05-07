@@ -2,28 +2,38 @@ import { create } from 'zustand';
 
 interface TempOrderState {
   tempOrderId: string;
+  tempAmount: number;
   setTempOrderId: (tempOrderId: string) => void;
-  amount: number;
-  setAmount: (amount: number) => void;
-}
-
-interface PaymentState {
-  userId: string;
-  setUserId: (userId: string) => void;
-  planId: number;
-  setPlanId: (planId: number) => void;
+  setTempAmount: (tempAmount: number) => void;
 }
 
 export const useTempOrderStore = create<TempOrderState>((set) => ({
   tempOrderId: '',
+  tempAmount: 0,
+
   setTempOrderId: (tempOrderId: string) => set({ tempOrderId }),
-  amount: 0,
-  setAmount: (amount: number) => set({ amount }),
+  setTempAmount: (tempAmount: number) => set({ tempAmount }),
 }));
 
-export const usePaymentStore = create<PaymentState>((set) => ({
-  userId: '',
-  setUserId: (userId: string) => set({ userId }),
-  planId: 1,
+interface PlanState {
+  planId: number;
+  planType: string;
+  amount: number;
+
+  setPlanId: (planId: number) => void;
+  setPlanType: (planType: string) => void;
+  setAmount: (amount: number) => void;
+  removeAll: () => void;
+}
+
+export const usePlanStore = create<PlanState>((set) => ({
+  planId: 0,
+  planType: '',
+  amount: 0,
+
   setPlanId: (planId: number) => set({ planId }),
+  setPlanType: (planType: string) => set({ planType }),
+  setAmount: (amount: number) => set({ amount }),
+
+  removeAll: () => set({ planId: 0, planType: '', amount: 0 }),
 }));
