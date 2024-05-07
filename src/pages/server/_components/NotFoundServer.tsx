@@ -7,10 +7,10 @@ import JoinServerModal from 'src/components/modal/contents/JoinServerModal';
 interface Props {
   isCreateServer: boolean;
   openCreateServer: () => void;
-  CloseCreateServer: () => void;
+  closeCreateServer: () => void;
 }
 
-export default function NotFoundServer({ isCreateServer, openCreateServer, CloseCreateServer }: Props) {
+export default function NotFoundServer({ isCreateServer, openCreateServer, closeCreateServer }: Props) {
   const { isOpen: isJoinServer, openModal: openJoinServer, closeModal: closeJoinServer } = useOpenModal();
   return (
     <Area>
@@ -25,7 +25,7 @@ export default function NotFoundServer({ isCreateServer, openCreateServer, Close
           <BottomButton onClick={openCreateServer}>서버 생성하기</BottomButton>
         </ButtonContainer>
       </Body>
-      <CreateServerModal isOpen={isCreateServer} closeModal={CloseCreateServer} />
+      <CreateServerModal isOpen={isCreateServer} closeModal={closeCreateServer} />
       <JoinServerModal isOpen={isJoinServer} closeModal={closeJoinServer} />
     </Area>
   );

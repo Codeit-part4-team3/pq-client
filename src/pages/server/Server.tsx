@@ -20,6 +20,7 @@ import { useQueryGet } from 'src/apis/service/service';
 import { useOpenModal } from 'src/hooks/useOpenModal';
 import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
 import ServerMenu from './_components/ServerMenu';
+import useUserStore from 'src/store/userStore';
 
 /**
  *
@@ -43,7 +44,9 @@ export default function Server() {
   const [serverName, setServerName] = useState<string>('');
   const navigate = useNavigate();
 
-  const userId = 2;
+  const { userInfo } = useUserStore();
+
+  const userId = userInfo.id;
 
   const { refetch: serverRefetch, data: serverData } = useQueryGet<ServerResponse[]>(
     'getAllServers',
@@ -138,7 +141,7 @@ export default function Server() {
             </ChannelContainer>
             {!isExist ? (
               <NotFoundServer
-                CloseCreateServer={closeModalHandler}
+                closeCreateServer={closeModalHandler}
                 isCreateServer={isOpen}
                 openCreateServer={openModal}
               />
@@ -163,7 +166,7 @@ const Area = styled.section`
 const Container = styled.main`
   height: 100%;
   display: flex;
-  background-color: #ffe0e0;
+  background-color: #ffffff;
 `;
 
 const ServerContainer = styled.aside`

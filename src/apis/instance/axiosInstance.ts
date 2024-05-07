@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { CHAT_URL, USER_URL } from 'src/constants/apiUrl';
 import useUserStore from 'src/store/userStore';
 import handleHttpError from 'src/utils/handleHttpError';
 
@@ -13,7 +12,7 @@ const getAccessToken = () => {
  */
 
 const axiosInstance = axios.create({
-  baseURL: USER_URL.BASE,
+  baseURL: import.meta.env.VITE_APP_ORIGIN_API,
   headers: {
     'Content-Type': 'application/json',
   },
