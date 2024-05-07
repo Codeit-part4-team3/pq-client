@@ -1,10 +1,10 @@
 export const CHAT_URL = {
-  BASE: import.meta.env.VITE_APP_ORIGIN_CHAT,
+  BASE: import.meta.env.VITE_APP_ORIGIN_API,
   SERVER: '/chat/v1/server',
 };
 
 export const USER_URL = {
-  BASE: import.meta.env.VITE_APP_ORIGIN_USER,
+  BASE: import.meta.env.VITE_APP_ORIGIN_API,
   USER: '/user/v1/user',
   AUTH: '/user/v1/auth',
 };

@@ -25,3 +25,35 @@ export type ChannelGroupResponse = IChannel | null;
 
 export type ChannelData = IChannel;
 export type ChannelGroupData = Pick<IChannel, 'id' | 'name'>;
+
+/**
+ * Invite
+ */
+interface IInviteLink {
+  inviteLink: string;
+}
+
+export type InviteLinkResponse = IInviteLink | null;
+
+interface IInviteMember {
+  inviterId: number;
+  inviteeEmail: string;
+}
+
+export type InviteMemberRequest = IInviteMember;
+export type InviteMemberResponse = IInviteMember | null;
+
+interface IInvite {
+  inviteId: number;
+  isAccept: boolean;
+}
+
+export type InvitedServerRequest = IInvite;
+
+interface IInvitedServer {
+  inviteId: number;
+  serverName: string;
+  inviterName: string;
+}
+
+export type InvitedServerResponse = IInvitedServer | null;

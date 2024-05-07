@@ -19,7 +19,7 @@ export default function ServerMenu({ serverName }: Props) {
       <DropDownButton type='button' onClick={toggleDropDown}>
         <img src='/images/arrow-down.svg' alt='arrow-down' />
       </DropDownButton>
-      {isDropDown && <ServerDropDown toggleDropDown={toggleDropDown} />}
+      <ServerDropDown isDropDown={isDropDown} toggleDropDown={toggleDropDown} />
     </Area>
   );
 }

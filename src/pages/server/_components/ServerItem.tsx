@@ -32,7 +32,7 @@ const Button = styled.button`
   width: 48px;
   height: 48px;
 
-  border: 1px solid #cccccc;
+  border: 0.5px solid #cccccc;
   border-radius: 25%;
   background-color: #f1f8ff;
 
@@ -47,7 +47,7 @@ const Button = styled.button`
   white-space: nowrap;
 
   &:hover {
-    scale: 1.1;
+    background-color: #8bc5ff;
     cursor: pointer;
   }
 
