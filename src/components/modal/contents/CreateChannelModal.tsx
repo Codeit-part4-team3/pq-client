@@ -3,7 +3,7 @@ import Modal from '../modal';
 import MemberInviteSearchForm from '../form/MemberInviteSearchForm';
 import InviteLinkInput from '../input/InviteLinkInput';
 import EssentialInput from '../input/EssentialInput';
-import PrivateToggleButton from '../button/PrivateToggleButton';
+import ToggleButton from '../button/ToggleButton';
 import ModalButtons from '../button/ModalButtons';
 import { ModalProps } from 'src/types/modalType';
 import { FormEventHandler, useContext, useState } from 'react';
@@ -27,6 +27,7 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
   const [channelName, setChannelName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
+  const [isVoice, setIsVoice] = useState(false);
   const [isNextModal, setIsNextModal] = useState(false);
 
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
@@ -38,9 +39,6 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
 
   const createMutation = useMutationPost<ChannelResponse, ChannelRequest>(`/chat/v1/server/${serverId}/channel`);
 
-  const handleToggle = () => {
-    setIsPrivate(!isPrivate);
-  };
   const handleNextModalClick = () => {
     setErrorMessage('');
     if (channelName === '') {
@@ -57,7 +55,7 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
       return;
     }
     // 생성로직
-    createMutation.mutate({ name: channelName, isPrivate: isPrivate, isVoice: false, groupId });
+    createMutation.mutate({ name: channelName, isPrivate: isPrivate, isVoice: isVoice, groupId });
     closeModal();
   };
 
@@ -88,7 +86,20 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
                 state={channelName}
                 setState={setChannelName}
               />
-              <PrivateToggleButton title='비공개 채널' state={isPrivate} toggleClick={handleToggle} />
+              <ToggleButton
+                isEnabled={false}
+                title='비공개 채널'
+                desc='초대를 받은 일부 사람만 참여할 수 있음'
+                state={isPrivate}
+                toggleClick={() => setIsPrivate(!isPrivate)}
+              />
+              <ToggleButton
+                isEnabled={true}
+                title='Voice 체널'
+                desc='음성 채팅을 할 수 있음'
+                state={isPrivate}
+                toggleClick={() => setIsVoice(!isVoice)}
+              />
               <ModalButtons
                 closeClick={closeModal}
                 ctaText={isPrivate ? '다음' : '생성'}

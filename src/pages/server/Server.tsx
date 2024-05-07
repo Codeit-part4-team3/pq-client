@@ -21,6 +21,7 @@ import { useOpenModal } from 'src/hooks/useOpenModal';
 import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
 import ServerMenu from './_components/ServerMenu';
 import useUserStore from 'src/store/userStore';
+import MyProfile from './_components/MyProfile';
 
 /**
  *
@@ -74,7 +75,7 @@ export default function Server() {
    * 이벤트 버블링으로 하위 버튼 컴포넌트들의 이벤트 처리를
    * 상위 컴포넌트에서 dataset을 사용하여 처리
    */
-  const onClickServer = (e: React.PointerEvent<HTMLElement>) => {
+  const onClickServer = (e: React.MouseEvent<HTMLElement>) => {
     const serverId = (e.target as HTMLElement).dataset.serverid;
 
     if (serverId) {
@@ -141,9 +142,12 @@ export default function Server() {
               <CreateServerModal isOpen={isOpen} closeModal={closeModalHandler} />
             </ServerContainer>
             <ChannelContainer>
-              <ServerMenu serverName={serverName} />
-              <CalendarContainer />
-              {createChannelGroupList(channelGroupList)}
+              <ChannelBox>
+                <ServerMenu serverName={serverName} />
+                <CalendarContainer />
+                {createChannelGroupList(channelGroupList)}
+              </ChannelBox>
+              <MyProfile />
             </ChannelContainer>
             {!isExist ? (
               <NotFoundServer
@@ -175,7 +179,7 @@ const Container = styled.main`
   background-color: #ffffff;
 `;
 
-const ServerContainer = styled.aside`
+const ServerContainer = styled.div`
   width: 68px;
   height: 100%;
 
@@ -189,17 +193,27 @@ const ServerContainer = styled.aside`
   background-color: #bedeff;
 `;
 
-const ChannelContainer = styled.aside`
+const ChannelContainer = styled.div`
   width: 260px;
   height: 100vh;
 
-  padding: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
 
   font-size: 14px;
   background-color: #f1f8ff;
+`;
+
+const ChannelBox = styled.div`
+  width: 100%;
+
+  padding-left: 10px;
+  padding-right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
 `;

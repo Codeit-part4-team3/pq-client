@@ -26,7 +26,6 @@ export default function ServerMenu({ serverName }: Props) {
 
 const Area = styled.section`
   position: relative;
-  margin: -10px 0 0 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -35,7 +34,6 @@ const Area = styled.section`
 
   flex-shrink: 0;
   border-right: 1px solid #ccc;
-
   border-bottom: 1px solid #ccc;
 
   background: var(--Schemes-On-Primary, #fff);
