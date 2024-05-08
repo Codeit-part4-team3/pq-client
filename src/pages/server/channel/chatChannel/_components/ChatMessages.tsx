@@ -18,10 +18,6 @@ interface ChatMessagesProps {
   onEditingMessageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-// 오른쪽 클릭시 메뉴창 뜨게하기
-// update, delete 기능 추가
-// id를 어떻게 받을 것인가?
-
 interface ContextMenu {
   isOpen: boolean;
   positionX: number;
@@ -287,6 +283,8 @@ const ChatMessageTextEditingInput = styled.input`
   border: none;
   border-radius: 8px;
   outline: none;
+
+  background-color: var(--gray_EEEEEE);
 `;
 
 const ChatMessageTextEditingDescription = styled.div``;

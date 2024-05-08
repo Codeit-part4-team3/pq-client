@@ -33,6 +33,8 @@ export default function ChatChannel() {
   const [isClickedUtilityButton, setIsClickedUtilityButton] = useState<boolean>(false);
   // 메시지 수정
   const [editingMessage, setEditingMessage] = useState<string>('');
+  // 메시지 수정 상태, 수정중인 메시지의 messageId를 저장
+  const [currentEditingMessageId, setCurrentEditingMessageId] = useState<string | null>(null);
 
   const handleUiilityButtonClick = () => {
     setIsClickedUtilityButton(!isClickedUtilityButton);
@@ -52,6 +54,7 @@ export default function ChatChannel() {
 
   // // 메시지 수정 상태로 만들기
   const handleUpdateMessageClick = ({ messageId, createdAt }: { messageId: string; createdAt: number }) => {
+    if (currentEditingMessageId) return;
     // message.status를 editing으로 바꾸고 input창에 기존 메시지를 넣어준다.
     setMessages((prevMessages) => {
       return prevMessages.map((message) => {
@@ -64,6 +67,7 @@ export default function ChatChannel() {
         return message;
       });
     });
+    setCurrentEditingMessageId(messageId);
     socketRef.current?.emit('update_message_editing', { messageId, createdAt, roomName });
   };
 
@@ -73,6 +77,7 @@ export default function ChatChannel() {
 
   // 메시지 수정 완료
   const handleUpdateMessageKeyDown = ({ messageId, createdAt }: { messageId: string; createdAt: number }) => {
+    if (editingMessage === '') return;
     // 낙관적 업데이트
     setMessages((prevMessages) => {
       return prevMessages.map((message) => {
@@ -85,7 +90,7 @@ export default function ChatChannel() {
         return message;
       });
     });
-    if (editingMessage === '') return;
+    setCurrentEditingMessageId(null);
 
     socketRef.current?.emit('update_message_complete', { messageId, createdAt, message: editingMessage, roomName });
     setEditingMessage('');
