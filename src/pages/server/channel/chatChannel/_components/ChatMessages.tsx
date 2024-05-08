@@ -159,9 +159,27 @@ export default function ChatMessages({
               <>
                 {messageItem.status === 'editing' ? (
                   <ChatMessageTextEditingBox>
-                    <ChatMessageTextEditingInput />
+                    <ChatMessageTextEditingInput value={editingMessage} onChange={onEditingMessageChange} />
                     <ChatMessageTextEditingDescription>
-                      ESC 키로 취소 • Enter 키로 저장
+                      ESC 키로{' '}
+                      <button
+                        onClick={() => {
+                          onUpdateMessageCancelClick({ messageId: messageItem.messageId });
+                        }}
+                      >
+                        취소
+                      </button>{' '}
+                      • Enter 키로
+                      <button
+                        onClick={() => {
+                          onUpdateMessageKeyDown({
+                            messageId: messageItem.messageId,
+                            createdAt: messageItem.createdAt,
+                          });
+                        }}
+                      >
+                        저장
+                      </button>
                     </ChatMessageTextEditingDescription>
                   </ChatMessageTextEditingBox>
                 ) : (
