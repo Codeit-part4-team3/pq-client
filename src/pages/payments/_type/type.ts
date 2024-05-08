@@ -10,6 +10,23 @@ export interface TempOrderResponsebody extends TempOrderData {
 export type TempOrderRequest = TempOrderData;
 export type TempOrderResponse = TempOrderResponsebody | null;
 
+interface CancelOrderRequestBody {
+  paymentId: number;
+  cancelReason: string;
+}
+interface CancelOrderResponseBody {
+  message: string;
+  refund: {
+    paymentId: number;
+    amount: number;
+    status: string;
+    createdAt: Date;
+  };
+}
+
+export type CancelOrderRequest = CancelOrderRequestBody;
+export type CancelOrderResponse = CancelOrderResponseBody | null;
+
 export interface PaymentMethodsWidget {
   updateAmount: (amount: number, reason?: string | string[]) => void;
   UPDATE_REASON: {
@@ -59,11 +76,24 @@ export interface ErrorResponse {
 }
 
 export interface ConfirmRequest {
-  userId: number | null;
-  planId: number | null;
-  orderId: string | null;
-  amount: number | null;
-  paymentKey: string | null;
+  userId: number;
+  planId: number;
+  orderId: string;
+  amount: number;
+  paymentKey: string;
 }
 
 export type ConfirmResponse = ConfirmResponseBody | null;
+
+interface RegistCardData {
+  userId: number;
+  customerKey: string;
+  authKey: string;
+}
+
+interface RegistCardResponseBody {
+  response: object;
+}
+
+export type RegistCardRequest = RegistCardData;
+export type RegistCardResponse = RegistCardResponseBody | null;

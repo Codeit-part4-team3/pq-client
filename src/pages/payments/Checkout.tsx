@@ -64,7 +64,7 @@ export default function Checkout() {
   // 결제 요청
   const handlePaymentRequest = async () => {
     const successUrl = `${window.location.origin}/payments/success?userId=${userInfo.id}&planId=${planId}`;
-    const failUrl = `${window.location.origin}/payments/fail?userId=${userInfo.id}&planId=${planId}`;
+    const failUrl = `${window.location.origin}/payments/fail`;
 
     try {
       await paymentWidget?.requestPayment({

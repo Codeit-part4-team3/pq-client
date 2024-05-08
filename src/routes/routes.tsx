@@ -13,8 +13,10 @@ import Invite from 'src/pages/invite/Invite';
 import ChatChannel from 'src/pages/server/channel/chatChannel/ChatChannel';
 import VoiceChannel from 'src/pages/server/channel/voiceChannel/VoiceChannel';
 import Checkout from 'src/pages/payments/Checkout';
-import { SuccessPage } from 'src/pages/payments/Success';
-import { FailPage } from 'src/pages/payments/Fail';
+import { PaymentSuccess } from 'src/pages/payments/PaymentSuccess';
+import { PaymentFail } from 'src/pages/payments/PaymentFail';
+import { RegistCardSuccess } from 'src/pages/payments/RegistCardSuccess';
+import { RegistCardFail } from 'src/pages/payments/RegistCardFail';
 
 export default function Router() {
   return (
@@ -37,8 +39,10 @@ export default function Router() {
       <Route path='voiceTest' element={<VoiceChannel />} />
 
       <Route path='/payments' element={<Checkout />}>
-        <Route path='success' element={<SuccessPage />} />
-        <Route path='fail' element={<FailPage />} />
+        <Route path='success' element={<PaymentSuccess />} />
+        <Route path='fail' element={<PaymentFail />} />
+        <Route path='regist-success' element={<RegistCardSuccess />} />
+        <Route path='regist-fail' element={<RegistCardFail />} />
       </Route>
 
       <Route path='*' element={<NotFound />} />

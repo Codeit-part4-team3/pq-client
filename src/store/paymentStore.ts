@@ -23,6 +23,7 @@ interface PlanState {
   setPlanId: (planId: number) => void;
   setPlanType: (planType: string) => void;
   setAmount: (amount: number) => void;
+
   removeAll: () => void;
 }
 

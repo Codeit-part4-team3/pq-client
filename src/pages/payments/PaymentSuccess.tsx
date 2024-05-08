@@ -4,7 +4,7 @@ import { ErrorResponse, ConfirmRequest, ConfirmResponse } from './_type/type';
 import { useMutationPost } from 'src/apis/service/service';
 import { USER_URL } from 'src/constants/apiUrl';
 
-export function SuccessPage() {
+export function PaymentSuccess() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -41,11 +41,11 @@ export function SuccessPage() {
     }
 
     const payment = {
-      userId: userId,
-      planId: planId,
-      orderId: orderId,
-      amount: amount,
-      paymentKey: paymentKey,
+      userId,
+      planId,
+      orderId,
+      amount,
+      paymentKey,
     };
 
     mutate(payment);
