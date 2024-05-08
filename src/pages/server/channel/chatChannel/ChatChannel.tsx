@@ -158,10 +158,11 @@ export default function ChatChannel() {
 }
 
 const Wrapper = styled.div`
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  /* background-color: #ffeec3fd; */
 
   position: relative;
 `;
@@ -172,14 +173,14 @@ const InfinityScrollTrigger = styled.div`
 `;
 
 const ChatContainer = styled.div`
-  width: 100%;
+  width: calc(100%-1px);
+
   flex-grow: 1;
   overflow-y: scroll;
   display: flex;
   flex-direction: column-reverse;
 
   margin-left: 20px;
-  margin-right: 20px;
 `;
 
 const ChatChannelIntro = styled.div`
@@ -207,11 +208,11 @@ const CreationDate = styled.p`
 const ChatInputBox = styled.div`
   display: flex;
   justify-content: center;
+  padding-bottom: 20px;
 
   position: relative;
   margin-left: 20px;
   margin-right: 20px;
-  margin-bottom: 20px;
 `;
 
 const ChatInput = styled.input`

@@ -34,9 +34,9 @@ export const GlobalStyles = createGlobalStyle`
     // 이름에 %를 사용할 수 없음, 수정해야할듯
     /* --blue_10%: #EDF5FD; */
 
-    --primary_basic_color: #007BFF;
-    --primary_light_color: #258dff; 
-    --primary_dark_color: #0F4C5C;
+    --primary_basic_color: #013050;
+    --primary_light_color: #03395d; 
+    --primary_dark_color: #00233a;
 
     --secondary_basic_color: #FF5722;
     --secondary_light_color: #258dff;
@@ -45,6 +45,15 @@ export const GlobalStyles = createGlobalStyle`
     --emphasis_basic_color: #4CAF50;
     --emphasis_light_color: #9C27B0;
     --emphasis_dark_color: #F44336;
+
+    --background_basic_gray: #404040;
+    --background_light_gray: #707070;
+    --background_dark_gray: #202020;
+
+    --background_basic_white: #FFFFFF;
+    --background_light_white: #FAFAFA;
+
+    --text_gray: #d9d9d9;
   }
 
   * {
@@ -120,5 +129,14 @@ export const scaleAnim = keyframes`
   }
   to {
     transform: scale(1.1);
+  }
+`;
+
+export const appearAnim = keyframes`
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
   }
 `;

@@ -12,7 +12,6 @@ import {
   IServer,
   IChannel,
 } from './_types/type';
-import AddServerButton from './_components/AddServerButton';
 import ChannelGroup from './_components/ChannelGroup';
 import ChannelItem from './_components/ChannelItem';
 import CalendarContainer from './_components/CalendarContainer';
@@ -43,10 +42,9 @@ export default function Server() {
   const [channelGroupList, setChannelGroupList] = useState<ChannelGroupData[]>([]);
   const [channelItemList, setChannelItemList] = useState<ChannelData[]>([]);
   const [serverName, setServerName] = useState<string>('');
+
   const navigate = useNavigate();
-
   const { userInfo } = useUserStore();
-
   const userId = userInfo.id;
 
   const { refetch: serverRefetch, data: serverData } = useQueryGet<ServerResponse[]>(
@@ -76,11 +74,9 @@ export default function Server() {
    * 상위 컴포넌트에서 dataset을 사용하여 처리
    */
   const onClickServer = (e: React.MouseEvent<HTMLElement>) => {
-    const serverId = (e.target as HTMLElement).dataset.serverid;
+    const sId = (e.target as HTMLElement).dataset.serverid;
 
-    if (serverId) {
-      setServerId(Number(serverId));
-    }
+    if (sId) setServerId(Number(sId));
   };
 
   const createServerItemList = (serverList: ServerData[]) => {
@@ -136,19 +132,21 @@ export default function Server() {
       <ServerIdContext.Provider value={serverId}>
         <UserIdContext.Provider value={userId}>
           <Container>
-            <ServerContainer onClick={onClickServer}>
-              {createServerItemList(serverList)}
-              <AddServerButton onClick={openModal} />
-              <CreateServerModal isOpen={isOpen} closeModal={closeModalHandler} />
-            </ServerContainer>
-            <ChannelContainer>
-              <ChannelBox>
-                <ServerMenu serverName={serverName} />
-                <CalendarContainer />
-                {createChannelGroupList(channelGroupList)}
-              </ChannelBox>
-              <MyProfile />
-            </ChannelContainer>
+            <LeftContainer>
+              <ServerContainer onClick={onClickServer}>
+                {createServerItemList(serverList)}
+                <ServerFuncButton onClick={openModal}>+</ServerFuncButton>
+                <CreateServerModal isOpen={isOpen} closeModal={closeModalHandler} />
+              </ServerContainer>
+              <ChannelContainer>
+                <ChannelBox>
+                  <ServerMenu serverName={serverName} />
+                  <CalendarContainer />
+                  {createChannelGroupList(channelGroupList)}
+                </ChannelBox>
+                <MyProfile />
+              </ChannelContainer>
+            </LeftContainer>
             {!isExist ? (
               <NotFoundServer
                 closeCreateServer={closeModalHandler}
@@ -175,40 +173,75 @@ const Area = styled.section`
 
 const Container = styled.main`
   height: 100%;
+
   display: flex;
-  background-color: #ffffff;
+  flex-direction: row;
+  justify-content: space-between;
+  backdrop-filter: blur(10px);
+  background: var(--primary_basic_color);
+  background-size: cover;
+`;
+
+const LeftContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 `;
 
 const ServerContainer = styled.div`
-  width: 68px;
   height: 100%;
 
-  padding: 15px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   gap: 10px;
 
-  background-color: #bedeff;
+  border-radius: 10px;
+  background: transparent;
+  padding: 10px;
+`;
+
+const ServerFuncButton = styled.button`
+  width: 48px;
+  height: 48px;
+
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.6);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  overflow: hidden;
+  transition: 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+  }
 `;
 
 const ChannelContainer = styled.div`
   width: 260px;
-  height: 100vh;
+  height: 100%;
 
+  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-
   font-size: 14px;
-  background-color: #f1f8ff;
+
+  background-color: var(--primary_light_color);
 `;
 
 const ChannelBox = styled.div`
-  width: 100%;
+  height: 100%;
 
+  color: white;
   padding-left: 10px;
   padding-right: 10px;
   display: flex;
@@ -216,4 +249,6 @@ const ChannelBox = styled.div`
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
+
+  transform-origin: 0 0;
 `;

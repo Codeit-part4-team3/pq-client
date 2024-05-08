@@ -25,11 +25,15 @@ export default function MyProfile() {
 
 const Area = styled.div`
   width: 100%;
-  background-color: #d7eaff;
+  height: 60px;
+
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
 `;
 
 const Wrapper = styled.div`
-  width: 100%;
+  /* width: 100%; */
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -55,9 +59,16 @@ const Image = styled.img`
   overflow: hidden;
   background-size: cover;
   background-image: url('/images/minji-profile-image.png');
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const InfoWrapper = styled.div`
+  width: 120px;
+  height: 60px;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
