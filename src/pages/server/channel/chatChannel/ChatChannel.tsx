@@ -16,7 +16,7 @@ export default function ChatChannel() {
   const userId = 'minji';
   const { serverId, channelId } = useParams();
   console.log('serverId', serverId, 'channelId', channelId);
-  const roomName = channelId || 'test';
+  const roomName = channelId || '1';
   const socketRef = useRef<Socket | null>(null);
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
@@ -40,6 +40,16 @@ export default function ChatChannel() {
       socketRef.current?.emit('send_message', { message: e.currentTarget.value, roomName, userId });
       setInputValue('');
     }
+  };
+
+  // // 메시지 수정
+  const handleUpdateMessageClick = ({ messageId }: { messageId: string }) => {
+    socketRef.current?.emit('update_message', { messageId, roomName });
+  };
+
+  // 메시지 삭제
+  const handleDeleteMessageClick = ({ messageId }: { messageId: string }) => {
+    socketRef.current?.emit('delete_message', { messageId, roomName });
   };
 
   // infinite scroll : InfiniteScrollTrigger에 닿으면 추가로 메시지를 가져온다.
@@ -129,7 +139,11 @@ export default function ChatChannel() {
       <ChatContainer ref={chatContainerRef}>
         {/* flex: column-reverse상태 */}
         {/* 가장 아래쪽 */}
-        <ChatMessages messages={messages} />
+        <ChatMessages
+          messages={messages}
+          onUpdateMessageClick={handleUpdateMessageClick}
+          onDeleteMessageClick={handleDeleteMessageClick}
+        />
         {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯, 서버 데이터 필요 */}
         {isNoMoreMessages ? (
           <ChatChannelIntro>

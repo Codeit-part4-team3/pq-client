@@ -4,16 +4,61 @@ import { MessageItem } from '../_types/type';
 import extractDate from 'src/utils/extractDate';
 import ChatDayDivider from './ChatDayDivider';
 import addZero from 'src/utils/addZero';
+import { useState } from 'react';
+import ContextMenu from './ContextMenu';
 
 interface ChatMessagesProps {
   messages: MessageItem[];
+  onUpdateMessageClick: ({ messageId }: { messageId: string }) => void;
+  onDeleteMessageClick: ({ messageId }: { messageId: string }) => void;
 }
 
-export default function ChatMessages({ messages }: ChatMessagesProps) {
+// 오른쪽 클릭시 메뉴창 뜨게하기
+// update, delete 기능 추가
+// id를 어떻게 받을 것인가?
+
+interface ContextMenu {
+  isOpen: boolean;
+  positionX: number;
+  positionY: number;
+  messageId: string;
+}
+
+export default function ChatMessages({ messages, onUpdateMessageClick, onDeleteMessageClick }: ChatMessagesProps) {
+  // 마우스 오른쪽 클릭시 메뉴창 뜨게 하기
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState<ContextMenu>({
+    isOpen: false,
+    positionX: 0,
+    positionY: 0,
+    messageId: '',
+  });
+
+  const handleContextMenuOpen = (messageId: string) => (e: React.MouseEvent<HTMLDivElement>) => {
+    console.log('right click');
+    e.preventDefault();
+    setIsContextMenuOpen((prev) => {
+      return {
+        ...prev,
+        isOpen: !isContextMenuOpen.isOpen,
+        positionX: e.clientX,
+        positionY: e.clientY,
+        messageId,
+      };
+    });
+  };
+
   let isDifferentUser = false;
+
   if (!messages || messages.length === 0) return null;
   return (
     <>
+      {isContextMenuOpen.isOpen ? (
+        <ContextMenu
+          {...isContextMenuOpen}
+          onUpdateMessageClick={onUpdateMessageClick}
+          onDeleteMessageClick={onDeleteMessageClick}
+        />
+      ) : null}
       {messages.map((messageItem, index) => {
         // 다음 메시지의 유저와 현재 메시지의 유저가 다르면 true로 변경
         isDifferentUser = messages[index + 1]?.userId !== messageItem.userId;
@@ -38,7 +83,10 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
           <>
             {isDifferentUser ? (
               <>
-                <ChatMessageWrapper>
+                <ChatMessageWrapper
+                  key={messageItem.messageId}
+                  onContextMenu={handleContextMenuOpen(messageItem.messageId)}
+                >
                   <UserProfileImage>
                     <img src={profileImage} alt='유저 프로필 이미지' />
                   </UserProfileImage>
@@ -52,7 +100,7 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
                 </ChatMessageWrapper>
               </>
             ) : (
-              <SameUserMessage>
+              <SameUserMessage key={messageItem.messageId} onContextMenu={handleContextMenuOpen(messageItem.messageId)}>
                 <ChatMessageText>{messageItem.message}</ChatMessageText>
               </SameUserMessage>
             )}
