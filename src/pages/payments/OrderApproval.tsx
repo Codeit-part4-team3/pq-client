@@ -6,7 +6,7 @@ import { USER_URL } from 'src/constants/apiUrl';
 import useUserStore from 'src/store/userStore';
 import { UserInfo } from 'src/types/userType';
 
-export function PaymentSuccess() {
+export function OrderApproval() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -23,12 +23,12 @@ export function PaymentSuccess() {
   const { mutate } = useMutationPost<ConfirmResponse, ConfirmRequest>(`${USER_URL.PAYMENTS}/confirm`, {
     onSuccess: () => {
       navigate(
-        `/payments/confirm-success?orderId=${paymentData.orderId}&amount=${paymentData.amount}&paymentKey=${paymentData.paymentKey}`,
+        `/order-success?orderId=${paymentData.orderId}&amount=${paymentData.amount}&paymentKey=${paymentData.paymentKey}`,
       );
     },
     onError: (err: unknown) => {
       const error = err as ErrorResponse;
-      navigate(`/payments/fail?code=${error.code}&message=${encodeURIComponent(error.message)}`);
+      navigate(`/order-fail?code=${error.code}&message=${encodeURIComponent(error.message)}`);
     },
   });
 

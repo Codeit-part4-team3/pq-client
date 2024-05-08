@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 
-export function PaymentConfirmSuccess() {
+export function OrderSuccess() {
   const [searchParams] = useSearchParams();
 
   return (

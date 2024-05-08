@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 
-export function PaymentFail() {
+export function OrderFail() {
   const [searchParams] = useSearchParams();
 
   return (

@@ -14,8 +14,8 @@ export default function RegistCardButton({ isRecurring }: RegistCardButtonProps)
       tossPayments
         .requestBillingAuth('카드', {
           customerKey,
-          successUrl: `${window.location.origin}/payments/regist-success?userId=${userInfo.id}`,
-          failUrl: `${window.location.origin}/payments/regist-fail`,
+          successUrl: `${window.location.origin}/regist-success?userId=${userInfo.id}`,
+          failUrl: `${window.location.origin}/regist-fail`,
         })
         .catch(function (error) {
           if (error.code === 'USER_CANCEL') {

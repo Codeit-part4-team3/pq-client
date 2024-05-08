@@ -13,11 +13,11 @@ import Invite from 'src/pages/invite/Invite';
 import ChatChannel from 'src/pages/server/channel/chatChannel/ChatChannel';
 import VoiceChannel from 'src/pages/server/channel/voiceChannel/VoiceChannel';
 import Checkout from 'src/pages/payments/Checkout';
-import { PaymentSuccess } from 'src/pages/payments/PaymentSuccess';
-import { PaymentFail } from 'src/pages/payments/PaymentFail';
+import { OrderApproval } from 'src/pages/payments/OrderApproval';
+import { OrderSuccess } from 'src/pages/payments/OrderSuccess';
+import { OrderFail } from 'src/pages/payments/OrderFail';
 import { RegistCardSuccess } from 'src/pages/payments/RegistCardSuccess';
 import { RegistCardFail } from 'src/pages/payments/RegistCardFail';
-import { PaymentConfirmSuccess } from 'src/pages/payments/PaymentConfirmSuccess';
 
 export default function Router() {
   return (
@@ -39,13 +39,12 @@ export default function Router() {
       <Route path='chatTest' element={<ChatChannel />} />
       <Route path='voiceTest' element={<VoiceChannel />} />
 
-      <Route path='/payments' element={<Checkout />}>
-        <Route path='success' element={<PaymentSuccess />} />
-        <Route path='confirm-success' element={<PaymentConfirmSuccess />} />
-        <Route path='fail' element={<PaymentFail />} />
-        <Route path='regist-success' element={<RegistCardSuccess />} />
-        <Route path='regist-fail' element={<RegistCardFail />} />
-      </Route>
+      <Route path='/payments' element={<Checkout />} />
+      <Route path='/order-approval' element={<OrderApproval />} />
+      <Route path='/order-success' element={<OrderSuccess />} />
+      <Route path='/order-fail' element={<OrderFail />} />
+      <Route path='/regist-success' element={<RegistCardSuccess />} />
+      <Route path='/regist-fail' element={<RegistCardFail />} />
 
       <Route path='*' element={<NotFound />} />
       <Route path='/admin' element={<Admin />} />

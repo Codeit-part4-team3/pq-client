@@ -5,6 +5,7 @@ import { io, Socket } from 'socket.io-client';
 import { lastKey, MessageItem } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
 import UtilityButton from './_components/UtilityButton';
+import { useSubscription } from 'src/hooks/useSubscription';
 // import { useParams } from 'react-router-dom';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
@@ -21,6 +22,26 @@ export default function ChatChannel() {
   const [isClickedUtilityButton, setIsClickedUtilityButton] = useState<boolean>(false);
   const infiniteScrollTriggerRef = useRef<HTMLDivElement | null>(null);
   const [lastKey, setLastKey] = useState<lastKey | null>(null);
+  const [maxLength, setMaxLength] = useState(150);
+
+  // 구독 여부에 따라 채팅 글자수 제한
+  const { isSubscribed, planType } = useSubscription();
+  useEffect(() => {
+    const calculateMaxLength = () => {
+      if (!isSubscribed) return 150;
+
+      switch (planType) {
+        case 'PREMIUM':
+          return 1000;
+        case 'BASIC':
+          return 500;
+        default:
+          return 150;
+      }
+    };
+
+    setMaxLength(calculateMaxLength());
+  }, [isSubscribed, planType]);
 
   const handleUiilityButtonClick = () => {
     setIsClickedUtilityButton(!isClickedUtilityButton);
@@ -147,6 +168,7 @@ export default function ChatChannel() {
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleSendMessageKeyDown}
+          maxLength={maxLength}
         />
         <UtilityButton
           isClickedUtilityButton={isClickedUtilityButton}

@@ -122,18 +122,26 @@ export default function PaymentTest() {
 
   return (
     <div>
-      <button onClick={() => handlePlanButtonClick(1)}>베이직 30000원</button>
-      <button onClick={() => handlePlanButtonClick(2)}>프리미엄 50000원</button>
-      <input
-        type='checkbox'
-        checked={isRecurring}
-        onChange={(e) => setIsRecurring(e.target.checked)}
-        id='recurringCheckbox'
-      />
-      <label htmlFor='recurringCheckbox'>정기 결제 활성화</label>
-      <SubscriptionButton isRecurring={isRecurring} />
+      <div>
+        <h3>구독권 선택</h3>
+        <button onClick={() => handlePlanButtonClick(1)}>베이직 30000원</button>
+        <button onClick={() => handlePlanButtonClick(2)}>프리미엄 50000원</button>
+      </div>
       <button onClick={handlePayButtonClick}>결제하기</button>
 
+      <div>
+        <h3>정기 결제</h3>
+        <input
+          type='checkbox'
+          checked={isRecurring}
+          onChange={(e) => setIsRecurring(e.target.checked)}
+          id='recurringCheckbox'
+        />
+        <label htmlFor='recurringCheckbox'>정기 결제 활성화</label>
+        <SubscriptionButton isRecurring={isRecurring} />
+      </div>
+
+      <h3>결제 취소</h3>
       <select
         id='cancelReason'
         name='cancelReason'
@@ -142,7 +150,8 @@ export default function PaymentTest() {
       >
         <option value=''>취소 사유를 선택해 주세요.</option>
         <option>단순 변심</option>
-        <option>불량</option>
+        <option>계정 탈퇴</option>
+        <option>실수로 결제함</option>
       </select>
       <button onClick={handleCancelButtonClick}>결제 취소</button>
     </div>

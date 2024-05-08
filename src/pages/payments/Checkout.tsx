@@ -3,7 +3,6 @@ import { PaymentWidgetInstance, loadPaymentWidget } from '@tosspayments/payment-
 import useUserStore from 'src/store/userStore';
 import { usePlanStore, useTempOrderStore } from 'src/store/paymentStore';
 import { PaymentMethodsWidget } from './_type/type';
-import { Outlet } from 'react-router-dom';
 
 const widgetClientKey = import.meta.env.VITE_APP_TOSS_CLIENT_KEY;
 
@@ -68,8 +67,8 @@ export default function Checkout() {
       orderName: planType,
       customerEmail: userInfo.email,
       customerName: userInfo.nickname,
-      successUrl: `${location.origin}/payments/success?userId=${userInfo.id}&planId=${planId}`,
-      failUrl: `${location.origin}/payments/fail`,
+      successUrl: `${location.origin}/order-approval?userId=${userInfo.id}&planId=${planId}`,
+      failUrl: `${location.origin}/order-fail`,
     };
 
     try {
@@ -80,15 +79,12 @@ export default function Checkout() {
   };
 
   return (
-    <>
-      <div>
-        {/* 결제 UI, 이용약관 UI 영역 */}
-        <div id='payment-widget' />
-        <div id='agreement' />
-        {/* 결제하기 버튼 */}
-        <button onClick={handlePaymentRequest}>구독하기</button>
-        <Outlet />
-      </div>
-    </>
+    <div>
+      {/* 결제 UI, 이용약관 UI 영역 */}
+      <div id='payment-widget' />
+      <div id='agreement' />
+      {/* 결제하기 버튼 */}
+      <button onClick={handlePaymentRequest}>구독하기</button>
+    </div>
   );
 }
