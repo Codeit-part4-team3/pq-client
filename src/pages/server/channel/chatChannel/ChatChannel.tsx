@@ -110,6 +110,7 @@ export default function ChatChannel() {
         return message;
       });
     });
+    setCurrentEditingMessageId(null);
   };
 
   // 메시지 삭제
@@ -234,6 +235,7 @@ export default function ChatChannel() {
           messages={messages}
           editingMessage={editingMessage}
           setEditingMessage={setEditingMessage}
+          currentEditingMessageId={currentEditingMessageId}
           onUpdateMessageClick={handleUpdateMessageClick}
           onDeleteMessageClick={handleDeleteMessageClick}
           onUpdateMessageKeyDown={handleUpdateMessageKeyDown}
@@ -290,9 +292,6 @@ const ChatContainer = styled.div`
   overflow-y: scroll;
   display: flex;
   flex-direction: column-reverse;
-
-  margin-left: 20px;
-  margin-right: 20px;
 `;
 
 const ChatChannelIntro = styled.div`
