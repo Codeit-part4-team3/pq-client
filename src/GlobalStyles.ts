@@ -24,6 +24,7 @@ export const GlobalStyles = createGlobalStyle`
     --gray_666666: #666666;
     --gray_999999: #999999;
     --gray_CCCCCC: #CCCCCC;
+    --gray_D9D9D9: #D9D9D9;
     --gray_EEEEEE: #EEEEEE;
     --gray_FAFAFA: #FAFAFA;
     --white_FFFFFF: #FFFFFF;
@@ -32,6 +33,17 @@ export const GlobalStyles = createGlobalStyle`
     --blue_5534DA: #5534DA;
     // 이름에 %를 사용할 수 없음, 수정해야할듯
     /* --blue_10%: #EDF5FD; */
+
+    --primary_basic_color: #013050; // 가장 진한 색
+    --primary_light_color: #03395d; // 중간 색
+    --primary_text_color: #021A2D; // 텍스트 색 PQ색과 동일
+
+    --background_basic_gray: #404040;
+    --background_light_gray: #707070;
+    --background_dark_gray: #202020;
+
+    --text_gray: #d9d9d9;
+    --landing_background_color: #ecf3fc; // 랜딩페이지 배경색( 하늘색 ) // hover시 fafafa
   }
 
   * {
@@ -72,12 +84,14 @@ export const ButtonIcon = styled.button`
 
   border: none;
   background-color: transparent;
+  background-size: cover;
+  background-position: center;
 
   transition: 0.2s;
 
   &:hover {
     cursor: pointer;
-    scale: 1.3;
+    scale: 1.1;
   }
 `;
 
@@ -99,11 +113,30 @@ export const InputNormal = styled.input`
 // Animations
 //
 
-export const scaleAnim = keyframes`
-  from {
+export const scaleBounceAnim = keyframes`
+  0% {
     transform: scale(1);
   }
-  to {
+  50% {
     transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+`;
+
+export const opacityBounceAnim = keyframes`
+  0% { opacity: 1; }
+  10% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 1; }
+`;
+
+export const appearAnim = keyframes`
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
   }
 `;

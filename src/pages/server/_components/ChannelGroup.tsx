@@ -33,16 +33,17 @@ export default function ChannelGroup({ data, children }: ChannelGroupProps) {
 const Area = styled.div`
   width: 100%;
 
+  border-radius: 5px;
+  border: none;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: transparent;
+  color: var(--text_gray);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  border-radius: 5px;
-  border: none;
-  background-color: transparent;
-
-  padding: 0;
   margin-bottom: 20px;
 `;
 
@@ -79,5 +80,5 @@ const DropDownButton = styled(ButtonIcon)`
 `;
 
 const PlusButton = styled(ButtonIcon)`
-  background-image: url('/images/plus.svg');
+  background-image: url('/images/plus_white.svg');
 `;
