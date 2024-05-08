@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import groupSvg from '../../../public/images/group_FILL0_wght200_GRAD0_opsz24 1.svg';
 import tagSvg from '../../../public/images/tag_FILL0_wght200_GRAD0_opsz24 11.svg';
-import React from 'react';
 
 interface ChannelHeaderProps {
   onClickMembers: () => void;
