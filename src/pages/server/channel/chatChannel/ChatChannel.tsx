@@ -296,6 +296,7 @@ const ChatContainer = styled.div`
 
 const ChatChannelIntro = styled.div`
   margin-top: 495px;
+  padding-left: 20px;
 `;
 
 const ChannelName = styled.h1`
