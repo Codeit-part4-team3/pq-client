@@ -29,7 +29,7 @@ export default function LocalMedia({ userId, stream, isMutedLocalStream, showLoc
             <ProfileImage src={profileImage} alt='프로필 이미지' />
           </NotShowVideoWrapper>
         ) : null}
-        <Media ref={videoRef} autoPlay playsInline muted={isMutedLocalStream} />
+        <Media ref={videoRef} autoPlay playsInline muted />
         <NameTag>{userId}</NameTag>
         {isMutedLocalStream ? (
           <MicOff>
