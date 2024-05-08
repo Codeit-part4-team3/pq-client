@@ -1,24 +1,42 @@
-import styled from 'styled-components';
-import ChannelHeader from 'src/components/channel/ChannelHeader';
+import styled, { keyframes } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { lastKey, MessageItem } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
 import UtilityButton from 'src/pages/server/channel/chatChannel/_components/UtilityButton';
+import { useParams } from 'react-router-dom';
+import ChannelHeader from 'src/components/channel/ChannelHeader';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
-export default function AdminChatSocketServer() {
-  const userId = 'admin_user_id';
-  const roomName = 'admin_chat_room';
+/**@Todo Channel 컴포넌트로 부터 channel date를 prop로 받고 데이터 바인딩 예정
+ * 유저 데이터들 처리하는 로직 짜야함
+ */
+export default function ChatChannel() {
+  // 유저, 서버, 채널 데이터
+  const userId = 'minji';
+  const { serverId, channelId } = useParams();
+  console.log('serverId', serverId, 'channelId', channelId);
+  const roomName = channelId || '1';
+  console.log('roomName', roomName);
+  // 소켓
   const socketRef = useRef<Socket | null>(null);
+  // 메시지 관련
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
+  // 무한 스크롤
   const [isNoMoreMessages, setIsNoMoreMessages] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
-  const [isClickedUtilityButton, setIsClickedUtilityButton] = useState<boolean>(false);
   const infiniteScrollTriggerRef = useRef<HTMLDivElement | null>(null);
   const [lastKey, setLastKey] = useState<lastKey | null>(null);
+  // 유틸리티 버튼
+  const [isClickedUtilityButton, setIsClickedUtilityButton] = useState<boolean>(false);
+  // 메시지 수정
+  const [editingMessage, setEditingMessage] = useState<string>('');
+  // 메시지 수정 상태, 수정중인 메시지의 messageId를 저장
+  const [currentEditingMessageId, setCurrentEditingMessageId] = useState<string | null>(null);
+
+  const handleMembers = () => {};
 
   const handleUiilityButtonClick = () => {
     setIsClickedUtilityButton(!isClickedUtilityButton);
@@ -36,9 +54,74 @@ export default function AdminChatSocketServer() {
     }
   };
 
+  // // 메시지 수정 상태로 만들기
+  const handleUpdateMessageClick = ({ messageId, createdAt }: { messageId: string; createdAt: number }) => {
+    if (currentEditingMessageId) return;
+    // message.status를 editing으로 바꾸고 input창에 기존 메시지를 넣어준다.
+    setMessages((prevMessages) => {
+      return prevMessages.map((message) => {
+        if (message.messageId === messageId) {
+          return {
+            ...message,
+            status: 'editing',
+          };
+        }
+        return message;
+      });
+    });
+    setCurrentEditingMessageId(messageId);
+    socketRef.current?.emit('update_message_editing', { messageId, createdAt, roomName });
+  };
+
+  const hanedleEditingMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingMessage(e.target.value);
+  };
+
+  // 메시지 수정 완료
+  const handleUpdateMessageKeyDown = ({ messageId, createdAt }: { messageId: string; createdAt: number }) => {
+    if (editingMessage === '') return;
+    // 낙관적 업데이트
+    setMessages((prevMessages) => {
+      return prevMessages.map((message) => {
+        if (message.messageId === messageId) {
+          return {
+            ...message,
+            status: 'stable',
+          };
+        }
+        return message;
+      });
+    });
+    setCurrentEditingMessageId(null);
+
+    socketRef.current?.emit('update_message_complete', { messageId, createdAt, message: editingMessage, roomName });
+    setEditingMessage('');
+  };
+
+  // 메시지 수정 취소
+  const handleUpdateMessageCancelClick = ({ messageId }: { messageId: string }) => {
+    socketRef.current?.emit('update_message_cancel', { messageId, roomName });
+    setMessages((prevMessages) => {
+      return prevMessages.map((message) => {
+        if (message.messageId === messageId) {
+          return {
+            ...message,
+            status: 'stable',
+          };
+        }
+        return message;
+      });
+    });
+    setCurrentEditingMessageId(null);
+  };
+
+  // 메시지 삭제
+  const handleDeleteMessageClick = ({ messageId, createdAt }: { messageId: string; createdAt: number }) => {
+    socketRef.current?.emit('delete_message', { messageId, createdAt, roomName });
+  };
+
   // infinite scroll : InfiniteScrollTrigger에 닿으면 추가로 메시지를 가져온다.
   const infiniteScroll = async () => {
-    console.log('infiniteScroll');
     if (infiniteScrollTriggerRef.current) {
       const infiniteScrollTriggerIo = new IntersectionObserver(
         (entries) => {
@@ -78,6 +161,32 @@ export default function AdminChatSocketServer() {
     socketRef.current.on('receive_message', (newMessage: MessageItem) => {
       console.log('new message data : ', newMessage);
       setMessages((prevMessages) => [newMessage, ...prevMessages]);
+    });
+
+    // 메시지 수정 완료
+    socketRef.current.on(
+      'update_message_complete',
+      ({ messageId, message }: { messageId: string; message: string }) => {
+        console.log('update message data : ', messageId, message);
+        setMessages((prevMessages) =>
+          prevMessages.map((prevMessage) => {
+            if (prevMessage.messageId === messageId) {
+              return {
+                ...prevMessage,
+                message,
+                status: 'stable',
+              };
+            }
+            return prevMessage;
+          }),
+        );
+      },
+    );
+
+    // 메시지 삭제
+    socketRef.current.on('delete_message', (messageId: string) => {
+      console.log('delete message data : ', messageId);
+      setMessages((prevMessages) => prevMessages.filter((message) => message.messageId !== messageId));
     });
 
     // 인피니티 스크롤을 위한 이벤트
@@ -120,11 +229,21 @@ export default function AdminChatSocketServer() {
 
   return (
     <Wrapper>
-      <ChannelHeader />
+      <ChannelHeader onClickMembers={handleMembers} />
       <ChatContainer ref={chatContainerRef}>
         {/* flex: column-reverse상태 */}
         {/* 가장 아래쪽 */}
-        <ChatMessages messages={messages} />
+        <ChatMessages
+          messages={messages}
+          editingMessage={editingMessage}
+          setEditingMessage={setEditingMessage}
+          currentEditingMessageId={currentEditingMessageId}
+          onUpdateMessageClick={handleUpdateMessageClick}
+          onDeleteMessageClick={handleDeleteMessageClick}
+          onUpdateMessageKeyDown={handleUpdateMessageKeyDown}
+          onUpdateMessageCancelClick={handleUpdateMessageCancelClick}
+          onEditingMessageChange={hanedleEditingMessageChange}
+        />
         {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯, 서버 데이터 필요 */}
         {isNoMoreMessages ? (
           <ChatChannelIntro>
@@ -133,9 +252,14 @@ export default function AdminChatSocketServer() {
           </ChatChannelIntro>
         ) : null}
         {lastKey ? (
-          <InfinityScrollTrigger ref={infiniteScrollTriggerRef}>infiniteScrollTrigger</InfinityScrollTrigger>
+          <>
+            <ChatLoadingSpinner ref={infiniteScrollTriggerRef}>
+              <Spinner delay='0s' />
+              <Spinner delay='0.2s' />
+              <Spinner delay='0.4s' />
+            </ChatLoadingSpinner>
+          </>
         ) : null}
-
         {/* 가장 위쪽 */}
       </ChatContainer>
       <ChatInputBox>
@@ -156,7 +280,8 @@ export default function AdminChatSocketServer() {
 }
 
 const Wrapper = styled.div`
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -164,24 +289,28 @@ const Wrapper = styled.div`
   position: relative;
 `;
 
-const InfinityScrollTrigger = styled.div`
-  width: 100%;
-  height: 100px;
-`;
-
 const ChatContainer = styled.div`
-  width: 100%;
+  width: 100%-1px;
+
   flex-grow: 1;
   overflow-y: scroll;
   display: flex;
   flex-direction: column-reverse;
 
   margin-left: 20px;
-  margin-right: 20px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background: #ccc;
+  }
 `;
 
 const ChatChannelIntro = styled.div`
   margin-top: 495px;
+  padding-left: 20px;
 `;
 
 const ChannelName = styled.h1`
@@ -205,11 +334,11 @@ const CreationDate = styled.p`
 const ChatInputBox = styled.div`
   display: flex;
   justify-content: center;
+  padding-bottom: 20px;
 
   position: relative;
   margin-left: 20px;
   margin-right: 20px;
-  margin-bottom: 20px;
 `;
 
 const ChatInput = styled.input`
@@ -227,4 +356,27 @@ const ChatInput = styled.input`
     outline: none;
     border: 1px solid #00bb83;
   }
+`;
+
+const ChatLoadingSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 300px;
+`;
+
+const bounce = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+`;
+
+const Spinner = styled.div<{ delay: string }>`
+  margin: 8px;
+  width: 12px;
+  height: 12px;
+  background-color: var(--black_000000);
+  border-radius: 50%;
+  animation: ${bounce} 1s infinite;
+  animation-delay: ${(props) => props.delay};
 `;

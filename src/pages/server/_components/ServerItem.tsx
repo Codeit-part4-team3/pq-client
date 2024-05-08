@@ -32,22 +32,20 @@ const Button = styled.button`
   width: 48px;
   height: 48px;
 
-  border: 0.5px solid #cccccc;
-  border-radius: 25%;
-  background-color: #f1f8ff;
+  border: none;
+  border-radius: 10px;
+  background-color: #d8980e;
 
   display: flex;
   justify-content: center;
   align-items: center;
-
-  padding: 0;
+  font-size: 16px;
 
   overflow: hidden;
-  transition: 0.2s;
   white-space: nowrap;
 
   &:hover {
-    background-color: #8bc5ff;
+    outline: 3px solid #d9d9d9;
     cursor: pointer;
   }
 

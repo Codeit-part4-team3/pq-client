@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import MediaControlPanel from './_components/MediaControlPanel';
-import ChannelHeader from 'src/components/channel/ChannelHeader';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import LocalMedia from './_components/LocalMedia';
@@ -289,14 +288,11 @@ export default function VoiceChannel() {
 
   return (
     <Wrapper>
-      <ChannelHeader />
       <button
         onClick={() => {
           console.log('localStreamRef.current', localStreamRef.current?.getTracks());
         }}
-      >
-        getLocalStream
-      </button>
+      ></button>
       <ContentBox>
         <MediaBox>
           <VideoContainer>
@@ -321,28 +317,44 @@ export default function VoiceChannel() {
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 100vh;
-  background-color: var(--white_FFFFFF);
+  height: 100%;
+  background-color: var(--landing_background_color);
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: scroll;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 `;
 
 const VideoContainer = styled.div`
+  width: 100%;
+
+  padding: 20px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  padding-top: 80px;
-  padding-bottom: 125px;
+  grid-template-columns: repeat(2, minmax(200px, 1fr));
+  grid-template-rows: repeat(2, minmax(120px, 1fr));
+  justify-items: center;
+  align-items: center;
+  gap: 10px;
 `;
 
 const ContentBox = styled.div`
   width: 100%;
   flex-grow: 1;
   display: flex;
+  flex-direction: row;
 `;
 
 const MediaBox = styled.div`
+  width: 65%;
+  height: 100%;
+  min-width: 450px;
+
   display: flex;
   flex-direction: column;
 `;

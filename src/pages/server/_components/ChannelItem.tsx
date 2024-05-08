@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { ChannelItemProps } from '../_types/props';
 import { Link, useLocation } from 'react-router-dom';
-import tagSvg from '../../../../public/images/tag_FILL0_wght200_GRAD0_opsz24 3.svg';
+import tagSvg from '/images/tag_small_white.svg';
 
 export default function ChannelItem({ data }: ChannelItemProps) {
   const path = useLocation();
@@ -26,7 +26,7 @@ const ChannelItemWrapper = styled(Link)`
   align-items: center;
   gap: 4px;
   background-color: transparent;
-  color: #000;
+  color: #d9d9d9;
   font-family: Pretendard;
   font-size: 12px;
   font-style: normal;
@@ -36,7 +36,7 @@ const ChannelItemWrapper = styled(Link)`
 
   &:hover {
     cursor: pointer;
-    background-color: #d7eaff;
+    background-color: rgba(255, 255, 255, 0.2);
   }
 
   img {

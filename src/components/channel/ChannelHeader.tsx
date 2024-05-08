@@ -1,10 +1,15 @@
 import styled from 'styled-components';
 import groupSvg from '../../../public/images/group_FILL0_wght200_GRAD0_opsz24 1.svg';
 import tagSvg from '../../../public/images/tag_FILL0_wght200_GRAD0_opsz24 11.svg';
+import React from 'react';
+
+interface ChannelHeaderProps {
+  onClickMembers: () => void;
+}
 
 // voiceChannel, chatChannel 공통
 // @ToDo 채널 이름, 채널 설명, 채널 참여자 수를 서버에서 받아와서 렌더링
-export default function ChannelHeader() {
+export default function ChannelHeader({ onClickMembers }: ChannelHeaderProps) {
   const MockChannelName = '채팅방 이름1';
   const MockChannelDescription = '채팅방 이름1을 소개하는 설명입니다.';
   const MockChannelParticipants = '5명';
@@ -19,7 +24,7 @@ export default function ChannelHeader() {
         <ChannelDescription>{MockChannelDescription}</ChannelDescription>
       </LeftBox>
       <RightBox>
-        <ChannelParticipants type='button'>
+        <ChannelParticipants type='button' onClick={onClickMembers}>
           <img src={groupSvg} width={20} height={20} alt='채널 참여자 수 이미지' />
           <span>{MockChannelParticipants}</span>
         </ChannelParticipants>
@@ -33,6 +38,7 @@ const Wrapper = styled.div`
   width: 100%;
   height: 48px;
 
+  background-color: var(--landing_background_color);
   display: flex;
   justify-content: space-between;
   align-items: center;

@@ -1,5 +1,4 @@
 import styled, { keyframes } from 'styled-components';
-import ChannelHeader from 'src/components/channel/ChannelHeader';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { lastKey, MessageItem } from 'src/pages/server/channel/chatChannel/_types/type';
@@ -227,7 +226,6 @@ export default function ChatChannel() {
 
   return (
     <Wrapper>
-      <ChannelHeader />
       <ChatContainer ref={chatContainerRef}>
         {/* flex: column-reverse상태 */}
         {/* 가장 아래쪽 */}
@@ -278,7 +276,8 @@ export default function ChatChannel() {
 }
 
 const Wrapper = styled.div`
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -287,11 +286,22 @@ const Wrapper = styled.div`
 `;
 
 const ChatContainer = styled.div`
-  width: 100%;
+  width: 100%-1px;
+
   flex-grow: 1;
   overflow-y: scroll;
   display: flex;
   flex-direction: column-reverse;
+
+  margin-left: 20px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background: #ccc;
+  }
 `;
 
 const ChatChannelIntro = styled.div`
@@ -320,11 +330,11 @@ const CreationDate = styled.p`
 const ChatInputBox = styled.div`
   display: flex;
   justify-content: center;
+  padding-bottom: 20px;
 
   position: relative;
   margin-left: 20px;
   margin-right: 20px;
-  margin-bottom: 20px;
 `;
 
 const ChatInput = styled.input`

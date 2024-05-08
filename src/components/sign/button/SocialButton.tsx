@@ -25,7 +25,7 @@ const Button = styled(ButtonNormal)<{ $variant: SocialVariant }>`
   font-size: 14px;
 
   background: ${({ $variant }) => ($variant === 'kakao' ? '#FFE812' : '#fff')};
-  border: 1px solid #f4f4f4;
+  border: 1px solid #d9d9d9;
   border-radius: 10px;
 
   display: flex;
