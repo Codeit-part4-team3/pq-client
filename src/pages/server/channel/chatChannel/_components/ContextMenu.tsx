@@ -47,7 +47,7 @@ const Wrapper = styled.div<{
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-top: 6px;
+  overflow: hidden;
 
   position: absolute;
   top: ${({ positionY }) => positionY}px;

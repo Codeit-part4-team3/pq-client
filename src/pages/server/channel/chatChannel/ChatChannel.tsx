@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import ChannelHeader from 'src/components/channel/ChannelHeader';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
@@ -250,9 +250,14 @@ export default function ChatChannel() {
           </ChatChannelIntro>
         ) : null}
         {lastKey ? (
-          <InfinityScrollTrigger ref={infiniteScrollTriggerRef}>infiniteScrollTrigger</InfinityScrollTrigger>
+          <>
+            <ChatLoadingSpinner ref={infiniteScrollTriggerRef}>
+              <Spinner delay='0s' />
+              <Spinner delay='0.2s' />
+              <Spinner delay='0.4s' />
+            </ChatLoadingSpinner>
+          </>
         ) : null}
-
         {/* 가장 위쪽 */}
       </ChatContainer>
       <ChatInputBox>
@@ -279,11 +284,6 @@ const Wrapper = styled.div`
   justify-content: space-between;
 
   position: relative;
-`;
-
-const InfinityScrollTrigger = styled.div`
-  width: 100%;
-  height: 100px;
 `;
 
 const ChatContainer = styled.div`
@@ -342,4 +342,27 @@ const ChatInput = styled.input`
     outline: none;
     border: 1px solid #00bb83;
   }
+`;
+
+const ChatLoadingSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 300px;
+`;
+
+const bounce = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+`;
+
+const Spinner = styled.div<{ delay: string }>`
+  margin: 8px;
+  width: 12px;
+  height: 12px;
+  background-color: var(--black_000000);
+  border-radius: 50%;
+  animation: ${bounce} 1s infinite;
+  animation-delay: ${(props) => props.delay};
 `;
