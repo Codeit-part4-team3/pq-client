@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-import ChannelHeader from 'src/components/channel/ChannelHeader';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import LocalMedia from 'src/pages/server/channel/voiceChannel/_components/LocalMedia';
@@ -38,8 +37,10 @@ export default function AdminVoiceSocketServer() {
     }[]
   >([]);
 
-  // localMediaControl
+  // remoteMediaControl
   const [isMutedAllRemoteStreams, setIsMutedAllRemoteStreams] = useState<boolean>(false);
+
+  // localMediaControl
   const [isMutedLocalStream, setIsMutedLocalStream] = useState<boolean>(false);
   const [showLocalVideo, setShowLocalVideo] = useState<boolean>(true);
 
@@ -283,7 +284,6 @@ export default function AdminVoiceSocketServer() {
 
   return (
     <Wrapper>
-      <ChannelHeader />
       <button
         onClick={() => {
           console.log('localStreamRef.current', localStreamRef.current?.getTracks());
@@ -303,8 +303,11 @@ export default function AdminVoiceSocketServer() {
           </VideoContainer>
           <MediaControlPanel
             onMuteLocalStreamButtonClick={handleMuteLocalStream}
+            isMutedLocalStream={isMutedLocalStream}
             onOffLocalCameraButtonClick={handleOffLocalCamera}
+            showLocalVideo={showLocalVideo}
             onHandleMuteAllRemoteStreamsButtonClick={handleMuteAllRemoteStreams}
+            isMutedAllRemoteStreams={isMutedAllRemoteStreams}
           />
         </MediaBox>
         {showMeetingNote ? <MeetingNote /> : null}
