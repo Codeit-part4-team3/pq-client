@@ -6,26 +6,26 @@ import SubscriptionButton from 'src/pages/payments/_components/RegistCardButton'
 import {
   CancelOrderRequest,
   CancelOrderResponse,
-  PlanResponse,
+  PaymentResponse,
+  PlanData,
+  PlansResponse,
   TempOrderRequest,
   TempOrderResponse,
 } from 'src/pages/payments/_type/type';
 import { useTempOrderStore, usePlanStore } from 'src/store/paymentStore';
 
 export default function PaymentTest() {
-  const [plan, setPlan] = useState<number | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<PlanData | null>(null);
   const [isRecurring, setIsRecurring] = useState(false); // 정기 결제 체크박스 상태
   const [cancelReason, setCancelReason] = useState('');
   const navigate = useNavigate();
   const { setTempOrderId, setTempAmount } = useTempOrderStore();
   const { setPlanId, setPlanType, setAmount } = usePlanStore();
-  const paymentId = 3; // 임시
+  const paymentId = 26; // TODO: 임시
 
-  const { data: planData, refetch } = useQueryGet<PlanResponse>('getPlan', `${USER_URL.PLANS}/${plan}`, {
-    enabled: !!plan,
-  });
-  const { data: paymentData } = useQueryGet<PlanResponse>('getPayment', `${USER_URL.PAYMENTS}/${paymentId}`, {
-    enabled: !!paymentId,
+  const { data: plans, refetch: getAllPlans } = useQueryGet<PlansResponse>('getPlan', `${USER_URL.PLANS}/all`);
+  const { data: paymentData } = useQueryGet<PaymentResponse>('getPayment', `${USER_URL.PAYMENTS}/${paymentId}`, {
+    enabled: !!paymentId, //TODO: 타입 추가해야됨.
   });
 
   const { mutate: createTempOrder } = useMutationPost<TempOrderResponse, TempOrderRequest>(
@@ -58,35 +58,45 @@ export default function PaymentTest() {
       },
 
       onSuccess: () => {
-        alert('결제가 취소되었습니다.');
+        alert('환불되었습니다.');
       },
     },
   );
 
   useEffect(() => {
-    refetch();
-  }, [plan]);
+    getAllPlans();
+  }, []);
 
-  const handleSelectPlanClick = (id: number) => {
-    setPlan(id);
-    setPlanId(id);
+  const handlePlanButtonClick = (id: number) => {
+    const selectedPlan = plans?.find((plan) => plan.id === id);
+
+    if (selectedPlan) {
+      setSelectedPlan(selectedPlan);
+      setPlanId(selectedPlan.id);
+      return;
+    }
+
+    console.error('선택된 플랜이 없습니다.');
+    throw new Error('선택된 플랜이 없습니다.');
   };
 
-  const handlePaymentClick = () => {
-    if (!planData) throw new Error('플랜 정보가 없습니다.');
+  const handlePayButtonClick = () => {
+    if (!plans) throw new Error('플랜 정보가 없습니다.');
+
+    if (!selectedPlan) return alert('선택된 플랜이 없습니다.');
 
     const tempOrder: TempOrderRequest = {
-      orderName: planData.type,
-      totalAmount: planData.price,
+      orderName: selectedPlan.type,
+      totalAmount: selectedPlan.price,
     };
 
-    setPlanType(planData.type);
-    setAmount(planData.price);
+    setPlanType(selectedPlan.type);
+    setAmount(selectedPlan.price);
 
     createTempOrder(tempOrder);
   };
 
-  const handleCancelClick = () => {
+  const handleCancelButtonClick = () => {
     if (!paymentData) throw new Error('결제 정보가 없습니다.');
 
     if (!cancelReason) {
@@ -104,8 +114,8 @@ export default function PaymentTest() {
 
   return (
     <div>
-      <button onClick={() => handleSelectPlanClick(1)}>베이직 30000원</button>
-      <button onClick={() => handleSelectPlanClick(2)}>프리미엄 50000원</button>
+      <button onClick={() => handlePlanButtonClick(1)}>베이직 30000원</button>
+      <button onClick={() => handlePlanButtonClick(2)}>프리미엄 50000원</button>
       <input
         type='checkbox'
         checked={isRecurring}
@@ -114,7 +124,7 @@ export default function PaymentTest() {
       />
       <label htmlFor='recurringCheckbox'>정기 결제 활성화</label>
       <SubscriptionButton isRecurring={isRecurring} />
-      <button onClick={handlePaymentClick}>결제하기</button>
+      <button onClick={handlePayButtonClick}>결제하기</button>
 
       <select
         id='cancelReason'
@@ -126,7 +136,7 @@ export default function PaymentTest() {
         <option>단순 변심</option>
         <option>불량</option>
       </select>
-      <button onClick={handleCancelClick}>결제 취소</button>
+      <button onClick={handleCancelButtonClick}>결제 취소</button>
     </div>
   );
 }

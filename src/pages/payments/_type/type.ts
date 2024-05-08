@@ -17,6 +17,7 @@ interface CancelOrderRequestBody {
 interface CancelOrderResponseBody {
   message: string;
   refund: {
+    id: number;
     paymentId: number;
     amount: number;
     status: string;
@@ -44,14 +45,15 @@ export interface PaymentMethodsWidget {
   };
 }
 
-interface PlanData {
+export interface PlanData {
   id: number;
   type: string;
   price: number;
   duration: number;
 }
 
-export type PlanResponse = PlanData | null;
+export type PlansResponse = PlanData[] | null;
+
 interface PaymentData {
   id: number;
   userId: number;
@@ -61,6 +63,8 @@ interface PaymentData {
   status: string;
   createdAt: string;
 }
+
+export type PaymentResponse = PaymentData | null;
 
 export interface ConfirmResponseBody {
   title: string;

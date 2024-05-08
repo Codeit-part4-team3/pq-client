@@ -17,6 +17,7 @@ import { PaymentSuccess } from 'src/pages/payments/PaymentSuccess';
 import { PaymentFail } from 'src/pages/payments/PaymentFail';
 import { RegistCardSuccess } from 'src/pages/payments/RegistCardSuccess';
 import { RegistCardFail } from 'src/pages/payments/RegistCardFail';
+import { PaymentConfirmSuccess } from 'src/pages/payments/PaymentConfirmSuccess';
 
 export default function Router() {
   return (
@@ -40,6 +41,7 @@ export default function Router() {
 
       <Route path='/payments' element={<Checkout />}>
         <Route path='success' element={<PaymentSuccess />} />
+        <Route path='confirm-success' element={<PaymentConfirmSuccess />} />
         <Route path='fail' element={<PaymentFail />} />
         <Route path='regist-success' element={<RegistCardSuccess />} />
         <Route path='regist-fail' element={<RegistCardFail />} />

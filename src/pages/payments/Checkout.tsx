@@ -12,7 +12,7 @@ export default function Checkout() {
   const paymentMethodsWidgetRef = useRef<PaymentMethodsWidget | null>(null);
   const { userInfo } = useUserStore();
   const { tempOrderId } = useTempOrderStore();
-  const { amount, planType, planId } = usePlanStore();
+  const { planId, amount, planType } = usePlanStore();
 
   // 결제 위젯 불러오기
   useEffect(() => {
@@ -63,17 +63,17 @@ export default function Checkout() {
 
   // 결제 요청
   const handlePaymentRequest = async () => {
-    const successUrl = `${window.location.origin}/payments/success?userId=${userInfo.id}&planId=${planId}`;
-    const failUrl = `${window.location.origin}/payments/fail`;
+    const paymentRequestData = {
+      orderId: tempOrderId,
+      orderName: planType,
+      customerEmail: userInfo.email,
+      customerName: userInfo.nickname,
+      successUrl: `${location.origin}/payments/success?userId=${userInfo.id}&planId=${planId}`,
+      failUrl: `${location.origin}/payments/fail`,
+    };
 
     try {
-      await paymentWidget?.requestPayment({
-        orderId: tempOrderId,
-        orderName: planType,
-        customerEmail: userInfo.email,
-        successUrl: successUrl,
-        failUrl: failUrl,
-      });
+      await paymentWidget?.requestPayment(paymentRequestData);
     } catch (error) {
       console.error('Error requesting payment:', error);
     }
@@ -86,7 +86,7 @@ export default function Checkout() {
         <div id='payment-widget' />
         <div id='agreement' />
         {/* 결제하기 버튼 */}
-        <button onClick={handlePaymentRequest}>결제하기</button>
+        <button onClick={handlePaymentRequest}>구독하기</button>
         <Outlet />
       </div>
     </>
