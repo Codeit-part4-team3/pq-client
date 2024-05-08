@@ -22,6 +22,7 @@ export default function MeetingNote() {
 const Wrapper = styled.div`
   border-left: 0.5px solid var(--gray-666666, #666);
   flex-grow: 1;
+  width: min(100%, 350px);
   height: 100%;
 
   background: var(--white-FFFFFF, #fff);

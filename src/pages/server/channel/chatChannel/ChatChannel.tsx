@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import ChannelHeader from 'src/components/channel/ChannelHeader';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { lastKey, MessageItem } from 'src/pages/server/channel/chatChannel/_types/type';
@@ -122,7 +121,6 @@ export default function ChatChannel() {
 
   return (
     <Wrapper>
-      <ChannelHeader />
       <ChatContainer ref={chatContainerRef}>
         {/* flex: column-reverse상태 */}
         {/* 가장 아래쪽 */}
@@ -158,11 +156,11 @@ export default function ChatChannel() {
 }
 
 const Wrapper = styled.div`
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  /* background-color: #ffeec3fd; */
 
   position: relative;
 `;

@@ -19,6 +19,8 @@ export default function AdminSocketServer() {
   const [isNoMoreMessages, setIsNoMoreMessages] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
+  const handleMembers = () => {};
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
@@ -94,7 +96,7 @@ export default function AdminSocketServer() {
   return (
     <Wrapper>
       <button onClick={handleMoreMessageButton}>메시지 더보기</button>
-      <ChannelHeader />
+      <ChannelHeader onClickMembers={handleMembers} />
       <ChatContainer ref={chatContainerRef}>
         <ChatMessages messages={messages} />
         {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯 */}
