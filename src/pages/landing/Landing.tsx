@@ -1,6 +1,6 @@
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { scaleBounceAnim } from 'src/GlobalStyles';
+import { opacityBounceAnim, scaleBounceAnim } from 'src/GlobalStyles';
 
 export default function Landing() {
   return (
@@ -25,7 +25,7 @@ const Wrapper = styled.div`
   height: 100vh;
 
   padding: 0px;
-  background-color: #ecf3fc;
+  background-color: var(--landing_background_color);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -37,7 +37,7 @@ const Wrapper = styled.div`
     font-size: 3rem;
     font-family: 'Jua', sans-serif;
     text-decoration: none;
-    color: black;
+    color: var(--primary_text_color);
 
     animation: ${scaleBounceAnim} 1s infinite;
   }
@@ -46,16 +46,10 @@ const Wrapper = styled.div`
 const MainThumbnail = styled.div`
   width: 30vw;
   height: 30vw;
-  /* object-fit: cover; */
 
   background-image: url('/images/landing.webp');
   background-size: cover;
   background-position: center;
-`;
-
-const typing = keyframes`
-  from { opacity: 0; }
-  to { opacity: 1; }
 `;
 
 const Message = styled.div`
@@ -66,9 +60,10 @@ const Message = styled.div`
   align-items: center;
 
   & > div {
+    color: var(--primary_text_color);
     font-family: 'Jua', sans-serif;
     opacity: 0;
-    animation: ${typing} 3s infinite;
+    animation: ${opacityBounceAnim} 5s infinite;
   }
 
   div:nth-child(1) {

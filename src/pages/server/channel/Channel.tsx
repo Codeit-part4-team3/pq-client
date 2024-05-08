@@ -28,11 +28,24 @@ export default function Channel() {
         {onVoice === 'true' ? <ChatChannel /> : <VoiceChannel />}
         {isShowMembers && (
           <MembersContainer>
-            <div>
+            <Member>
+              <ImageWrapper>
+                <Image />
+              </ImageWrapper>
               <span>구성원</span>
-            </div>
-            <div>구성원4</div>
-            <div>구성원3</div>
+            </Member>
+            <Member>
+              <ImageWrapper>
+                <Image />
+              </ImageWrapper>
+              <span>구성원</span>
+            </Member>
+            <Member>
+              <ImageWrapper>
+                <Image />
+              </ImageWrapper>
+              <span>구성원</span>
+            </Member>
           </MembersContainer>
         )}
       </Container>
@@ -54,7 +67,7 @@ const Container = styled.div`
   width: 100%;
   height: calc(100% - 48px);
 
-  background-color: var(--white_FFFFFF);
+  background-color: var(--landing_background_color);
   display: flex;
   flex-direction: row;
 
@@ -65,6 +78,7 @@ const MembersContainer = styled.div`
   width: 180px;
   height: 100%;
 
+  background-color: var(--landing_background_color);
   border-left: 1px solid var(--gray_CCCCCC);
   display: flex;
   flex-direction: column;
@@ -73,5 +87,41 @@ const MembersContainer = styled.div`
 
   & > * {
     padding: 10px;
+  }
+`;
+
+const Member = styled.div`
+  width: 100%;
+  height: 60px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 5px;
+`;
+
+const ImageWrapper = styled.div`
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  overflow: hidden;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+
+  border-radius: 50%;
+  background-size: cover;
+  background-image: url('/images/minji-profile-image.png');
+
+  &:hover {
+    cursor: pointer;
   }
 `;

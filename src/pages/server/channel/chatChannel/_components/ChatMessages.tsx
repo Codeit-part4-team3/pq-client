@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import profileImage from '../../../../../../public/images/minji-profile-image.png';
 import { MessageItem } from '../_types/type';
 import extractDate from 'src/utils/extractDate';
 import ChatDayDivider from './ChatDayDivider';
@@ -40,7 +39,7 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
               <>
                 <ChatMessageWrapper>
                   <UserProfileImage>
-                    <img src={profileImage} alt='유저 프로필 이미지' />
+                    <Image />
                   </UserProfileImage>
                   <ChatMessageContent>
                     <ChatMessageContentHeader>
@@ -78,13 +77,19 @@ const ChatMessageWrapper = styled.div`
 const UserProfileImage = styled.div`
   width: 40px;
   height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+`;
 
-  img {
-    border-radius: 4px;
-    border: 1px solid var(--gray_EEEEEE);
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+
+  background-size: cover;
+  background-image: url('/images/minji-profile-image.png');
+
+  &:hover {
+    cursor: pointer;
   }
 `;
 

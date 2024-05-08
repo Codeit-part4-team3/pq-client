@@ -316,7 +316,7 @@ export default function VoiceChannel() {
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-  background-color: var(--white_FFFFFF);
+  background-color: var(--landing_background_color);
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -34,26 +34,16 @@ export const GlobalStyles = createGlobalStyle`
     // 이름에 %를 사용할 수 없음, 수정해야할듯
     /* --blue_10%: #EDF5FD; */
 
-    --primary_basic_color: #013050;
-    --primary_light_color: #03395d; 
-    --primary_dark_color: #00233a;
-
-    --secondary_basic_color: #FF5722;
-    --secondary_light_color: #258dff;
-    --secondary_dark_color: #0F4C5C;
-
-    --emphasis_basic_color: #4CAF50;
-    --emphasis_light_color: #9C27B0;
-    --emphasis_dark_color: #F44336;
+    --primary_basic_color: #013050; // 가장 진한 색
+    --primary_light_color: #03395d; // 중간 색
+    --primary_text_color: #021A2D; // 텍스트 색 PQ색과 동일
 
     --background_basic_gray: #404040;
     --background_light_gray: #707070;
     --background_dark_gray: #202020;
 
-    --background_basic_white: #FFFFFF;
-    --background_light_white: #FAFAFA;
-
     --text_gray: #d9d9d9;
+    --landing_background_color: #ecf3fc; // 랜딩페이지 배경색( 하늘색 ) // hover시 fafafa
   }
 
   * {
@@ -133,7 +123,13 @@ export const scaleBounceAnim = keyframes`
   100% {
     transform: scale(1);
   }
+`;
 
+export const opacityBounceAnim = keyframes`
+  0% { opacity: 1; }
+  10% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 1; }
 `;
 
 export const appearAnim = keyframes`

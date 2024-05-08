@@ -171,7 +171,7 @@ const InfinityScrollTrigger = styled.div`
 `;
 
 const ChatContainer = styled.div`
-  width: calc(100%-1px);
+  width: 100%-1px;
 
   flex-grow: 1;
   overflow-y: scroll;
@@ -179,6 +179,14 @@ const ChatContainer = styled.div`
   flex-direction: column-reverse;
 
   margin-left: 20px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background: #ccc;
+  }
 `;
 
 const ChatChannelIntro = styled.div`
