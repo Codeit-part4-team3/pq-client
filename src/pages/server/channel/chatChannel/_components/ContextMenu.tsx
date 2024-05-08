@@ -6,7 +6,7 @@ interface ContextMenuProps {
   messageId: string;
   createdAt: number;
   onDeleteMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
-  onUpdateMessageClick: ({ messageId }: { messageId: string }) => void;
+  onUpdateMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
 }
 
 export default function ContextMenu({
@@ -28,7 +28,7 @@ export default function ContextMenu({
       </Item>
       <Item
         onClick={() => {
-          onUpdateMessageClick({ messageId });
+          onUpdateMessageClick({ messageId, createdAt });
         }}
       >
         메시지 수정하기

@@ -13,19 +13,26 @@ const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
  * 유저 데이터들 처리하는 로직 짜야함
  */
 export default function ChatChannel() {
+  // 유저, 서버, 채널 데이터
   const userId = 'minji';
   const { serverId, channelId } = useParams();
   console.log('serverId', serverId, 'channelId', channelId);
   const roomName = channelId || '1';
   console.log('roomName', roomName);
+  // 소켓
   const socketRef = useRef<Socket | null>(null);
+  // 메시지 관련
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
+  // 무한 스크롤
   const [isNoMoreMessages, setIsNoMoreMessages] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const infiniteScrollTriggerRef = useRef<HTMLDivElement | null>(null);
   const [lastKey, setLastKey] = useState<lastKey | null>(null);
+  // 유틸리티 버튼
   const [isClickedUtilityButton, setIsClickedUtilityButton] = useState<boolean>(false);
+  // 메시지 수정
+  const [editingMessage, setEditingMessage] = useState<string>('');
 
   const handleUiilityButtonClick = () => {
     setIsClickedUtilityButton(!isClickedUtilityButton);
@@ -43,9 +50,61 @@ export default function ChatChannel() {
     }
   };
 
-  // // 메시지 수정
-  const handleUpdateMessageClick = ({ messageId }: { messageId: string }) => {
-    socketRef.current?.emit('update_message', { messageId, roomName });
+  // // 메시지 수정 상태로 만들기
+  const handleUpdateMessageClick = ({ messageId, createdAt }: { messageId: string; createdAt: number }) => {
+    // message.status를 editing으로 바꾸고 input창에 기존 메시지를 넣어준다.
+    setMessages((prevMessages) => {
+      return prevMessages.map((message) => {
+        if (message.messageId === messageId) {
+          return {
+            ...message,
+            status: 'editing',
+          };
+        }
+        return message;
+      });
+    });
+    socketRef.current?.emit('update_message_editing', { messageId, createdAt, roomName });
+  };
+
+  const hanedleEditingMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingMessage(e.target.value);
+  };
+
+  // 메시지 수정 완료
+  const handleUpdateMessageKeyDown = ({ messageId, createdAt }: { messageId: string; createdAt: number }) => {
+    // 낙관적 업데이트
+    setMessages((prevMessages) => {
+      return prevMessages.map((message) => {
+        if (message.messageId === messageId) {
+          return {
+            ...message,
+            status: 'stable',
+          };
+        }
+        return message;
+      });
+    });
+    if (editingMessage === '') return;
+
+    socketRef.current?.emit('update_message_complete', { messageId, createdAt, message: editingMessage, roomName });
+    setEditingMessage('');
+  };
+
+  // 메시지 수정 취소
+  const handleUpdateMessageCancelClick = ({ messageId }: { messageId: string }) => {
+    socketRef.current?.emit('update_message_cancel', { messageId, roomName });
+    setMessages((prevMessages) => {
+      return prevMessages.map((message) => {
+        if (message.messageId === messageId) {
+          return {
+            ...message,
+            status: 'stable',
+          };
+        }
+        return message;
+      });
+    });
   };
 
   // 메시지 삭제
@@ -95,6 +154,26 @@ export default function ChatChannel() {
       console.log('new message data : ', newMessage);
       setMessages((prevMessages) => [newMessage, ...prevMessages]);
     });
+
+    // 메시지 수정 완료
+    socketRef.current.on(
+      'update_message_complete',
+      ({ messageId, message }: { messageId: string; message: string }) => {
+        console.log('update message data : ', messageId, message);
+        setMessages((prevMessages) =>
+          prevMessages.map((prevMessage) => {
+            if (prevMessage.messageId === messageId) {
+              return {
+                ...prevMessage,
+                message,
+                status: 'stable',
+              };
+            }
+            return prevMessage;
+          }),
+        );
+      },
+    );
 
     // 메시지 삭제
     socketRef.current.on('delete_message', (messageId: string) => {
@@ -148,8 +227,13 @@ export default function ChatChannel() {
         {/* 가장 아래쪽 */}
         <ChatMessages
           messages={messages}
+          editingMessage={editingMessage}
+          setEditingMessage={setEditingMessage}
           onUpdateMessageClick={handleUpdateMessageClick}
           onDeleteMessageClick={handleDeleteMessageClick}
+          onUpdateMessageKeyDown={handleUpdateMessageKeyDown}
+          onUpdateMessageCancelClick={handleUpdateMessageCancelClick}
+          onEditingMessageChange={hanedleEditingMessageChange}
         />
         {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯, 서버 데이터 필요 */}
         {isNoMoreMessages ? (

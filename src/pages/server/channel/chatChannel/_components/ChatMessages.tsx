@@ -9,8 +9,13 @@ import ContextMenu from './ContextMenu';
 
 interface ChatMessagesProps {
   messages: MessageItem[];
-  onUpdateMessageClick: ({ messageId }: { messageId: string }) => void;
+  onUpdateMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
   onDeleteMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
+  onUpdateMessageKeyDown: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
+  onUpdateMessageCancelClick: ({ messageId }: { messageId: string }) => void;
+  editingMessage: string;
+  setEditingMessage: React.Dispatch<React.SetStateAction<string>>;
+  onEditingMessageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 // 오른쪽 클릭시 메뉴창 뜨게하기
@@ -22,33 +27,47 @@ interface ContextMenu {
   positionX: number;
   positionY: number;
   messageId: string;
+  message: string;
   createdAt: number;
 }
 
-export default function ChatMessages({ messages, onUpdateMessageClick, onDeleteMessageClick }: ChatMessagesProps) {
+export default function ChatMessages({
+  messages,
+  onUpdateMessageClick,
+  onDeleteMessageClick,
+  onUpdateMessageKeyDown,
+  onUpdateMessageCancelClick,
+  editingMessage,
+  setEditingMessage,
+  onEditingMessageChange,
+}: ChatMessagesProps) {
   // 마우스 오른쪽 클릭시 메뉴창 뜨게 하기
   const [isContextMenuOpen, setIsContextMenuOpen] = useState<ContextMenu>({
     isOpen: false,
     positionX: 0,
     positionY: 0,
     messageId: '',
+    message: '',
     createdAt: 0,
   });
 
-  const handleContextMenuOpen = (messageId: string, createdAt: number) => (e: React.MouseEvent<HTMLDivElement>) => {
-    console.log('right click');
-    e.preventDefault();
-    setIsContextMenuOpen((prev) => {
-      return {
-        ...prev,
-        isOpen: !isContextMenuOpen.isOpen,
-        positionX: e.clientX,
-        positionY: e.clientY,
-        messageId,
-        createdAt,
-      };
-    });
-  };
+  const handleContextMenuOpen =
+    (messageId: string, message: string, createdAt: number) => (e: React.MouseEvent<HTMLDivElement>) => {
+      console.log('right click');
+      e.preventDefault();
+      setIsContextMenuOpen((prev) => {
+        return {
+          ...prev,
+          isOpen: !isContextMenuOpen.isOpen,
+          positionX: e.clientX,
+          positionY: e.clientY,
+          messageId,
+          message,
+          createdAt,
+        };
+      });
+      setEditingMessage(message);
+    };
 
   let isDifferentUser = false;
 
@@ -82,33 +101,82 @@ export default function ChatMessages({ messages, onUpdateMessageClick, onDeleteM
         // 2024년 04월 22일 (화) 헝태
         const ChatDayDividerDay = `${year}년 ${addZero(month)}월 ${addZero(day)}일 (${'일월화수목금토'[new Date(`${year}-${month}-${day}`).getDay()]})`;
 
+        // 메시지 수정 중인 경우 message.status가 'editing'으로 변경됨을 이용해서 수정 중인 메시지를 표시
+
         return (
           <>
             {isDifferentUser ? (
               <>
                 <ChatMessageWrapper
                   key={messageItem.messageId}
-                  onContextMenu={handleContextMenuOpen(messageItem.messageId, messageItem.createdAt)}
+                  onContextMenu={handleContextMenuOpen(
+                    messageItem.messageId,
+                    messageItem.message,
+                    messageItem.createdAt,
+                  )}
                 >
                   <UserProfileImage>
                     <img src={profileImage} alt='유저 프로필 이미지' />
                   </UserProfileImage>
+
                   <ChatMessageContent>
                     <ChatMessageContentHeader>
                       <ChatMessageSender>{messageItem.userId}</ChatMessageSender>
                       <ChatMessageCreatedAt>{messageCreatedAt}</ChatMessageCreatedAt>
                     </ChatMessageContentHeader>
-                    <ChatMessageText>{messageItem.message}</ChatMessageText>
+                    {messageItem.status === 'editing' ? (
+                      <ChatMessageTextEditingBox>
+                        <ChatMessageTextEditingInput value={editingMessage} onChange={onEditingMessageChange} />
+                        <ChatMessageTextEditingDescription>
+                          ESC 키로{' '}
+                          <button
+                            onClick={() => {
+                              onUpdateMessageCancelClick({ messageId: messageItem.messageId });
+                            }}
+                          >
+                            취소
+                          </button>{' '}
+                          • Enter 키로
+                          <button
+                            onClick={() => {
+                              onUpdateMessageKeyDown({
+                                messageId: messageItem.messageId,
+                                createdAt: messageItem.createdAt,
+                              });
+                            }}
+                          >
+                            저장
+                          </button>
+                        </ChatMessageTextEditingDescription>
+                      </ChatMessageTextEditingBox>
+                    ) : (
+                      <ChatMessageText>{messageItem.message}</ChatMessageText>
+                    )}
                   </ChatMessageContent>
                 </ChatMessageWrapper>
               </>
             ) : (
-              <SameUserMessage
-                key={messageItem.messageId}
-                onContextMenu={handleContextMenuOpen(messageItem.messageId, messageItem.createdAt)}
-              >
-                <ChatMessageText>{messageItem.message}</ChatMessageText>
-              </SameUserMessage>
+              <>
+                {messageItem.status === 'editing' ? (
+                  <ChatMessageTextEditingBox>
+                    <ChatMessageTextEditingInput />
+                    <ChatMessageTextEditingDescription>
+                      ESC 키로 취소 • Enter 키로 저장
+                    </ChatMessageTextEditingDescription>
+                  </ChatMessageTextEditingBox>
+                ) : (
+                  <SameUserMessage
+                    key={messageItem.messageId}
+                    onContextMenu={handleContextMenuOpen(
+                      messageItem.messageId,
+                      messageItem.message,
+                      messageItem.createdAt,
+                    )}
+                  >
+                    <ChatMessageText>{messageItem.message}</ChatMessageText>
+                  </SameUserMessage>
+                )}
+              </>
             )}
             {isDifferentDay ? <ChatDayDivider ChatDayDividerDay={ChatDayDividerDay} /> : null}
           </>
@@ -119,13 +187,14 @@ export default function ChatMessages({ messages, onUpdateMessageClick, onDeleteM
 }
 
 const ChatMessageWrapper = styled.div`
+  width: 100%;
   display: flex;
   gap: 12px;
 
   margin-top: 20px;
 
   &:hover {
-    background-color: #fafafa;
+    background-color: var(--gray_CCCCCC);
   }
 `;
 
@@ -143,6 +212,7 @@ const UserProfileImage = styled.div`
 `;
 
 const ChatMessageContent = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
 `;
@@ -183,6 +253,22 @@ const SameUserMessage = styled.div`
   padding-left: 52px;
 
   &:hover {
-    background-color: #fafafa;
+    background-color: var(--gray_CCCCCC);
   }
 `;
+
+const ChatMessageTextEditingBox = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-right: 52px;
+`;
+
+const ChatMessageTextEditingInput = styled.input`
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+`;
+
+const ChatMessageTextEditingDescription = styled.div``;
