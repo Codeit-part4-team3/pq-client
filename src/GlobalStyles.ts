@@ -123,13 +123,17 @@ export const InputNormal = styled.input`
 // Animations
 //
 
-export const scaleAnim = keyframes`
-  from {
+export const scaleBounceAnim = keyframes`
+  0% {
     transform: scale(1);
   }
-  to {
+  50% {
     transform: scale(1.1);
   }
+  100% {
+    transform: scale(1);
+  }
+
 `;
 
 export const appearAnim = keyframes`
