@@ -10,7 +10,7 @@ import ContextMenu from './ContextMenu';
 interface ChatMessagesProps {
   messages: MessageItem[];
   onUpdateMessageClick: ({ messageId }: { messageId: string }) => void;
-  onDeleteMessageClick: ({ messageId }: { messageId: string }) => void;
+  onDeleteMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
 }
 
 // 오른쪽 클릭시 메뉴창 뜨게하기
@@ -22,6 +22,7 @@ interface ContextMenu {
   positionX: number;
   positionY: number;
   messageId: string;
+  createdAt: number;
 }
 
 export default function ChatMessages({ messages, onUpdateMessageClick, onDeleteMessageClick }: ChatMessagesProps) {
@@ -31,9 +32,10 @@ export default function ChatMessages({ messages, onUpdateMessageClick, onDeleteM
     positionX: 0,
     positionY: 0,
     messageId: '',
+    createdAt: 0,
   });
 
-  const handleContextMenuOpen = (messageId: string) => (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleContextMenuOpen = (messageId: string, createdAt: number) => (e: React.MouseEvent<HTMLDivElement>) => {
     console.log('right click');
     e.preventDefault();
     setIsContextMenuOpen((prev) => {
@@ -43,6 +45,7 @@ export default function ChatMessages({ messages, onUpdateMessageClick, onDeleteM
         positionX: e.clientX,
         positionY: e.clientY,
         messageId,
+        createdAt,
       };
     });
   };
@@ -85,7 +88,7 @@ export default function ChatMessages({ messages, onUpdateMessageClick, onDeleteM
               <>
                 <ChatMessageWrapper
                   key={messageItem.messageId}
-                  onContextMenu={handleContextMenuOpen(messageItem.messageId)}
+                  onContextMenu={handleContextMenuOpen(messageItem.messageId, messageItem.createdAt)}
                 >
                   <UserProfileImage>
                     <img src={profileImage} alt='유저 프로필 이미지' />
@@ -100,7 +103,10 @@ export default function ChatMessages({ messages, onUpdateMessageClick, onDeleteM
                 </ChatMessageWrapper>
               </>
             ) : (
-              <SameUserMessage key={messageItem.messageId} onContextMenu={handleContextMenuOpen(messageItem.messageId)}>
+              <SameUserMessage
+                key={messageItem.messageId}
+                onContextMenu={handleContextMenuOpen(messageItem.messageId, messageItem.createdAt)}
+              >
                 <ChatMessageText>{messageItem.message}</ChatMessageText>
               </SameUserMessage>
             )}

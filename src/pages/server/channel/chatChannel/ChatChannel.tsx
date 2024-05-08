@@ -17,6 +17,7 @@ export default function ChatChannel() {
   const { serverId, channelId } = useParams();
   console.log('serverId', serverId, 'channelId', channelId);
   const roomName = channelId || '1';
+  console.log('roomName', roomName);
   const socketRef = useRef<Socket | null>(null);
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
@@ -48,8 +49,8 @@ export default function ChatChannel() {
   };
 
   // 메시지 삭제
-  const handleDeleteMessageClick = ({ messageId }: { messageId: string }) => {
-    socketRef.current?.emit('delete_message', { messageId, roomName });
+  const handleDeleteMessageClick = ({ messageId, createdAt }: { messageId: string; createdAt: number }) => {
+    socketRef.current?.emit('delete_message', { messageId, createdAt, roomName });
   };
 
   // infinite scroll : InfiniteScrollTrigger에 닿으면 추가로 메시지를 가져온다.
@@ -93,6 +94,12 @@ export default function ChatChannel() {
     socketRef.current.on('receive_message', (newMessage: MessageItem) => {
       console.log('new message data : ', newMessage);
       setMessages((prevMessages) => [newMessage, ...prevMessages]);
+    });
+
+    // 메시지 삭제
+    socketRef.current.on('delete_message', (messageId: string) => {
+      console.log('delete message data : ', messageId);
+      setMessages((prevMessages) => prevMessages.filter((message) => message.messageId !== messageId));
     });
 
     // 인피니티 스크롤을 위한 이벤트

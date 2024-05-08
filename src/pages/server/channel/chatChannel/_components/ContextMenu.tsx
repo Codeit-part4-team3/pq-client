@@ -4,7 +4,8 @@ interface ContextMenuProps {
   positionX: number;
   positionY: number;
   messageId: string;
-  onDeleteMessageClick: ({ messageId }: { messageId: string }) => void;
+  createdAt: number;
+  onDeleteMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
   onUpdateMessageClick: ({ messageId }: { messageId: string }) => void;
 }
 
@@ -12,6 +13,7 @@ export default function ContextMenu({
   positionX,
   positionY,
   messageId,
+  createdAt,
   onDeleteMessageClick,
   onUpdateMessageClick,
 }: ContextMenuProps) {
@@ -19,7 +21,7 @@ export default function ContextMenu({
     <Wrapper positionX={positionX} positionY={positionY}>
       <Item
         onClick={() => {
-          onDeleteMessageClick({ messageId });
+          onDeleteMessageClick({ messageId, createdAt });
         }}
       >
         메시지 삭제하기
