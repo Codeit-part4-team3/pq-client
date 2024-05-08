@@ -17,6 +17,7 @@ export const Area = styled.section`
 `;
 
 export const Container = styled.main`
+  background-color: var(--landing_background_color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,7 +30,7 @@ export const Button = styled(ButtonNormal)`
   font-size: 14px;
 
   background: #fff;
-  border: 1px solid #f4f4f4;
+  border: 1px solid #d9d9d9;
   border-radius: 10px;
 
   display: flex;

@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { ButtonIcon } from 'src/GlobalStyles';
+import styled from 'styled-components';
 
 export default function CalendarContainer() {
   return (
@@ -13,6 +13,9 @@ export default function CalendarContainer() {
 const Area = styled.section`
   width: 100%;
 
+  padding-left: 10px;
+  padding-right: 10px;
+  color: var(--text_gray);
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
