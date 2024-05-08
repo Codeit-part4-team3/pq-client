@@ -218,7 +218,7 @@ export default function ChatChannel() {
   }, [roomName]);
 
   useEffect(() => {
-    // 채팅이 추가될 때마다 스크롤을 맨 아래로 내려준다
+    // 페이지 진입시, 채팅이 추가될 때마다 스크롤을 맨 아래로 내려준다
     if (inputValue === '' && chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
@@ -255,6 +255,7 @@ export default function ChatChannel() {
         ) : null}
         {lastKey ? (
           <>
+            {/* LoadingSpinner */}
             <ChatLoadingSpinner ref={infiniteScrollTriggerRef}>
               <Spinner delay='0s' />
               <Spinner delay='0.2s' />
@@ -264,6 +265,7 @@ export default function ChatChannel() {
         ) : null}
         {/* 가장 위쪽 */}
       </ChatContainer>
+      {/* 채팅 input */}
       <ChatInputBox>
         <ChatInput
           type='text'

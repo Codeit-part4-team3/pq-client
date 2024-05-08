@@ -43,8 +43,10 @@ export default function VoiceChannel() {
     }[]
   >([]);
 
-  // localMediaControl
+  // remoteMediaControl
   const [isMutedAllRemoteStreams, setIsMutedAllRemoteStreams] = useState<boolean>(false);
+
+  // localMediaControl
   const [isMutedLocalStream, setIsMutedLocalStream] = useState<boolean>(false);
   const [showLocalVideo, setShowLocalVideo] = useState<boolean>(true);
 
@@ -305,8 +307,11 @@ export default function VoiceChannel() {
           </VideoContainer>
           <MediaControlPanel
             onMuteLocalStreamButtonClick={handleMuteLocalStream}
+            isMutedLocalStream={isMutedLocalStream}
             onOffLocalCameraButtonClick={handleOffLocalCamera}
+            showLocalVideo={showLocalVideo}
             onHandleMuteAllRemoteStreamsButtonClick={handleMuteAllRemoteStreams}
+            isMutedAllRemoteStreams={isMutedAllRemoteStreams}
           />
         </MediaBox>
         {showMeetingNote ? <MeetingNote /> : null}
