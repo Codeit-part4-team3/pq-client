@@ -11,14 +11,14 @@ export type TempOrderRequest = TempOrderData;
 export type TempOrderResponse = TempOrderResponsebody | null;
 
 interface CancelOrderRequestBody {
-  paymentId: number;
+  orderId: string;
   cancelReason: string;
 }
 interface CancelOrderResponseBody {
   message: string;
   refund: {
     id: number;
-    paymentId: number;
+    orderId: string;
     amount: number;
     status: string;
     createdAt: Date;
@@ -55,7 +55,7 @@ export interface PlanData {
 export type PlansResponse = PlanData[] | null;
 
 interface PaymentData {
-  id: number;
+  orderId: string;
   userId: number;
   planId: number;
   subscriptionId: number;

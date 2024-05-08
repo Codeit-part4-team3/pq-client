@@ -21,11 +21,11 @@ export default function PaymentTest() {
   const navigate = useNavigate();
   const { setTempOrderId, setTempAmount } = useTempOrderStore();
   const { setPlanId, setPlanType, setAmount } = usePlanStore();
-  const paymentId = 26; // TODO: 임시
+  const orderId = 'fXXIpV=cIcpO3tdLD2mvi1ONW'; // TODO: 임시
 
   const { data: plans, refetch: getAllPlans } = useQueryGet<PlansResponse>('getPlan', `${USER_URL.PLANS}/all`);
-  const { data: paymentData } = useQueryGet<PaymentResponse>('getPayment', `${USER_URL.PAYMENTS}/${paymentId}`, {
-    enabled: !!paymentId, //TODO: 타입 추가해야됨.
+  const { data: paymentData } = useQueryGet<PaymentResponse>('getPayment', `${USER_URL.PAYMENTS}/${orderId}`, {
+    enabled: !!orderId,
   });
 
   const { mutate: createTempOrder } = useMutationPost<TempOrderResponse, TempOrderRequest>(
@@ -97,7 +97,15 @@ export default function PaymentTest() {
   };
 
   const handleCancelButtonClick = () => {
-    if (!paymentData) throw new Error('결제 정보가 없습니다.');
+    if (!orderId) {
+      console.error('주문번호를 찾을 수 없습니다.');
+      return;
+    }
+
+    if (!paymentData) {
+      console.error('결제 정보가 없습니다.');
+      return;
+    }
 
     if (!cancelReason) {
       alert('취소 사유를 선택해 주세요.');
@@ -105,7 +113,7 @@ export default function PaymentTest() {
     }
 
     const cancelData = {
-      paymentId: paymentData.id,
+      orderId: orderId,
       cancelReason,
     };
 
