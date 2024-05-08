@@ -10,7 +10,7 @@ import InviteLinkInput from '../input/InviteLinkInput';
 import MemberInviteSearchForm from '../form/MemberInviteSearchForm';
 import { useMutationPost } from 'src/apis/service/service';
 import { ChannelRequest, ChannelResponse } from 'src/pages/server/_types/type';
-import { ServerIdContext, UserIdContext } from 'src/pages/server/Server';
+import { ServerIdContext } from 'src/pages/server/Server';
 
 export default function CreateCategoryModal({ closeModal, isOpen }: ModalProps) {
   const mockData = [
@@ -31,11 +31,8 @@ export default function CreateCategoryModal({ closeModal, isOpen }: ModalProps) 
     setInvitedUsers([...invitedUsers, email]);
   };
   const serverId = useContext<number>(ServerIdContext);
-  const userId = useContext<number>(UserIdContext);
 
-  const createMutation = useMutationPost<ChannelResponse, ChannelRequest>(
-    `/chat/v1/server/${serverId}/channel?userId=${userId}`,
-  );
+  const createMutation = useMutationPost<ChannelResponse, ChannelRequest>(`/chat/v1/server/${serverId}/channel`);
 
   const handleToggle = () => {
     setIsPrivate(!isPrivate);
