@@ -5,7 +5,7 @@ import { lastKey, MessageItem } from 'src/pages/server/channel/chatChannel/_type
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
 import UtilityButton from 'src/pages/server/channel/chatChannel/_components/UtilityButton';
 import { useParams } from 'react-router-dom';
-import ChannelHeader from 'src/components/channel/ChannelHeader';
+import ChannelHeader from 'src/pages/server/channel/_conponents/ChannelHeader';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 

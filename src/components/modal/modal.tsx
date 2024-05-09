@@ -43,7 +43,8 @@ const Background = styled.div`
 const ModalWrapper = styled.div`
   /* Add your modal styles here */
   padding: 32px;
-  background-color: white;
+  color: black;
+  background-color: var(--landing_background_color);
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;

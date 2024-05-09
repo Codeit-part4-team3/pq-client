@@ -33,12 +33,13 @@ const Wrapper = styled.div`
 const Header = styled.div`
   width: 100%;
   height: 48px;
+  border: 1px solid var(--text_gray);
   border-radius: 10px;
 
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #f1f8ff;
+  background: #ffffff;
   padding-left: 16px;
 `;
 

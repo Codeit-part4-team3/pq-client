@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 import VoiceChannel from './voiceChannel/VoiceChannel';
 import ChatChannel from './chatChannel/ChatChannel';
 import { useState } from 'react';
-import ChannelHeader from 'src/components/channel/ChannelHeader';
+import ChannelHeader from 'src/pages/server/channel/_conponents/ChannelHeader';
 
 export default function Channel() {
   const [isShowMembers, setIsShowMembers] = useState(true);
@@ -25,7 +25,7 @@ export default function Channel() {
     <Area>
       <ChannelHeader onClickMembers={handleMembers} />
       <Container>
-        {onVoice === 'true' ? <ChatChannel /> : <VoiceChannel />}
+        {onVoice === 'false' ? <ChatChannel /> : <VoiceChannel />}
         {isShowMembers && (
           <MembersContainer>
             <Member>

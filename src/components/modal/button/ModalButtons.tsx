@@ -34,12 +34,12 @@ const CloseButton = styled.button`
   align-items: center;
   gap: 10px;
   border-radius: 10px;
-  border: 1px solid #e7e7e7;
+  border: 1px solid var(--text_gray);
   background: #fff;
 
   &:hover {
     cursor: pointer;
-    background: #d9d9d9;
+    background: var(--text_gray);
   }
 `;
 

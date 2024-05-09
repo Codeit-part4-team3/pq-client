@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MediaQueryType } from 'src/components/channel/constants/common';
+import { MediaQueryType } from 'src/constants/enum';
 
 export const useMediaQuery = () => {
   const [mediaQuery, setMediaQuery] = useState<MediaQueryType>(MediaQueryType.MOBILE);

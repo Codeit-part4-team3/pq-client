@@ -13,6 +13,7 @@ const getAccessToken = () => {
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_APP_ORIGIN_API,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },

@@ -95,4 +95,5 @@ const PromptButton = styled(ButtonNormal)`
   margin-top: 20px;
   border: none;
   font-size: 14px;
+  background-color: transparent;
 `;
