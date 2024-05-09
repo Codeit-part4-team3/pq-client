@@ -22,19 +22,21 @@ export default function Checkout() {
 
   // 결제 위젯 불러오기
   useEffect(() => {
-    if (userInfo.email) {
-      const customerKey = userInfo.email;
-      const fetchPaymentWidget = async () => {
-        try {
-          const loadedWidget = await loadPaymentWidget(widgetClientKey, customerKey);
-          setPaymentWidget(loadedWidget);
-        } catch (error) {
-          console.error('Error fetching payment widget:', error);
-        }
-      };
-
-      fetchPaymentWidget();
+    if (!userInfo.email) {
+      return console.error('결제 위젯을 불러오기 위해 사용자 정보가 필요합니다.');
     }
+
+    const customerKey = userInfo.email;
+    const fetchPaymentWidget = async () => {
+      try {
+        const loadedWidget = await loadPaymentWidget(widgetClientKey, customerKey);
+        setPaymentWidget(loadedWidget);
+      } catch (error) {
+        console.error('결제 위젯 불러오기 실패:', error);
+      }
+    };
+
+    fetchPaymentWidget();
   }, [userInfo.email]);
 
   // 결제 수단 선택 UI, 이용약관 UI 렌더링
