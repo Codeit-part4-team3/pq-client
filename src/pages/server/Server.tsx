@@ -20,7 +20,7 @@ import { useOpenModal } from 'src/hooks/useOpenModal';
 import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
 import ServerMenu from './_components/ServerMenu';
 import { useGetUserInfo } from 'src/hooks/useGetUserInfo';
-// import useUserStore from 'src/store/userStore';
+import useUserStore from 'src/store/userStore';
 import MyProfile from '../../components/MyProfile';
 
 /**
@@ -42,23 +42,27 @@ export default function Server() {
 
   const navigate = useNavigate();
 
-  const userInfo = useGetUserInfo();
+  useGetUserInfo();
 
-  // const { userInfo } = useUserStore();
+  const { userInfo } = useUserStore();
+
   const userId = userInfo.id;
+  console.log(userId);
 
-  const { refetch: serverRefetch, data: serverData } = useQueryGet<ServerResponse[]>(
-    'getAllServers',
-    `/chat/v1/server/all?userId=${userId}`,
-    {
-      staleTime: 5000,
-    },
-  );
+  const {
+    refetch: serverRefetch,
+    data: serverData,
+    isLoading,
+  } = useQueryGet<ServerResponse[]>('getAllServers', `/chat/v1/server/all?userId=${userId}`, {
+    staleTime: 5000,
+    enabled: !!userId,
+  });
   const { refetch: channelRefetch, data: channelData } = useQueryGet<ChannelResponse[]>(
     'getAllChannels',
     `/chat/v1/server/${serverId}/channel/all`,
     {
       staleTime: 5000,
+      enabled: !!userId,
     },
   );
 
@@ -151,7 +155,7 @@ export default function Server() {
                 <MyProfile />
               </ChannelContainer>
             </LeftContainer>
-            {!isExist ? (
+            {!isExist && !isLoading && userId ? (
               <NotFoundServer
                 closeCreateServer={closeModalHandler}
                 isCreateServer={isOpen}

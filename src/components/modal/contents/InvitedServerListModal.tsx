@@ -14,6 +14,10 @@ export default function InvitedServerListModal({ closeModal, isOpen }: ModalProp
   const { data, refetch } = useQueryGet<InvitedServerResponse[]>(
     `getInvitedServerList`,
     `/chat/v1/server/invitedServer?userId=${userId}`,
+    {
+      staleTime: 5000,
+      enabled: !!userId,
+    },
   );
 
   const mutation = useMutationPost<InvitedServerResponse, InvitedServerRequest>(
@@ -34,7 +38,9 @@ export default function InvitedServerListModal({ closeModal, isOpen }: ModalProp
   };
 
   useEffect(() => {
-    refetch();
+    if (userId) {
+      refetch();
+    }
   }, []);
 
   return (
