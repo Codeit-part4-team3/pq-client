@@ -18,6 +18,7 @@ export default function PaymentTest() {
   const [selectedPlan, setSelectedPlan] = useState<PlanData | null>(null);
   const [isRecurring, setIsRecurring] = useState(false); // 정기 결제 체크박스 상태
   const [cancelReason, setCancelReason] = useState('');
+  const [cancelOrderId, setCancelOrderId] = useState('');
   const navigate = useNavigate();
   const { setTempOrderId, setTempAmount } = useTempOrderStore();
   const { setPlanId, setPlanType, setAmount } = usePlanStore();
@@ -148,6 +149,11 @@ export default function PaymentTest() {
         value={cancelReason}
         onChange={(e) => setCancelReason(e.target.value)}
       >
+        <input
+          placeholder='취소할 주문번호 입력'
+          onChange={(e) => setCancelOrderId(e.target.value)}
+          value={cancelOrderId}
+        />
         <option value=''>취소 사유를 선택해 주세요.</option>
         <option>단순 변심</option>
         <option>계정 탈퇴</option>
