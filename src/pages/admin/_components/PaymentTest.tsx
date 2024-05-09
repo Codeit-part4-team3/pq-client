@@ -18,14 +18,14 @@ export default function PaymentTest() {
   const [selectedPlan, setSelectedPlan] = useState<PlanData | null>(null);
   const [isRecurring, setIsRecurring] = useState(false); // 정기 결제 체크박스 상태
   const [cancelReason, setCancelReason] = useState('');
+  const [cancelOrderId, setCancelOrderId] = useState('');
   const navigate = useNavigate();
   const { setTempOrderId, setTempAmount } = useTempOrderStore();
   const { setPlanId, setPlanType, setAmount } = usePlanStore();
-  const orderId = 'fXXIpV=cIcpO3tdLD2mvi1ONW'; // TODO: 임시
 
   const { data: plans, refetch: getAllPlans } = useQueryGet<PlansResponse>('getPlan', `${USER_URL.PLANS}/all`);
-  const { data: paymentData } = useQueryGet<PaymentResponse>('getPayment', `${USER_URL.PAYMENTS}/${orderId}`, {
-    enabled: !!orderId,
+  const { data: paymentData } = useQueryGet<PaymentResponse>('getPayment', `${USER_URL.PAYMENTS}/${cancelOrderId}`, {
+    enabled: !!cancelOrderId,
   });
 
   const { mutate: createTempOrder } = useMutationPost<TempOrderResponse, TempOrderRequest>(
@@ -97,7 +97,7 @@ export default function PaymentTest() {
   };
 
   const handleCancelButtonClick = () => {
-    if (!orderId) {
+    if (!cancelOrderId) {
       console.error('주문번호를 찾을 수 없습니다.');
       return;
     }
@@ -113,7 +113,7 @@ export default function PaymentTest() {
     }
 
     const cancelData = {
-      orderId: orderId,
+      orderId: cancelOrderId,
       cancelReason,
     };
 
@@ -142,6 +142,11 @@ export default function PaymentTest() {
       </div>
 
       <h3>결제 취소</h3>
+      <input
+        placeholder='취소할 주문번호 입력'
+        onChange={(e) => setCancelOrderId(e.target.value)}
+        value={cancelOrderId}
+      />
       <select
         id='cancelReason'
         name='cancelReason'
