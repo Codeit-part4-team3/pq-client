@@ -15,3 +15,5 @@ interface SubscriptionResponseBody {
 export type SubscriptionResponse = SubscriptionResponseBody | null;
 
 export type PlanType = 'BASIC' | 'PREMIUM' | 'NONE';
+
+export type MessageMaxLength = 150 | 500 | 1000;

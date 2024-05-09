@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { lastKey, MessageItem } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
-import UtilityButton from './_components/UtilityButton';
-import { useSubscription } from 'src/hooks/useSubscription';
+import UtilityButton from 'src/pages/server/channel/chatChannel/_components/UtilityButton';
 import { useParams } from 'react-router-dom';
 import ChannelHeader from 'src/components/channel/ChannelHeader';
 
@@ -36,12 +35,8 @@ export default function ChatChannel() {
   const [editingMessage, setEditingMessage] = useState<string>('');
   // 메시지 수정 상태, 수정중인 메시지의 messageId를 저장
   const [currentEditingMessageId, setCurrentEditingMessageId] = useState<string | null>(null);
-  // 구독 여부에 따라 채팅 글자수 제한
-  const { messageMaxLength } = useSubscription();
 
-  const handleMembers = () => {
-    console.log('members');
-  };
+  const handleMembers = () => {};
 
   const handleUiilityButtonClick = () => {
     setIsClickedUtilityButton(!isClickedUtilityButton);
@@ -221,7 +216,7 @@ export default function ChatChannel() {
   }, [roomName]);
 
   useEffect(() => {
-    // 페이지 진입시, 채팅이 추가될 때마다 스크롤을 맨 아래로 내려준다
+    // 채팅이 추가될 때마다 스크롤을 맨 아래로 내려준다
     if (inputValue === '' && chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
@@ -258,7 +253,6 @@ export default function ChatChannel() {
         ) : null}
         {lastKey ? (
           <>
-            {/* LoadingSpinner */}
             <ChatLoadingSpinner ref={infiniteScrollTriggerRef}>
               <Spinner delay='0s' />
               <Spinner delay='0.2s' />
@@ -268,7 +262,6 @@ export default function ChatChannel() {
         ) : null}
         {/* 가장 위쪽 */}
       </ChatContainer>
-      {/* 채팅 input */}
       <ChatInputBox>
         <ChatInput
           type='text'
@@ -276,7 +269,6 @@ export default function ChatChannel() {
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleSendMessageKeyDown}
-          maxLength={messageMaxLength}
         />
         <UtilityButton
           isClickedUtilityButton={isClickedUtilityButton}
@@ -289,7 +281,7 @@ export default function ChatChannel() {
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
