@@ -20,15 +20,11 @@ import { useOpenModal } from 'src/hooks/useOpenModal';
 import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
 import ServerMenu from './_components/ServerMenu';
 import useUserStore from 'src/store/userStore';
-import MyProfile from './_components/MyProfile';
+import MyProfile from '../../components/MyProfile';
 
 /**
  *
- * server 전체 서버리스트 표시
- * server 클릭시 해당 서버의 채널리스트 표시
- * channel 클릭시 해당 체널 내용으로 업데이트
- *
- * 해당 컴포넌트에서 현재 서버 정보 및 체널 정보를 가지고 있어야함
+ * TODO: 서버 Not Found 페이지 구현
  *
  */
 
@@ -112,7 +108,7 @@ export default function Server() {
       const sData: IServer[] = serverData.filter((item): item is IServer => item !== null);
       setServerList(sData);
 
-      setIsExist(sData.length > 0 ? true : false);
+      setIsExist(sData && sData.length > 0 ? true : false);
       setServerId(sData.length > 0 ? sData[0].id : 0);
     }
   }, [serverData]);
@@ -139,11 +135,15 @@ export default function Server() {
                 <CreateServerModal isOpen={isOpen} closeModal={closeModalHandler} />
               </ServerContainer>
               <ChannelContainer>
-                <ChannelBox>
-                  <ServerMenu serverName={serverName} />
-                  <CalendarContainer />
-                  {createChannelGroupList(channelGroupList)}
-                </ChannelBox>
+                {isExist ? (
+                  <ChannelBox>
+                    <ServerMenu serverName={serverName} />
+                    <CalendarContainer />
+                    {createChannelGroupList(channelGroupList)}
+                  </ChannelBox>
+                ) : (
+                  <div></div>
+                )}
                 <MyProfile />
               </ChannelContainer>
             </LeftContainer>
@@ -186,6 +186,8 @@ const LeftContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: 10px;
+
+  z-index: 10;
 `;
 
 const ServerContainer = styled.div`

@@ -14,3 +14,13 @@ export enum MediaQueryType {
   DESKTOP = 2,
   DESKTOP_2XL = 3,
 }
+
+export enum ServerDropdownType {
+  CREATE_CATEORY = 1,
+  INVITE_LINK,
+  INVITE_MEMBER,
+}
+
+export enum MyDropdownType {
+  INVITED_SERVER_LIST = 1,
+}

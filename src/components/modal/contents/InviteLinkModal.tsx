@@ -5,6 +5,7 @@ import { InviteLinkResponse } from '../../../pages/server/_types/type';
 import { useQueryGet } from 'src/apis/service/service';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { APP_ORIGIN } from 'src/constants/apiUrl';
 
 interface Props extends ModalProps {
   serverId: number;
@@ -18,7 +19,7 @@ export default function InviteLinkModal({ closeModal, isOpen, serverId }: Props)
   });
 
   const onClipBoard = () => {
-    navigator.clipboard.writeText(`${process.env.VITE_APP_ORIGIN}/invite/${data?.inviteLink}`).then(() => {
+    navigator.clipboard.writeText(`${APP_ORIGIN}/invite/${data?.inviteLink}`).then(() => {
       setMsg('링크 복사 완료');
     });
   };
@@ -37,7 +38,7 @@ export default function InviteLinkModal({ closeModal, isOpen, serverId }: Props)
             <span>{msg}</span>
           </Top>
           <LinkContainer>
-            <span>{`${process.env.VITE_APP_ORIGIN}/invite/${data?.inviteLink}`}</span>
+            <span>{`${APP_ORIGIN}/invite/${data?.inviteLink}`}</span>
             <button onClick={onClipBoard}>복사</button>
           </LinkContainer>
         </Body>
@@ -88,7 +89,6 @@ const LinkContainer = styled.span`
     width: 57px;
     height: 30px;
 
-    color: #fff;
     background-color: #007aff;
     border: 0;
     border-radius: 5px;
