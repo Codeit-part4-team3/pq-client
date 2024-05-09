@@ -20,12 +20,12 @@ export default function Channel() {
   };
 
   /**@ToDo channel 데이터의 onVoice의 boolean에 따라 ChatChannel을 보여줄지 VoiceChannel을 보여줄지 생각 */
-  const [onVoice] = useState('false');
+  // const [onVoice] = useState('false');
   return (
     <Area>
       <ChannelHeader onClickMembers={handleMembers} />
       <Container>
-        {onVoice === 'false' ? <ChatChannel /> : <VoiceChannel />}
+        {Number(channelId) % 2 === 0 ? <ChatChannel /> : <VoiceChannel />}
         {isShowMembers && (
           <MembersContainer>
             <Member>
