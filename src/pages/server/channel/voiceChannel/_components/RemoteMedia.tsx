@@ -77,6 +77,9 @@ const NotShowVideoWrapper = styled.div`
 
 const Media = styled.video`
   object-fit: contain;
+
+  width: 100%;
+  height: 100%;
 `;
 
 const ProfileImage = styled.img`
