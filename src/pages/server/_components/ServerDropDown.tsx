@@ -12,9 +12,11 @@ interface Prorps {
 }
 
 const DropdownList = [
+  { name: '일반', type: ServerDropdownType.LABEL },
   { name: '카테고리 생성', type: ServerDropdownType.CREATE_CATEORY },
-  { name: '초대코드 생성', type: ServerDropdownType.INVITE_LINK },
-  { name: '멤버 초대하기', type: ServerDropdownType.INVITE_MEMBER },
+  { name: '초대', type: ServerDropdownType.LABEL },
+  { name: '초대링크 생성', type: ServerDropdownType.INVITE_LINK },
+  { name: '이메일로 초대하기', type: ServerDropdownType.INVITE_MEMBER },
 ];
 
 export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
@@ -41,7 +43,9 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
     <Area>
       <ButtonContainer isDown={isDropDown}>
         {DropdownList.map((item) => {
-          return (
+          return item.type === ServerDropdownType.LABEL ? (
+            <Label>{item.name}</Label>
+          ) : (
             <Button key={item.type} type='button' onClick={() => handleClick(item.type)}>
               {item.name}
             </Button>
@@ -53,6 +57,7 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
       </ButtonContainer>
       {
         {
+          [ServerDropdownType.LABEL]: <></>,
           [ServerDropdownType.CREATE_CATEORY]: <CreateCategoryModal closeModal={handleCloseModal} isOpen={isShow} />,
           [ServerDropdownType.INVITE_LINK]: (
             <InviteLinkModal closeModal={handleCloseModal} isOpen={isShow} serverId={Number(serverId)} />
@@ -91,14 +96,25 @@ const ButtonContainer = styled.div<ButtonContainerProps>`
   transform: ${(props) => (props.isDown ? 'scale(1.0)' : 'scale(0)')};
 `;
 
+const Label = styled.div`
+  width: 100%;
+  padding: 12px 10px 6px 10px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--landing_background_color);
+  border: none;
+  border-bottom: 1px solid var(--text_gray);
+  text-align: left;
+`;
+
 const Button = styled.button`
   width: 100%;
   padding: 6px 10px 6px 10px;
   color: #000;
-  font-size: 14px;
+  font-size: 12px;
   background: var(--landing_background_color);
   border: none;
-  border-bottom: 1px solid var(--text_gray);
   text-align: left;
 
   &:hover {

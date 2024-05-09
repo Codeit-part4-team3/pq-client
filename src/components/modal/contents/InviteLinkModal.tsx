@@ -1,7 +1,7 @@
 import { ModalProps } from 'src/types/modalType';
 import Modal from '../modal';
 import { ModalContainer } from '../CommonStyles';
-import { InviteLinkResponse } from '../../../pages/server/_types/type';
+import { GetInviteLinkResponse } from '../../../pages/server/_types/type';
 import { useQueryGet } from 'src/apis/service/service';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -13,13 +13,15 @@ interface Props extends ModalProps {
 
 export default function InviteLinkModal({ closeModal, isOpen, serverId }: Props) {
   const [msg, setMsg] = useState<string>('');
-  const { refetch, data } = useQueryGet<InviteLinkResponse>('inviteLink', `/chat/v1/server/${serverId}/inviteLink`, {
+  const { refetch, data } = useQueryGet<GetInviteLinkResponse>('inviteLink', `/chat/v1/server/${serverId}/inviteLink`, {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
 
+  const linkUrl = `${APP_ORIGIN}/login/invite/${data?.inviteLink}`;
+
   const onClipBoard = () => {
-    navigator.clipboard.writeText(`${APP_ORIGIN}/invite/${data?.inviteLink}`).then(() => {
+    navigator.clipboard.writeText(`${linkUrl}`).then(() => {
       setMsg('링크 복사 완료');
     });
   };
@@ -38,7 +40,7 @@ export default function InviteLinkModal({ closeModal, isOpen, serverId }: Props)
             <span>{msg}</span>
           </Top>
           <LinkContainer>
-            <span>{`${APP_ORIGIN}/invite/${data?.inviteLink}`}</span>
+            <span>{`${linkUrl}`}</span>
             <button onClick={onClipBoard}>복사</button>
           </LinkContainer>
         </Body>
@@ -81,14 +83,21 @@ const LinkContainer = styled.span`
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    overflow: hidden;
+    overflow: scroll;
     padding-left: 5px;
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 
   & > button {
     width: 57px;
     height: 30px;
 
+    color: white;
     background-color: #007aff;
     border: 0;
     border-radius: 5px;

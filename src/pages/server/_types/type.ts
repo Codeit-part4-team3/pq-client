@@ -30,10 +30,20 @@ export type ChannelGroupData = Pick<IChannel, 'id' | 'name'>;
  * Invite
  */
 interface IInviteLink {
+  inviteeId: number;
+  secretKey: string;
+
+  redirectUrl: string;
+}
+
+export type InviteLinkRequest = Omit<IInviteLink, 'redirectUrl'>;
+export type InviteLinkResponse = Pick<IInviteLink, 'redirectUrl'> | null;
+
+interface IGetInviteLink {
   inviteLink: string;
 }
 
-export type InviteLinkResponse = IInviteLink | null;
+export type GetInviteLinkResponse = IGetInviteLink | null;
 
 interface IInviteMember {
   inviterId: number;

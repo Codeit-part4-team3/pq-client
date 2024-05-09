@@ -11,16 +11,19 @@ import {
   ChannelResponse,
   IServer,
   IChannel,
+  InviteLinkResponse,
+  InviteLinkRequest,
 } from './_types/type';
 import ChannelGroup from './_components/ChannelGroup';
 import ChannelItem from './_components/ChannelItem';
 import CalendarContainer from './_components/CalendarContainer';
-import { useQueryGet } from 'src/apis/service/service';
+import { useMutationPost, useQueryGet } from 'src/apis/service/service';
 import { useOpenModal } from 'src/hooks/useOpenModal';
 import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
 import ServerMenu from './_components/ServerMenu';
 import useUserStore from 'src/store/userStore';
 import MyProfile from '../../components/MyProfile';
+import { APP_ORIGIN } from 'src/constants/apiUrl';
 
 /**
  *
@@ -33,7 +36,7 @@ export const UserIdContext = React.createContext<number>(0);
 
 export default function Server() {
   const [isExist, setIsExist] = useState(false);
-  const [serverId, setServerId] = useState<number>(0);
+  const [serverId, setServerId] = useState<number>(NaN);
   const [serverList, setServerList] = useState<ServerData[]>([]);
   const [channelGroupList, setChannelGroupList] = useState<ChannelGroupData[]>([]);
   const [channelItemList, setChannelItemList] = useState<ChannelData[]>([]);
@@ -48,6 +51,7 @@ export default function Server() {
     `/chat/v1/server/all?userId=${userId}`,
     {
       staleTime: 5000,
+      refetchInterval: 5000,
     },
   );
   const { refetch: channelRefetch, data: channelData } = useQueryGet<ChannelResponse[]>(
@@ -55,8 +59,11 @@ export default function Server() {
     `/chat/v1/server/${serverId}/channel/all`,
     {
       staleTime: 5000,
+      refetchInterval: 5000,
     },
   );
+
+  const mutation = useMutationPost<InviteLinkResponse, InviteLinkRequest>(`/chat/v1/server/inviteLink`);
 
   const { isOpen, openModal, closeModal } = useOpenModal();
 
@@ -96,20 +103,22 @@ export default function Server() {
   };
 
   useEffect(() => {
-    if (serverId) {
-      navigate(`/server/${serverId}`);
-      channelRefetch();
-      setServerName(serverData?.find((server) => server?.id === serverId)?.name || '');
-    }
+    navigate(`/server/${serverId}`);
+    channelRefetch();
+
+    setServerName(serverData?.find((server) => server?.id === serverId)?.name || '');
   }, [serverId]);
 
   useEffect(() => {
     if (serverData) {
       const sData: IServer[] = serverData.filter((item): item is IServer => item !== null);
+      setIsExist(sData && sData.length > 0 ? true : false);
       setServerList(sData);
 
-      setIsExist(sData && sData.length > 0 ? true : false);
-      setServerId(sData.length > 0 ? sData[0].id : 0);
+      if (Number.isNaN(serverId)) {
+        setServerId(sData.length > 0 ? sData[0].id : 0);
+        setServerName(sData.length > 0 ? sData[0].name : '');
+      } else setServerName(serverData.find((server) => server?.id === serverId)?.name || '');
     }
   }, [serverData]);
 
@@ -123,6 +132,29 @@ export default function Server() {
     }
   }, [channelData]);
 
+  useEffect(() => {
+    const secretKey = sessionStorage.getItem('invite');
+    if (secretKey) {
+      mutation.mutate(
+        { inviteeId: userId, secretKey: secretKey },
+        {
+          onSuccess: (data) => {
+            console.log(`${APP_ORIGIN}/${data?.redirectUrl}`);
+
+            setServerId(Number(data?.redirectUrl.split('/')[1]) || 0);
+            // navigate(`${data?.redirectUrl.split('/')[1]}`);
+
+            sessionStorage.removeItem('invite');
+            // alert('초대 링크를 확인했습니다.');
+          },
+          onError: () => {
+            console.log('[error] invite');
+          },
+        },
+      );
+    }
+  }, []);
+
   return (
     <Area>
       <ServerIdContext.Provider value={serverId}>
@@ -130,7 +162,9 @@ export default function Server() {
           <Container>
             <LeftContainer>
               <ServerContainer onClick={onClickServer}>
-                {createServerItemList(serverList)}
+                <ServerBox>
+                  <ListBody>{createServerItemList(serverList)}</ListBody>
+                </ServerBox>
                 <ServerFuncButton onClick={openModal}>+</ServerFuncButton>
                 <CreateServerModal isOpen={isOpen} closeModal={closeModalHandler} />
               </ServerContainer>
@@ -193,15 +227,40 @@ const LeftContainer = styled.div`
 const ServerContainer = styled.div`
   height: 100%;
 
+  background: transparent;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   gap: 10px;
-
   border-radius: 10px;
-  background: transparent;
-  padding: 10px;
+`;
+
+const ServerBox = styled.div`
+  width: 100%;
+  height: 92%;
+  overflow: scroll;
+
+  position: relative;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+`;
+
+const ListBody = styled.div`
+  height: 100%;
+
+  display: flex;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
 `;
 
 const ServerFuncButton = styled.button`
@@ -211,14 +270,12 @@ const ServerFuncButton = styled.button`
   border: none;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.6);
-
   display: flex;
   justify-content: center;
   align-items: center;
-
-  overflow: hidden;
   transition: 0.2s;
-  white-space: nowrap;
+
+  z-index: 10;
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.4);

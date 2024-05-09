@@ -16,6 +16,7 @@ export enum MediaQueryType {
 }
 
 export enum ServerDropdownType {
+  LABEL = 0,
   CREATE_CATEORY = 1,
   INVITE_LINK,
   INVITE_MEMBER,
