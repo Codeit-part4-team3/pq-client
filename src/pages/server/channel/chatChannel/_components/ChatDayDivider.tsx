@@ -8,7 +8,9 @@ export default function ChatDayDivider({ ChatDayDividerDay }: ChatDayDividerProp
   return (
     <>
       <Wrapper>
+        <HLine />
         <ChatDayDividerText>{ChatDayDividerDay}</ChatDayDividerText>
+        <HLine />
       </Wrapper>
     </>
   );
@@ -16,7 +18,10 @@ export default function ChatDayDivider({ ChatDayDividerDay }: ChatDayDividerProp
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: row;
   justify-content: center;
+  align-items: center;
+  gap: 10px;
 
   margin-top: 30px;
 `;
@@ -30,4 +35,9 @@ const ChatDayDividerText = styled.div`
   justify-content: center;
   align-items: center;
   gap: 10px;
+`;
+
+const HLine = styled.div`
+  border-top: 1px solid var(--gray_CCCCCC);
+  width: 40%;
 `;

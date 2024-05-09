@@ -5,12 +5,12 @@ import ModalButtons from '../button/ModalButtons';
 import EssentialInput from '../input/EssentialInput';
 import Modal from '../modal';
 import { ModalTitle, ModalContainer } from './../CommonStyles';
-import PrivateToggleButton from '../button/PrivateToggleButton';
+import ToggleButton from '../button/ToggleButton';
 import InviteLinkInput from '../input/InviteLinkInput';
 import MemberInviteSearchForm from '../form/MemberInviteSearchForm';
 import { useMutationPost } from 'src/apis/service/service';
 import { ChannelRequest, ChannelResponse } from 'src/pages/server/_types/type';
-import { ServerIdContext, UserIdContext } from 'src/pages/server/Server';
+import { ServerIdContext } from 'src/pages/server/Server';
 
 export default function CreateCategoryModal({ closeModal, isOpen }: ModalProps) {
   const mockData = [
@@ -31,11 +31,8 @@ export default function CreateCategoryModal({ closeModal, isOpen }: ModalProps) 
     setInvitedUsers([...invitedUsers, email]);
   };
   const serverId = useContext<number>(ServerIdContext);
-  const userId = useContext<number>(UserIdContext);
 
-  const createMutation = useMutationPost<ChannelResponse, ChannelRequest>(
-    `/chat/v1/server/${serverId}/channel?userId=${userId}`,
-  );
+  const createMutation = useMutationPost<ChannelResponse, ChannelRequest>(`/chat/v1/server/${serverId}/channel`);
 
   const handleToggle = () => {
     setIsPrivate(!isPrivate);
@@ -89,7 +86,13 @@ export default function CreateCategoryModal({ closeModal, isOpen }: ModalProps) 
                 state={categoryName}
                 setState={setCategoryName}
               />
-              <PrivateToggleButton title='비공개 카테고리' state={isPrivate} toggleClick={handleToggle} />
+              <ToggleButton
+                isEnabled={false}
+                title='비공개 카테고리'
+                desc='초대를 받은 일부 사람만 참여할 수 있음'
+                state={isPrivate}
+                toggleClick={handleToggle}
+              />
               <ModalButtons
                 closeClick={closeModal}
                 ctaText={isPrivate ? '다음' : '생성'}

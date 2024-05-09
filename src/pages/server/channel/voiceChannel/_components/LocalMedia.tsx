@@ -29,7 +29,7 @@ export default function LocalMedia({ userId, stream, isMutedLocalStream, showLoc
             <ProfileImage src={profileImage} alt='프로필 이미지' />
           </NotShowVideoWrapper>
         ) : null}
-        <Media ref={videoRef} autoPlay playsInline muted={isMutedLocalStream} />
+        <Media ref={videoRef} autoPlay playsInline muted />
         <NameTag>{userId}</NameTag>
         {isMutedLocalStream ? (
           <MicOff>
@@ -49,8 +49,8 @@ export default function LocalMedia({ userId, stream, isMutedLocalStream, showLoc
 
 const MediaBox = styled.div`
   border-radius: 10px;
-  width: 600px;
-  height: 338px;
+  width: 100%;
+  height: 100%;
 
   display: flex;
   justify-content: center;
@@ -77,6 +77,9 @@ const NotShowVideoWrapper = styled.div`
 
 const Media = styled.video`
   object-fit: contain;
+
+  width: 100%;
+  height: 100%;
 `;
 
 const ProfileImage = styled.img`

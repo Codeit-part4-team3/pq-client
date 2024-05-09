@@ -16,7 +16,6 @@ export default function InviteLinkModal({ closeModal, isOpen, serverId }: Props)
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
-  console.log(data);
 
   const onClipBoard = () => {
     navigator.clipboard.writeText(`${process.env.VITE_APP_ORIGIN}/invite/${data?.inviteLink}`).then(() => {

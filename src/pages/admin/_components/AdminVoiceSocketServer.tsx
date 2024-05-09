@@ -1,12 +1,11 @@
 import styled from 'styled-components';
 
-import MediaControlPanel from './_components/MediaControlPanel';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import LocalMedia from './_components/LocalMedia';
-import RemoteMedia from './_components/RemoteMedia';
-import MeetingNote from './_components/MeetingNote';
-import { useParams } from 'react-router-dom';
+import LocalMedia from 'src/pages/server/channel/voiceChannel/_components/LocalMedia';
+import MediaControlPanel from 'src/pages/server/channel/voiceChannel/_components/MediaControlPanel';
+import RemoteMedia from 'src/pages/server/channel/voiceChannel/_components/RemoteMedia';
+import MeetingNote from 'src/pages/server/channel/voiceChannel/_components/MeetingNote';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
@@ -19,15 +18,10 @@ const pc_config = {
   ],
 };
 
-/**@ToDo
- * 1. 유저 데이터들 처리하는 로직 짜야함
- * 2. Channel 컴포넌트로 부터 channel date를 prop로 받고 데이터 바인딩 예정 */
-
-export default function VoiceChannel() {
-  const { serverId, channelId } = useParams();
-  console.log('serverId', serverId, 'channelId', channelId);
-  const roomName = channelId || 'test';
-  const userId = 'userId';
+/**@ToDo 매일 시간내서 RTC 고치기 */
+export default function AdminVoiceSocketServer() {
+  const roomName = 'admin_voice_room';
+  const userId = 'admin_user_id';
 
   // socket
   const socketRef = useRef<Socket | null>(null);
@@ -114,7 +108,7 @@ export default function VoiceChannel() {
     } catch (error) {
       console.error('failed to get user media :', error);
     }
-  }, [roomName]);
+  }, []);
 
   useEffect(() => {
     console.log('useEffect');
@@ -294,7 +288,9 @@ export default function VoiceChannel() {
         onClick={() => {
           console.log('localStreamRef.current', localStreamRef.current?.getTracks());
         }}
-      ></button>
+      >
+        getLocalStream
+      </button>
       <ContentBox>
         <MediaBox>
           <VideoContainer>
@@ -322,44 +318,28 @@ export default function VoiceChannel() {
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 100%;
-  background-color: var(--landing_background_color);
+  height: 100vh;
+  background-color: var(--white_FFFFFF);
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: scroll;
-
-  ::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
 `;
 
 const VideoContainer = styled.div`
-  width: 100%;
-
-  padding: 20px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(200px, 1fr));
-  grid-template-rows: repeat(2, minmax(120px, 1fr));
-  justify-items: center;
-  align-items: center;
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding-top: 80px;
+  padding-bottom: 125px;
 `;
 
 const ContentBox = styled.div`
   width: 100%;
   flex-grow: 1;
   display: flex;
-  flex-direction: row;
 `;
 
 const MediaBox = styled.div`
-  width: 65%;
-  height: 100%;
-  min-width: 450px;
-
   display: flex;
   flex-direction: column;
 `;
