@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.32.0",
+    "@tosspayments/payment-sdk": "^1.7.1",
+    "@tosspayments/payment-widget-sdk": "^0.10.2",
     "axios": "^1.6.8",
     "js-cookie": "^3.0.5",
     "react": "^18.2.0",
@@ -20,7 +22,8 @@
     "react-router-dom": "^6.22.3",
     "socket.io-client": "^4.7.5",
     "styled-components": "^6.1.8",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.2",
+    "zustand-persist": "^0.4.0"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.28.11",
