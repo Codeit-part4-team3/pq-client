@@ -23,4 +23,5 @@ export enum ServerDropdownType {
 
 export enum MyDropdownType {
   INVITED_SERVER_LIST = 1,
+  LOGOUT = 2,
 }
