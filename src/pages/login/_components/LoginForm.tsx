@@ -67,7 +67,7 @@ export default function LoginForm() {
       setUserInfo(data.userInfo);
       setAccessToken(accessToken);
       Cookies.set('refreshToken', refreshToken, { expires: 7, secure: true, sameSite: 'strict' });
-      navigate('/admin');
+      navigate('/server');
     },
   });
 
