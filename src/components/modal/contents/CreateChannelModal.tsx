@@ -9,9 +9,7 @@ import { ModalProps } from 'src/types/modalType';
 import { FormEventHandler, useContext, useState } from 'react';
 import { useMutationPost } from 'src/apis/service/service';
 import { ChannelRequest, ChannelResponse } from 'src/pages/server/_types/type';
-
-import { ServerIdContext, UserIdContext } from 'src/pages/server/Server';
-import ChannelModeInput from '../input/ChannelModeInput';
+import { ServerIdContext } from 'src/pages/server/Server';
 
 interface Props extends ModalProps {
   groupId: number;
@@ -31,14 +29,9 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
   const [isPrivate, setIsPrivate] = useState(false);
   const [isVoice, setIsVoice] = useState(false);
   const [isNextModal, setIsNextModal] = useState(false);
-  const [channelMode, setChannelMode] = useState(false);
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
   const handleInvite = (email: string) => {
     setInvitedUsers([...invitedUsers, email]);
-  };
-
-  const toggleClick = () => {
-    setChannelMode(!channelMode);
   };
 
   const serverId = useContext<number>(ServerIdContext);
@@ -66,6 +59,8 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
 
     createMutation.mutate({ name: channelName, isPrivate: isPrivate, isVoice: isVoice, groupId });
 
+    setChannelName('');
+
     closeModal();
   };
 
@@ -90,7 +85,6 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
           <>
             <ModalTitle>채널 만들기</ModalTitle>
             <ModalForm onSubmit={createChannel}>
-              <ChannelModeInput checked={channelMode} onChange={toggleClick} />
               <EssentialInput
                 errorMessage={errorMessage}
                 labelName='채널 이름'
@@ -108,7 +102,7 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
                 isEnabled={true}
                 title='Voice 체널'
                 desc='음성 채팅을 할 수 있음'
-                state={isPrivate}
+                state={isVoice}
                 toggleClick={() => setIsVoice(!isVoice)}
               />
               <ModalButtons

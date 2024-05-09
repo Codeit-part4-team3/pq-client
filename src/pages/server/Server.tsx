@@ -20,7 +20,7 @@ import { useOpenModal } from 'src/hooks/useOpenModal';
 import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
 import ServerMenu from './_components/ServerMenu';
 import { useGetUserInfo } from 'src/hooks/useGetUserInfo';
-import useUserStore from 'src/store/userStore';
+// import useUserStore from 'src/store/userStore';
 import MyProfile from './_components/MyProfile';
 
 /**
@@ -46,7 +46,9 @@ export default function Server() {
 
   const navigate = useNavigate();
 
-  const { userInfo } = useUserStore();
+  const userInfo = useGetUserInfo();
+
+  // const { userInfo } = useUserStore();
   const userId = userInfo.id;
 
   const { refetch: serverRefetch, data: serverData } = useQueryGet<ServerResponse[]>(

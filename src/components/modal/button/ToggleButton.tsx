@@ -11,22 +11,22 @@ interface Props {
 
 export default function ToggleButton({ isEnabled, title, desc, state, toggleClick }: Props) {
   return (
-    <Area enabled={isEnabled}>
+    <Area $enabled={isEnabled}>
       <PrivateBox>
         {title}
-        <Button onClick={toggleClick} type='button' state={state} />
+        <Button onClick={toggleClick} type='button' $state={state} />
       </PrivateBox>
       <Paragraph>{desc}</Paragraph>
     </Area>
   );
 }
 
-const Area = styled.section<{ enabled: boolean }>`
+const Area = styled.section<{ $enabled: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  pointer-events: ${(props) => (props.enabled ? 'auto' : 'none')};
-  opacity: ${(props) => (props.enabled ? 1 : 0.5)};
+  pointer-events: ${(props) => (props.$enabled ? 'auto' : 'none')};
+  opacity: ${(props) => (props.$enabled ? 1 : 0.5)};
 `;
 
 const PrivateBox = styled.div`
@@ -49,9 +49,9 @@ const Paragraph = styled.p`
   line-height: normal;
 `;
 
-const Button = styled(ButtonIcon)<{ state: boolean }>`
+const Button = styled(ButtonIcon)<{ $state: boolean }>`
   width: 48px;
   height: 24px;
 
-  background-image: url(${(props) => (props.state ? '/images/toggle-on.svg' : '/images/toggle-off.svg')});
+  background-image: url(${(props) => (props.$state ? '/images/toggle-on.svg' : '/images/toggle-off.svg')});
 `;
