@@ -49,14 +49,14 @@ export default function RemoteMedia({ stream, userId, isMutedAllRemoteStreams, s
 
 const MediaBox = styled.div`
   border-radius: 10px;
-  width: 600px;
-  height: 338px;
+  width: 100%;
+  height: 100%;
 
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
   background: #d9d9d9;
+  overflow: hidden;
 
   position: relative;
 `;
