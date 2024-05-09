@@ -16,7 +16,13 @@ export default async function handleError(error: unknown) {
       try {
         const newAccessToken = await refreshAccessToken();
         useUserStore.getState().setAccessToken(newAccessToken);
-        return;
+
+        axios.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+
+        if (error.config) {
+          error.config.headers['Authorization'] = `Bearer ${newAccessToken}`;
+          return axios(error.config);
+        }
       } catch (refreshError) {
         console.error('Refresh Token is not found');
         throw refreshError;
@@ -35,13 +41,13 @@ export default async function handleError(error: unknown) {
   throw error;
 }
 
-const dispatchAxiosErrorEvent = (errorMessage: string) => {
+export const dispatchAxiosErrorEvent = (errorMessage: string) => {
   const customEvent = new CustomEvent('axiosError', { detail: errorMessage });
   window.dispatchEvent(customEvent);
 };
 
 // refreshToken 사용해 accessToken 갱신
-const refreshAccessToken = async () => {
+export const refreshAccessToken = async () => {
   const refreshToken = Cookies.get('refreshToken');
 
   if (!refreshToken) {
@@ -51,11 +57,8 @@ const refreshAccessToken = async () => {
   }
 
   try {
-    const response = await axiosInstance.get(`${USER_URL.AUTH}/token`, {
-      headers: {
-        Authorization: `Bearer ${refreshToken}`,
-      },
-    });
+    const response = await axiosInstance.get(`${USER_URL.AUTH}/token`);
+
     return response.data.accessToken;
   } catch (error) {
     console.error('Failed to refresh token', error);

@@ -4,6 +4,7 @@ import AdminServerModal from './_components/AdminServerModal';
 import AdminChatSocketServer from './_components/AdminChatSocketServer';
 import styled from 'styled-components';
 import AdminVoiceSocketServer from './_components/AdminVoiceSocketServer';
+import PaymentTest from './_components/PaymentTest';
 
 export default function Admin() {
   return (
@@ -13,6 +14,7 @@ export default function Admin() {
         <AdminJoinServerModal />
         <AdminChatSocketServer />
         <AdminChatServer />
+        <PaymentTest />
       </Area>
       <VoiceChannelArea>
         <AdminVoiceSocketServer />
