@@ -6,7 +6,6 @@ import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatM
 import UtilityButton from './_components/UtilityButton';
 import { useSubscription } from 'src/hooks/useSubscription';
 import { useParams } from 'react-router-dom';
-import ChannelHeader from 'src/components/channel/ChannelHeader';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
@@ -38,10 +37,6 @@ export default function ChatChannel() {
   const [currentEditingMessageId, setCurrentEditingMessageId] = useState<string | null>(null);
   // 구독 여부에 따라 채팅 글자수 제한
   const { messageMaxLength } = useSubscription();
-
-  const handleMembers = () => {
-    console.log('members');
-  };
 
   const handleUiilityButtonClick = () => {
     setIsClickedUtilityButton(!isClickedUtilityButton);
@@ -234,7 +229,6 @@ export default function ChatChannel() {
 
   return (
     <Wrapper>
-      <ChannelHeader onClickMembers={handleMembers} />
       <ChatContainer ref={chatContainerRef}>
         {/* flex: column-reverse상태 */}
         {/* 가장 아래쪽 */}
@@ -289,7 +283,7 @@ export default function ChatChannel() {
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -298,7 +292,8 @@ const Wrapper = styled.div`
 `;
 
 const ChatContainer = styled.div`
-  width: 100%-1px;
+  width: calc(100%-1px);
+  height: 100%;
 
   flex-grow: 1;
   overflow-y: scroll;

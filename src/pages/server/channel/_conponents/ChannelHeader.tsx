@@ -1,6 +1,4 @@
 import styled from 'styled-components';
-import groupSvg from '../../../public/images/group_FILL0_wght200_GRAD0_opsz24 1.svg';
-import tagSvg from '../../../public/images/tag_FILL0_wght200_GRAD0_opsz24 11.svg';
 
 interface ChannelHeaderProps {
   onClickMembers: () => void;
@@ -17,14 +15,14 @@ export default function ChannelHeader({ onClickMembers }: ChannelHeaderProps) {
     <Wrapper>
       <LeftBox>
         <ChannelName>
-          <img src={tagSvg} width={24} height={24} alt='채널 이름 태그 이미지' />
+          <TagImage />
           <span>{MockChannelName}</span>
         </ChannelName>
         <ChannelDescription>{MockChannelDescription}</ChannelDescription>
       </LeftBox>
       <RightBox>
         <ChannelParticipants type='button' onClick={onClickMembers}>
-          <img src={groupSvg} width={20} height={20} alt='채널 참여자 수 이미지' />
+          <GroupImage />
           <span>{MockChannelParticipants}</span>
         </ChannelParticipants>
       </RightBox>
@@ -56,16 +54,10 @@ const ChannelName = styled.div`
   align-items: center;
   gap: 4px;
   color: var(--black_000000);
-  font-family: Pretendard;
-  font-size: 16px;
-  line-height: 160%; /* 25.6px */
 `;
 
 const ChannelDescription = styled.div`
   color: var(--gray_666666);
-  font-family: Pretendard;
-  font-size: 16px;
-  line-height: 160%; /* 25.6px */
 `;
 
 const RightBox = styled.div`
@@ -84,9 +76,25 @@ const ChannelParticipants = styled.button`
   gap: 8px;
   background-color: var(--white_FFFFFF);
   color: var(--gray_666666);
-  font-family: Pretendard;
   font-size: 14px;
-  line-height: 160%; /* 22.4px */
 
   cursor: pointer;
+`;
+
+const TagImage = styled.div`
+  width: 24px;
+  height: 24px;
+
+  background-image: url('/images/tag.svg');
+  background-size: cover;
+  background-position: center;
+`;
+
+const GroupImage = styled.div`
+  width: 20px;
+  height: 20px;
+
+  background-image: url('/images/group.svg');
+  background-size: cover;
+  background-position: center;
 `;

@@ -13,7 +13,7 @@ export const Area = styled.section`
   font-family: 'Inter', 'Pretendard', sans-serif;
   line-height: 160%;
 
-  background-color: #fff;
+  background-color: var(--landing_background_color);
 `;
 
 export const Container = styled.main`

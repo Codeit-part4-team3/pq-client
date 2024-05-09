@@ -1,9 +1,9 @@
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import CreateCategoryModal from 'src/components/modal/contents/CreateCategoryModal';
-import InvitedServerList from 'src/components/modal/contents/InvitedServerList';
 import InviteLinkModal from 'src/components/modal/contents/InviteLinkModal';
 import InviteMemberModal from 'src/components/modal/contents/InviteMemberModal';
-import { useOpenModal } from 'src/hooks/useOpenModal';
+import { ServerDropdownType } from 'src/constants/enum';
 import styled from 'styled-components';
 
 interface Prorps {
@@ -11,15 +11,15 @@ interface Prorps {
   toggleDropDown: () => void;
 }
 
+const DropdownList = [
+  { name: '카테고리 생성', type: ServerDropdownType.CREATE_CATEORY },
+  { name: '초대코드 생성', type: ServerDropdownType.INVITE_LINK },
+  { name: '멤버 초대하기', type: ServerDropdownType.INVITE_MEMBER },
+];
+
 export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
-  const { isOpen: isCategory, openModal: openCategory, closeModal: closeCategory } = useOpenModal();
-  const { isOpen: isInviteLink, openModal: openInviteLink, closeModal: closeInviteLink } = useOpenModal();
-  const { isOpen: isInviteMember, openModal: openInviteMember, closeModal: closeInviteMember } = useOpenModal();
-  const {
-    isOpen: isInvitedServerList,
-    openModal: openInvitedServerList,
-    closeModal: closeInvitedServerList,
-  } = useOpenModal();
+  const [isShow, setIsShow] = useState<boolean>(false);
+  const [dropdownType, setDropdownType] = useState<ServerDropdownType>(ServerDropdownType.CREATE_CATEORY);
   const location = useLocation();
 
   const serverId = location.pathname.split('/')[2];
@@ -27,44 +27,39 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
   // const serverId = useContext(ServerIdContext);
   // const deleteMutation = useMutationDelete(`/chat/v1/server/${serverId}`);
 
-  const closeCtegoryModal = async () => {
-    await closeCategory();
+  const handleCloseModal = () => {
+    setIsShow(false);
     toggleDropDown();
   };
 
-  const closeInviteLinkModal = async () => {
-    await closeInviteLink();
-    toggleDropDown();
-  };
-
-  const closeInviteMemberModal = async () => {
-    await closeInviteMember();
-    toggleDropDown();
+  const handleClick = (type: ServerDropdownType) => {
+    setDropdownType(type);
+    setIsShow(true);
   };
 
   return (
     <Area>
       <ButtonContainer isDown={isDropDown}>
-        <Button type='button' onClick={openCategory}>
-          카테고리 생성
-        </Button>
-        <Button type='button' onClick={openInviteLink}>
-          초대코드 생성
-        </Button>
-        <Button type='button' onClick={openInviteMember}>
-          멤버 초대하기
-        </Button>
-        <Button type='button' onClick={openInvitedServerList}>
-          초대받은 서버목록
-        </Button>
+        {DropdownList.map((item) => {
+          return (
+            <Button key={item.type} type='button' onClick={() => handleClick(item.type)}>
+              {item.name}
+            </Button>
+          );
+        })}
         {/* <Button type='button' onClick={() => deleteMutation.mutate()}>
         서버 삭제
       </Button> */}
       </ButtonContainer>
-      <CreateCategoryModal closeModal={closeCtegoryModal} isOpen={isCategory} />
-      <InviteLinkModal closeModal={closeInviteLinkModal} isOpen={isInviteLink} serverId={Number(serverId)} />
-      <InviteMemberModal closeModal={closeInviteMemberModal} isOpen={isInviteMember} />
-      <InvitedServerList closeModal={closeInvitedServerList} isOpen={isInvitedServerList} />
+      {
+        {
+          [ServerDropdownType.CREATE_CATEORY]: <CreateCategoryModal closeModal={handleCloseModal} isOpen={isShow} />,
+          [ServerDropdownType.INVITE_LINK]: (
+            <InviteLinkModal closeModal={handleCloseModal} isOpen={isShow} serverId={Number(serverId)} />
+          ),
+          [ServerDropdownType.INVITE_MEMBER]: <InviteMemberModal closeModal={handleCloseModal} isOpen={isShow} />,
+        }[dropdownType]
+      }
     </Area>
   );
 }
@@ -74,22 +69,24 @@ type ButtonContainerProps = {
 };
 
 const Area = styled.section`
-  position: absolute;
   width: 100%;
   height: 100%;
+
+  padding: 10px;
   background: transparent;
-  top: 48px;
+
+  position: absolute;
+  top: 80%;
 `;
 
 const ButtonContainer = styled.div<ButtonContainerProps>`
+  width: 100%;
+
   display: flex;
-
-  padding: 10px;
   flex-direction: column;
-  border-radius: 25%;
+  border-radius: 4px;
   overflow: hidden;
-
-  transform-origin: 50% 0%;
+  transform-origin: 95% 0%;
   transition: 0.2s all ease-in-out;
   transform: ${(props) => (props.isDown ? 'scale(1.0)' : 'scale(0)')};
 `;
@@ -98,18 +95,14 @@ const Button = styled.button`
   width: 100%;
   padding: 6px 10px 6px 10px;
   color: #000;
-  font-family: Pretendard;
   font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 160%; /* 51.2px */
-  background: #fff;
+  background: var(--landing_background_color);
   border: none;
-  border-bottom: 1px solid #d9d9d9;
+  border-bottom: 1px solid var(--text_gray);
   text-align: left;
 
   &:hover {
-    background: #d9d9d9;
+    background: #fafafa;
     cursor: pointer;
   }
 
