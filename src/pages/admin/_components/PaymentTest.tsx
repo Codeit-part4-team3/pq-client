@@ -143,17 +143,17 @@ export default function PaymentTest() {
       </div>
 
       <h3>결제 취소</h3>
+      <input
+        placeholder='취소할 주문번호 입력'
+        onChange={(e) => setCancelOrderId(e.target.value)}
+        value={cancelOrderId}
+      />
       <select
         id='cancelReason'
         name='cancelReason'
         value={cancelReason}
         onChange={(e) => setCancelReason(e.target.value)}
       >
-        <input
-          placeholder='취소할 주문번호 입력'
-          onChange={(e) => setCancelOrderId(e.target.value)}
-          value={cancelOrderId}
-        />
         <option value=''>취소 사유를 선택해 주세요.</option>
         <option>단순 변심</option>
         <option>계정 탈퇴</option>
