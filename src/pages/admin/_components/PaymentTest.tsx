@@ -72,7 +72,6 @@ export default function PaymentTest() {
 
     if (selectedPlan) {
       setSelectedPlan(selectedPlan);
-      setPlanId(selectedPlan.id);
       return;
     }
 
@@ -90,6 +89,7 @@ export default function PaymentTest() {
       totalAmount: selectedPlan.price,
     };
 
+    setPlanId(selectedPlan.id);
     setPlanType(selectedPlan.type);
     setAmount(selectedPlan.price);
 
