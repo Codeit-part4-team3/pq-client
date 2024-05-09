@@ -6,6 +6,13 @@ import { PaymentMethodsWidget } from './_type/type';
 
 const widgetClientKey = import.meta.env.VITE_APP_TOSS_CLIENT_KEY;
 
+/**
+ * 토스 페이먼츠 결제 요청
+ *
+ * 공식 문서
+ * https://docs.tosspayments.com/guides/learn/payment-flow
+ * https://docs.tosspayments.com/guides/payment-widget/integration
+ */
 export default function Checkout() {
   const [paymentWidget, setPaymentWidget] = useState<PaymentWidgetInstance | null>(null);
   const paymentMethodsWidgetRef = useRef<PaymentMethodsWidget | null>(null);

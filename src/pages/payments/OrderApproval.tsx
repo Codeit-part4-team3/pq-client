@@ -6,10 +6,14 @@ import { USER_URL } from 'src/constants/apiUrl';
 import useUserStore from 'src/store/userStore';
 import { UserInfo } from 'src/types/userType';
 
+/**
+ * 결제 요청 승인 후 실제 결제 진행
+ */
 export function OrderApproval() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  // 결제 정보
   const paymentData = {
     userId: Number(searchParams.get('userId')),
     planId: Number(searchParams.get('planId')),
@@ -19,8 +23,8 @@ export function OrderApproval() {
   };
 
   const { setUserInfo } = useUserStore();
-  const { data: userData } = useQueryGet<UserInfo | null>('getUserData', `${USER_URL.USER}/me`);
-  const { mutate } = useMutationPost<ConfirmResponse, ConfirmRequest>(`${USER_URL.PAYMENTS}/confirm`, {
+  const { data: userData, isLoading } = useQueryGet<UserInfo | null>('getUserData', `${USER_URL.USER}/me`);
+  const { mutate, isPending } = useMutationPost<ConfirmResponse, ConfirmRequest>(`${USER_URL.PAYMENTS}/confirm`, {
     onSuccess: () => {
       navigate(
         `/order-success?orderId=${paymentData.orderId}&amount=${paymentData.amount}&paymentKey=${paymentData.paymentKey}`,
@@ -32,13 +36,18 @@ export function OrderApproval() {
     },
   });
 
+  // 유저 정보 업데이트
   useEffect(() => {
+    if (isLoading) return;
+
     if (userData) {
       setUserInfo(userData);
     }
   }, [userData, setUserInfo]);
 
+  // 결제 진행
   const handlePaymentClick = () => {
+    if (isPending) return;
     mutate(paymentData);
   };
 

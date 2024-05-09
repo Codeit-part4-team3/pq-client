@@ -10,7 +10,10 @@ export const useSubscription = () => {
   const { data } = useQueryGet<SubscriptionResponse>('getSubscription', `${USER_URL.PAYMENTS}/subscription`);
 
   useEffect(() => {
-    if (!data) return;
+    if (!data) {
+      return console.log('구독 정보를 불러올 수 없습니다.');
+    }
+
     setIsSubscribed(data.isActive);
 
     switch (data.planId) {
