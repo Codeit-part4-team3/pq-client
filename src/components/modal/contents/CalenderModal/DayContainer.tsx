@@ -93,7 +93,6 @@ export default function DayContainer({ currentDay, currentMonth, currentYear, se
   useEffect(() => {
     const newData = data?.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
     setEvents(newData || []);
-    console.log(newData);
   }, [data]);
 
   return (

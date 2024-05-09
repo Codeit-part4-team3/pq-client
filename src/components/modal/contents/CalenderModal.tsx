@@ -30,7 +30,6 @@ export default function CalenderModal({ isOpen, closeModal }: ModalProps) {
   );
 
   const onDayClick = async (day: number) => {
-    console.log(day);
     SetCurrentDay(day);
     setIsDay(true);
     const startDate = new Date(currentYear, currentMonth, day);
@@ -40,7 +39,6 @@ export default function CalenderModal({ isOpen, closeModal }: ModalProps) {
   };
 
   const onMonthChange = async (month: number) => {
-    console.log('눌림');
     SetCurrentMonth((pre) => pre + month);
     if (currentMonth + month < 0) {
       SetCurrentYear(currentYear - 1);

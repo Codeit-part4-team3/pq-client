@@ -18,7 +18,6 @@ export function useGetUserInfo() {
 
   useEffect(() => {
     if (accessToken) {
-      console.log(accessToken);
       getUserInfo();
     }
   }, [accessToken]);

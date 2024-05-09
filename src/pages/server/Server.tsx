@@ -45,7 +45,6 @@ export default function Server() {
   const userInfo = useGetUserInfo();
 
   // const { userInfo } = useUserStore();
-  console.log(userInfo);
   const userId = userInfo.id;
 
   const { refetch: serverRefetch, data: serverData } = useQueryGet<ServerResponse[]>(
