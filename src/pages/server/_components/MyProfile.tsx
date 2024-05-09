@@ -2,6 +2,9 @@ import styled from 'styled-components';
 import { UserIdContext } from '../Server';
 import { useContext } from 'react';
 
+/**
+ * get user profile image, status, and user id
+ */
 export default function MyProfile() {
   const user = useContext<number>(UserIdContext);
 
@@ -33,7 +36,6 @@ const Area = styled.div`
 `;
 
 const Wrapper = styled.div`
-  /* width: 100%; */
   display: flex;
   flex-direction: row;
   justify-content: flex-start;

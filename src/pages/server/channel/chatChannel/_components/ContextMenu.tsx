@@ -41,6 +41,7 @@ const Wrapper = styled.div<{
   positionX: number;
   positionY: number;
 }>`
+  border: 1px solid var(--text_gray);
   border-radius: 10px;
   width: 220px;
 

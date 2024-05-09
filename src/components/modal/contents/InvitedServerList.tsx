@@ -89,6 +89,7 @@ const InviteList = styled.div`
 const TextContainer = styled.div`
   display: flex;
   flex-direction: row;
+  color: black;
   gap: 5px;
 
   & > div {

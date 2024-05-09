@@ -15,7 +15,9 @@ export default function NotFoundServer({ isCreateServer, openCreateServer, close
   return (
     <Area>
       <Body>
-        <Thumbnail />
+        <Thumbnail>
+          <TextThumb>X</TextThumb>
+        </Thumbnail>
         <Desc>
           <p>아직 서버가 없어요.</p>
           <p>초대 받은 서버에 참가하거나 직접 생성해보세요.</p>
@@ -35,8 +37,7 @@ const Area = styled.section`
   width: 100%;
   height: 100vh;
 
-  border: 1px solid #cccccc;
-  background-color: #ffffff;
+  background-color: var(--landing_background_color);
 
   display: flex;
   justify-content: center;
@@ -56,9 +57,23 @@ const Thumbnail = styled.div`
   width: 360px;
   height: 240px;
 
-  background-color: #d9d9d9;
+  background-image: url('/images/landing.webp');
+  background-size: cover;
+  background-position: center;
 
   margin-bottom: 60px;
+  position: relative;
+`;
+
+const TextThumb = styled.div`
+  color: #ff0000;
+  font-size: 10rem;
+  font-family: 'Jua', sans-serif;
+  transform: translate(-50%, -50%);
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
 `;
 
 const Desc = styled.div`

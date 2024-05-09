@@ -74,21 +74,23 @@ type ButtonContainerProps = {
 };
 
 const Area = styled.section`
-  position: absolute;
   width: 100%;
   height: 100%;
+
+  padding: 10px;
   background: transparent;
+
+  position: absolute;
   top: 48px;
 `;
 
 const ButtonContainer = styled.div<ButtonContainerProps>`
+  width: 100%;
+
   display: flex;
-
-  padding: 10px;
   flex-direction: column;
-  border-radius: 25%;
+  border-radius: 4px;
   overflow: hidden;
-
   transform-origin: 50% 0%;
   transition: 0.2s all ease-in-out;
   transform: ${(props) => (props.isDown ? 'scale(1.0)' : 'scale(0)')};
@@ -103,13 +105,13 @@ const Button = styled.button`
   font-style: normal;
   font-weight: 400;
   line-height: 160%; /* 51.2px */
-  background: #fff;
+  background: var(--landing_background_color);
   border: none;
-  border-bottom: 1px solid #d9d9d9;
+  border-bottom: 1px solid var(--text_gray);
   text-align: left;
 
   &:hover {
-    background: #d9d9d9;
+    background: #fafafa;
     cursor: pointer;
   }
 

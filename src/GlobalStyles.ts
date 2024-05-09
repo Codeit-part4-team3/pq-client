@@ -42,13 +42,33 @@ export const GlobalStyles = createGlobalStyle`
     --background_light_gray: #707070;
     --background_dark_gray: #202020;
 
-    --text_gray: #d9d9d9;
+    --text_gray: #d9d9d9; // 텍스트 and border
     --landing_background_color: #ecf3fc; // 랜딩페이지 배경색( 하늘색 ) // hover시 fafafa
   }
 
   * {
     box-sizing: border-box;
     font-family: 'Pretendard', sans-serif;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-text-fill-color: #000;
+    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    box-shadow: 0 0 0px 1000px #fff inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  input:autofill,
+  input:autofill:hover,
+  input:autofill:focus,
+  input:autofill:active {
+    -webkit-text-fill-color: #000;
+    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    box-shadow: 0 0 0px 1000px #fff inset;
+    transition: background-color 5000s ease-in-out 0s;
   }
 `;
 

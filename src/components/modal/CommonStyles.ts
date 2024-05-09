@@ -5,6 +5,7 @@ export const ModalContainer = styled.div`
   flex-direction: column;
   width: 100%;
   gap: 32px;
+  background-color: var(--landing_background_color);
 `;
 
 export const ModalForm = styled.form`

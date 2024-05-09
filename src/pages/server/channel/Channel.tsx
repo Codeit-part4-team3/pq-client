@@ -25,7 +25,7 @@ export default function Channel() {
     <Area>
       <ChannelHeader onClickMembers={handleMembers} />
       <Container>
-        {onVoice === 'true' ? <ChatChannel /> : <VoiceChannel />}
+        {onVoice === 'false' ? <ChatChannel /> : <VoiceChannel />}
         {isShowMembers && (
           <MembersContainer>
             <Member>
