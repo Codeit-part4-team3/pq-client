@@ -22,11 +22,10 @@ export default function PaymentTest() {
   const navigate = useNavigate();
   const { setTempOrderId, setTempAmount } = useTempOrderStore();
   const { setPlanId, setPlanType, setAmount } = usePlanStore();
-  const orderId = 'fXXIpV=cIcpO3tdLD2mvi1ONW'; // TODO: 임시
 
   const { data: plans, refetch: getAllPlans } = useQueryGet<PlansResponse>('getPlan', `${USER_URL.PLANS}/all`);
-  const { data: paymentData } = useQueryGet<PaymentResponse>('getPayment', `${USER_URL.PAYMENTS}/${orderId}`, {
-    enabled: !!orderId,
+  const { data: paymentData } = useQueryGet<PaymentResponse>('getPayment', `${USER_URL.PAYMENTS}/${cancelOrderId}`, {
+    enabled: !!cancelOrderId,
   });
 
   const { mutate: createTempOrder } = useMutationPost<TempOrderResponse, TempOrderRequest>(
@@ -98,7 +97,7 @@ export default function PaymentTest() {
   };
 
   const handleCancelButtonClick = () => {
-    if (!orderId) {
+    if (!cancelOrderId) {
       console.error('주문번호를 찾을 수 없습니다.');
       return;
     }
@@ -114,7 +113,7 @@ export default function PaymentTest() {
     }
 
     const cancelData = {
-      orderId: orderId,
+      orderId: cancelOrderId,
       cancelReason,
     };
 
