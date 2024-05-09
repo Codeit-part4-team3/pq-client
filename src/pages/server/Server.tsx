@@ -20,7 +20,7 @@ import { useOpenModal } from 'src/hooks/useOpenModal';
 import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
 import ServerMenu from './_components/ServerMenu';
 import useUserStore from 'src/store/userStore';
-import MyProfile from './_components/MyProfile';
+import MyProfile from '../../components/MyProfile';
 
 /**
  *
@@ -186,6 +186,8 @@ const LeftContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: 10px;
+
+  z-index: 10;
 `;
 
 const ServerContainer = styled.div`

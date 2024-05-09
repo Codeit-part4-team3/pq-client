@@ -7,7 +7,7 @@ import useUserStore from 'src/store/userStore';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 
-export default function InvitedServerList({ closeModal, isOpen }: ModalProps) {
+export default function InvitedServerListModal({ closeModal, isOpen }: ModalProps) {
   const { userInfo } = useUserStore();
   const userId = userInfo.id;
 
