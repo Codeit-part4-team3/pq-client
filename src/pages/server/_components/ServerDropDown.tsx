@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useMutationDelete } from 'src/apis/service/service';
 import CreateCategoryModal from 'src/components/modal/contents/CreateCategoryModal';
+import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
 import InviteLinkModal from 'src/components/modal/contents/InviteLinkModal';
 import InviteMemberModal from 'src/components/modal/contents/InviteMemberModal';
 import DefaultModal from 'src/components/modal/DefaultModal';
@@ -16,6 +17,7 @@ interface Prorps {
 
 const DropdownList = [
   { name: '일반', type: ServerDropdownType.LABEL },
+  { name: '서버 수정하기', type: ServerDropdownType.UPDATE_SERVER },
   { name: '카테고리 생성', type: ServerDropdownType.CREATE_CATEORY },
   { name: '초대', type: ServerDropdownType.LABEL },
   { name: '초대링크 생성', type: ServerDropdownType.INVITE_LINK },
@@ -64,6 +66,9 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
       {
         {
           [ServerDropdownType.LABEL]: <></>,
+          [ServerDropdownType.UPDATE_SERVER]: (
+            <CreateServerModal isUpdate={true} closeModal={handleCloseModal} isOpen={isShow} />
+          ),
           [ServerDropdownType.CREATE_CATEORY]: <CreateCategoryModal closeModal={handleCloseModal} isOpen={isShow} />,
           [ServerDropdownType.INVITE_LINK]: (
             <InviteLinkModal closeModal={handleCloseModal} isOpen={isShow} serverId={Number(serverId)} />
@@ -90,7 +95,7 @@ type ButtonContainerProps = {
 
 const Area = styled.section`
   width: 100%;
-  height: 100%;
+  height: 0px;
 
   padding: 10px;
   background: transparent;

@@ -16,7 +16,6 @@ import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
 export default function Channel() {
   const [isShowMembers, setIsShowMembers] = useState(true);
   const { serverId, channelId } = useParams();
-  console.log('serverId:', serverId, 'channelId:', channelId);
 
   const { data, refetch } = useQueryGet<ChannelResponse>(
     'getChannel',
@@ -40,10 +39,6 @@ export default function Channel() {
     userRefetch();
   }, [serverId]);
 
-  console.log('data:', JSON.stringify(userData));
-
-  /**@ToDo channel 데이터의 onVoice의 boolean에 따라 ChatChannel을 보여줄지 VoiceChannel을 보여줄지 생각 */
-  // const [onVoice] = useState('false');
   return (
     <Area>
       <ChannelHeader title={data?.name ?? '없음'} userCount={userData?.length ?? 0} onClickMembers={handleMembers} />
