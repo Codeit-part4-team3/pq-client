@@ -5,6 +5,7 @@ import InvitedServerListModal from './modal/contents/InvitedServerListModal';
 import { MyDropdownType } from 'src/constants/enum';
 import useUserStore from 'src/store/userStore';
 import LogoutModal from './modal/contents/LogoutModal';
+import MyPageModal from './modal/contents/MyPageModal';
 
 /**
  * get user profile image, status, and user id
@@ -35,7 +36,7 @@ export default function MyProfile() {
       <Area>
         <Wrapper>
           <ImageWrapper>
-            <ProfileImage onClick={toggleDropdown} />
+            <ProfileImage $src={userInfo.imageUrl as string} onClick={toggleDropdown} />
           </ImageWrapper>
           <InfoWrapper>
             <strong>{userInfo.nickname}</strong>
@@ -53,6 +54,7 @@ export default function MyProfile() {
             <InvitedServerListModal closeModal={handleCloseModal} isOpen={isShow} />
           ),
           [MyDropdownType.LOGOUT]: <LogoutModal closeModal={handleCloseModal} isOpen={isShow} />,
+          [MyDropdownType.MYPAGE]: <MyPageModal closeModal={handleCloseModal} isOpen={isShow} />,
         }[dropdownType]
       }
     </>
@@ -93,14 +95,14 @@ const ImageWrapper = styled.div`
   margin-left: 10px;
 `;
 
-const ProfileImage = styled.img`
+const ProfileImage = styled.img<{ $src: string }>`
   width: 100%;
   height: 100%;
 
   border-radius: 50%;
   overflow: hidden;
   background-size: cover;
-  background-image: url('/images/minji-profile-image.png');
+  background-image: ${(props) => (props.$src ? `url(${props.$src})` : `url('/images/minji-profile-image.png')`)};
 
   &:hover {
     cursor: pointer;
