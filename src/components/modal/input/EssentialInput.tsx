@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ModalInputBox, ModalInputLabel, NameInput } from '../CommonStyles';
+import { EssentialSpan, ModalInputBox, ModalInputLabel, NameInput } from '../CommonStyles';
 
 interface Props {
   labelName: string;
@@ -20,15 +20,6 @@ export default function EssentialInput({ labelName, state, setState, errorMessag
     </ModalInputBox>
   );
 }
-
-const EssentialSpan = styled.span`
-  color: #258dff;
-  font-family: Pretendard;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-`;
 
 const ErrorMessage = styled.span`
   color: red;

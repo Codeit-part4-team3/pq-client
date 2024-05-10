@@ -29,7 +29,6 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
   const [isPrivate, setIsPrivate] = useState(false);
   const [isVoice, setIsVoice] = useState(false);
   const [isNextModal, setIsNextModal] = useState(false);
-
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
   const handleInvite = (email: string) => {
     setInvitedUsers([...invitedUsers, email]);
@@ -55,7 +54,13 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
       return;
     }
     // 생성로직
+
+    // createMutation.mutate({ name: channelName, isPrivate: isPrivate, isVoice: channelMode, groupId });
+
     createMutation.mutate({ name: channelName, isPrivate: isPrivate, isVoice: isVoice, groupId });
+
+    setChannelName('');
+
     closeModal();
   };
 
@@ -97,7 +102,7 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
                 isEnabled={true}
                 title='Voice 체널'
                 desc='음성 채팅을 할 수 있음'
-                state={isPrivate}
+                state={isVoice}
                 toggleClick={() => setIsVoice(!isVoice)}
               />
               <ModalButtons
