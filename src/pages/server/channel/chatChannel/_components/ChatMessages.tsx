@@ -99,13 +99,6 @@ export default function ChatMessages({
   if (!messages || messages.length === 0) return null;
   return (
     <>
-      {isContextMenuOpen.isOpen ? (
-        <ContextMenu
-          {...isContextMenuOpen}
-          onUpdateMessageClick={onUpdateMessageClick}
-          onDeleteMessageClick={onDeleteMessageClick}
-        />
-      ) : null}
       {messages.map((messageItem, index) => {
         // 현재 메시지에 해당하는 유저를 찾음
         const user = serverUserData?.find((user) => user.id === messageItem.userId);
@@ -130,6 +123,13 @@ export default function ChatMessages({
         const ChatDayDividerDay = `${year}년 ${addZero(month)}월 ${addZero(day)}일 (${'일월화수목금토'[new Date(`${year}-${month}-${day}`).getDay()]})`;
         return (
           <>
+            {isContextMenuOpen.isOpen ? (
+              <ContextMenu
+                {...isContextMenuOpen}
+                onUpdateMessageClick={onUpdateMessageClick}
+                onDeleteMessageClick={onDeleteMessageClick}
+              />
+            ) : null}
             {isDifferentUser ? (
               <>
                 <ChatMessageWrapper
@@ -242,10 +242,10 @@ const ChatMessageWrapper = styled.div<{ isOnEdit: boolean }>`
   padding-left: 20px;
   padding-right: 20px;
 
-  background-color: ${({ isOnEdit }) => (isOnEdit ? 'var(--gray_CCCCCC)' : 'transparent')};
+  background-color: ${({ isOnEdit }) => (isOnEdit ? 'var(--light_blue_0)' : 'transparent')};
 
   &:hover {
-    background-color: var(--gray_CCCCCC);
+    background-color: var(--light_blue_0);
   }
 `;
 
@@ -308,10 +308,10 @@ const ChatMessageText = styled.p`
 const SameUserMessage = styled.div<{ isOnEdit: boolean }>`
   display: flex;
   padding-left: 72px;
-  background-color: ${({ isOnEdit }) => (isOnEdit ? 'var(--gray_CCCCCC)' : 'transparent')};
+  background-color: ${({ isOnEdit }) => (isOnEdit ? 'var(--light_blue_0)' : 'transparent')};
 
   &:hover {
-    background-color: var(--gray_CCCCCC);
+    background-color: var(--light_blue_0);
   }
 `;
 
@@ -333,17 +333,18 @@ const ChatMessageTextEditingInput = styled.input`
   outline: none;
   padding: 12px 18px;
 
-  background-color: var(--gray_EEEEEE);
+  background-color: var(--landing_background_color);
 `;
 
 const ChatMessageTextEditingDescription = styled.div`
   font-family: Pretendard;
   font-size: 12px;
   padding-bottom: 6px;
+
   button {
     background-color: transparent;
     border: none;
-    color: var(--blue_5534DA);
+    color: var(--light_blue_5);
     font-weight: 700;
     cursor: pointer;
   }
