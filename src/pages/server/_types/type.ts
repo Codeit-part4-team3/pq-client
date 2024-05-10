@@ -13,11 +13,12 @@ export interface IChannel {
   id: number;
   name: string;
   groupId?: number;
+  serverId: number;
   isVoice: boolean;
   isPrivate: boolean;
 }
 
-export type ChannelRequest = Omit<IChannel, 'id'>;
+export type ChannelRequest = Omit<IChannel, 'id' | 'serverId'>;
 export type ChannelResponse = IChannel | null;
 
 export type ChannelGroupRequest = Pick<IChannel, 'id' | 'name'>;

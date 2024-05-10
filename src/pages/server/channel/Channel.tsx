@@ -7,39 +7,38 @@ import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import VoiceChannel from './voiceChannel/VoiceChannel';
 import ChatChannel from './chatChannel/ChatChannel';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ChannelHeader from 'src/pages/server/channel/_conponents/ChannelHeader';
+import { useQueryGet } from 'src/apis/service/service';
+import { ChannelResponse } from '../_types/type';
 
 export default function Channel() {
   const [isShowMembers, setIsShowMembers] = useState(true);
   const { serverId, channelId } = useParams();
   console.log('serverId:', serverId, 'channelId:', channelId);
 
+  const { data, refetch } = useQueryGet<ChannelResponse>(
+    'getChannel',
+    `/chat/v1/server/${serverId}/channel/${channelId}`,
+  );
+
   const handleMembers = () => {
     setIsShowMembers(!isShowMembers);
   };
+
+  useEffect(() => {
+    refetch();
+  }, [channelId]);
 
   /**@ToDo channel 데이터의 onVoice의 boolean에 따라 ChatChannel을 보여줄지 VoiceChannel을 보여줄지 생각 */
   // const [onVoice] = useState('false');
   return (
     <Area>
-      <ChannelHeader onClickMembers={handleMembers} />
+      <ChannelHeader title={data?.name ?? '없음'} onClickMembers={handleMembers} />
       <Container>
         {Number(channelId) % 2 === 0 ? <ChatChannel /> : <VoiceChannel />}
         {isShowMembers && (
           <MembersContainer>
-            <Member>
-              <ImageWrapper>
-                <Image />
-              </ImageWrapper>
-              <span>구성원</span>
-            </Member>
-            <Member>
-              <ImageWrapper>
-                <Image />
-              </ImageWrapper>
-              <span>구성원</span>
-            </Member>
             <Member>
               <ImageWrapper>
                 <Image />

@@ -23,7 +23,6 @@ import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
 import ServerMenu from './_components/ServerMenu';
 import useUserStore from 'src/store/userStore';
 import MyProfile from '../../components/MyProfile';
-import { APP_ORIGIN } from 'src/constants/apiUrl';
 
 /**
  *
@@ -139,13 +138,8 @@ export default function Server() {
         { inviteeId: userId, secretKey: secretKey },
         {
           onSuccess: (data) => {
-            console.log(`${APP_ORIGIN}/${data?.redirectUrl}`);
-
             setServerId(Number(data?.redirectUrl.split('/')[1]) || 0);
-            // navigate(`${data?.redirectUrl.split('/')[1]}`);
-
             sessionStorage.removeItem('invite');
-            // alert('초대 링크를 확인했습니다.');
           },
           onError: () => {
             console.log('[error] invite');
