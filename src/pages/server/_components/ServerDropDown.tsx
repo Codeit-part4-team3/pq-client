@@ -39,7 +39,7 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
 
   return (
     <Area>
-      <ButtonContainer isDown={isDropDown}>
+      <ButtonContainer $isDown={isDropDown}>
         {DropdownList.map((item) => {
           return (
             <Button key={item.type} type='button' onClick={() => handleClick(item.type)}>
@@ -47,6 +47,7 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
             </Button>
           );
         })}
+
         {/* <Button type='button' onClick={() => deleteMutation.mutate()}>
         서버 삭제
       </Button> */}
@@ -65,7 +66,7 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
 }
 
 type ButtonContainerProps = {
-  isDown: boolean;
+  $isDown: boolean;
 };
 
 const Area = styled.section`
@@ -88,7 +89,7 @@ const ButtonContainer = styled.div<ButtonContainerProps>`
   overflow: hidden;
   transform-origin: 95% 0%;
   transition: 0.2s all ease-in-out;
-  transform: ${(props) => (props.isDown ? 'scale(1.0)' : 'scale(0)')};
+  transform: ${(props) => (props.$isDown ? 'scale(1.0)' : 'scale(0)')};
 `;
 
 const Button = styled.button`
