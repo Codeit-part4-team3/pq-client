@@ -24,6 +24,7 @@ import ServerMenu from './_components/ServerMenu';
 import { useGetUserInfo } from 'src/hooks/useGetUserInfo';
 import useUserStore from 'src/store/userStore';
 import MyProfile from '../../components/MyProfile';
+import { useSocketConnect } from 'src/hooks/useSocketConnect';
 
 /**
  *
@@ -44,6 +45,10 @@ export default function Server() {
   const navigate = useNavigate();
   const { userInfo } = useUserStore();
   const userId = userInfo.id;
+
+  // eslint-disable-next-line
+  // 소켓 연결
+  const { socketRef } = useSocketConnect();
 
   useGetUserInfo();
 

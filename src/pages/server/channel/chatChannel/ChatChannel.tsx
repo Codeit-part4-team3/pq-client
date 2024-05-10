@@ -1,6 +1,5 @@
 import styled, { keyframes } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
 import { lastKey, MessageItem, User } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
 import UtilityButton from './_components/UtilityButton';
@@ -8,8 +7,7 @@ import { useSubscription } from 'src/hooks/useSubscription';
 import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
 import { useQueryGet } from 'src/apis/service/service';
-
-const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
+import { useSocketConnect } from 'src/hooks/useSocketConnect';
 
 /**@Todo Channel 컴포넌트로 부터 channel date를 prop로 받고 데이터 바인딩 예정
  * 유저 데이터들 처리하는 로직 짜야함
@@ -21,14 +19,14 @@ export default function ChatChannel() {
   const { serverId, channelId } = useParams();
   const roomName = channelId;
 
-  // 서버내의 모든 유저 데이터
+  // api 호출
   const { data: serverUserData } = useQueryGet<User[]>('getServerAllUser', `/chat/v1/server/${serverId}/users`, {
     staleTime: 5000,
     refetchInterval: 5000,
     enabled: !!userId,
   });
   // 소켓
-  const socketRef = useRef<Socket | null>(null);
+  const { socketRef } = useSocketConnect();
   // 메시지 관련
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
@@ -150,8 +148,7 @@ export default function ChatChannel() {
   };
 
   useEffect(() => {
-    socketRef.current = io(SOCKET_SERVER_URL);
-
+    if (!socketRef.current) return;
     socketRef.current.emit('join_chat_channel', roomName);
 
     socketRef.current.on('join_chat_channel_user_join', (socketId) => {
@@ -218,12 +215,6 @@ export default function ChatChannel() {
         }
       },
     );
-
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
-    };
   }, [roomName]);
 
   useEffect(() => {
