@@ -239,7 +239,9 @@ const FirstContainer = styled.div`
 const ServerBox = styled.div`
   width: 100%;
   height: 92%;
-  overflow: scroll;
+
+  overflow-x: hidden;
+  overflow-y: scroll;
 
   position: relative;
 
@@ -251,6 +253,7 @@ const ServerBox = styled.div`
 `;
 
 const ListBody = styled.div`
+  width: 100%;
   height: 100%;
 
   display: flex;

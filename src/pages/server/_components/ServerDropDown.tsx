@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useMutationDelete } from 'src/apis/service/service';
 import CreateCategoryModal from 'src/components/modal/contents/CreateCategoryModal';
 import InviteLinkModal from 'src/components/modal/contents/InviteLinkModal';
 import InviteMemberModal from 'src/components/modal/contents/InviteMemberModal';
 import DefaultModal from 'src/components/modal/DefaultModal';
+import { APP_ORIGIN } from 'src/constants/apiUrl';
 import { ServerDropdownType } from 'src/constants/enum';
 import styled from 'styled-components';
 
@@ -27,15 +29,12 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
   const [isShow, setIsShow] = useState<boolean>(false);
   const [dropdownType, setDropdownType] = useState<ServerDropdownType>(ServerDropdownType.CREATE_CATEORY);
   const location = useLocation();
-
   const serverId = location.pathname.split('/')[2];
+  const deleteMutation = useMutationDelete(`/chat/v1/server/${serverId}`);
 
-  // const serverId = useContext(ServerIdContext);
-  // const deleteMutation = useMutationDelete(`/chat/v1/server/${serverId}`);
-
-  const handleDeleteServer = () => {
-    console.log('delete server');
-    // deleteMutation.mutate();
+  const handleDeleteServer = async () => {
+    await deleteMutation.mutate();
+    window.location.href = `${APP_ORIGIN}/server/-1`;
     handleCloseModal();
   };
 
@@ -61,10 +60,6 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
             </Button>
           );
         })}
-
-        {/* <Button type='button' onClick={() => deleteMutation.mutate()}>
-        서버 삭제
-      </Button> */}
       </ButtonContainer>
       {
         {

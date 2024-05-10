@@ -33,7 +33,7 @@ const Button = styled.button`
   height: 48px;
 
   border: none;
-  border-radius: 10%;
+  border-radius: 50%;
   background-color: #d8980e;
 
   display: flex;
