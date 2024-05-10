@@ -5,7 +5,6 @@ import { lastKey, MessageItem } from 'src/pages/server/channel/chatChannel/_type
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
 import UtilityButton from 'src/pages/server/channel/chatChannel/_components/UtilityButton';
 import { useParams } from 'react-router-dom';
-import ChannelHeader from 'src/pages/server/channel/_conponents/ChannelHeader';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
@@ -35,8 +34,6 @@ export default function ChatChannel() {
   const [editingMessage, setEditingMessage] = useState<string>('');
   // 메시지 수정 상태, 수정중인 메시지의 messageId를 저장
   const [currentEditingMessageId, setCurrentEditingMessageId] = useState<string | null>(null);
-
-  const handleMembers = () => {};
 
   const handleUiilityButtonClick = () => {
     setIsClickedUtilityButton(!isClickedUtilityButton);
@@ -229,7 +226,6 @@ export default function ChatChannel() {
 
   return (
     <Wrapper>
-      <ChannelHeader onClickMembers={handleMembers} />
       <ChatContainer ref={chatContainerRef}>
         {/* flex: column-reverse상태 */}
         {/* 가장 아래쪽 */}

@@ -3,7 +3,7 @@ export interface MessageItem {
   createdAt: number;
   messageId: string;
   message: string;
-  userId: string;
+  userId: number;
   updatedAt: number;
   status: string;
 }
@@ -11,4 +11,10 @@ export interface MessageItem {
 export interface lastKey {
   channelId: string;
   createdAt: number;
+}
+
+export interface User {
+  id: number;
+  email: string;
+  nickname: string;
 }

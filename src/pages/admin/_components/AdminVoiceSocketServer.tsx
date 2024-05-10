@@ -6,6 +6,7 @@ import LocalMedia from 'src/pages/server/channel/voiceChannel/_components/LocalM
 import MediaControlPanel from 'src/pages/server/channel/voiceChannel/_components/MediaControlPanel';
 import RemoteMedia from 'src/pages/server/channel/voiceChannel/_components/RemoteMedia';
 import MeetingNote from 'src/pages/server/channel/voiceChannel/_components/MeetingNote';
+import useUserStore from 'src/store/userStore';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
@@ -21,7 +22,8 @@ const pc_config = {
 /**@ToDo 매일 시간내서 RTC 고치기 */
 export default function AdminVoiceSocketServer() {
   const roomName = 'admin_voice_room';
-  const userId = 'admin_user_id';
+  const { userInfo } = useUserStore();
+  const { id: userId, nickname: userNickname } = userInfo;
 
   // socket
   const socketRef = useRef<Socket | null>(null);
@@ -32,6 +34,7 @@ export default function AdminVoiceSocketServer() {
     {
       socketId: string;
       userId: string;
+      userNickname: string;
       stream: MediaStream;
       showVideo: boolean;
     }[]
@@ -46,6 +49,7 @@ export default function AdminVoiceSocketServer() {
 
   const localMediaData = {
     userId,
+    userNickname,
     stream: localStreamRef.current,
     isMutedLocalStream,
     showLocalVideo,
@@ -144,7 +148,13 @@ export default function AdminVoiceSocketServer() {
           setUsers((prevUsers) => prevUsers.filter((user) => user.socketId !== participant.socketId));
           setUsers((prevUsers) => [
             ...prevUsers,
-            { socketId: participant.socketId, userId: participant.userId, stream: e.streams[0], showVideo: true },
+            {
+              socketId: participant.socketId,
+              userId: participant.userId,
+              userNickname: participant.userNickname,
+              stream: e.streams[0],
+              showVideo: true,
+            },
           ]);
         };
 
@@ -173,7 +183,7 @@ export default function AdminVoiceSocketServer() {
       }
     });
 
-    socketRef.current.on('get_offer', async ({ sdp, offerSenderSocketId, offerSenderId }) => {
+    socketRef.current.on('get_offer', async ({ sdp, offerSenderSocketId, offerSenderNickname, offerSenderId }) => {
       console.log('get_offer : ', sdp, offerSenderSocketId, offerSenderId);
       // pc 설정
       const pc = new RTCPeerConnection(pc_config);
@@ -200,7 +210,13 @@ export default function AdminVoiceSocketServer() {
         setUsers((prevUsers) => prevUsers.filter((user) => user.socketId !== offerSenderSocketId));
         setUsers((prevUsers) => [
           ...prevUsers,
-          { socketId: offerSenderSocketId, userId: offerSenderId, stream: e.streams[0], showVideo: true },
+          {
+            socketId: offerSenderSocketId,
+            userId: offerSenderId,
+            userNickname: offerSenderNickname,
+            stream: e.streams[0],
+            showVideo: true,
+          },
         ]);
       };
 
