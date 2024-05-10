@@ -15,8 +15,7 @@ export default function ChatChannel() {
     chatContainerRef,
     infiniteScrollTriggerRef,
     lastKey,
-    editingMessage,
-    setEditingMessage,
+    editinMessageInputRef,
     currentEditingMessageId,
     messageMaxLength,
     isClickedUtilityButton,
@@ -26,7 +25,6 @@ export default function ChatChannel() {
     handleDeleteMessageClick,
     handleUpdateMessageKeyDown,
     handleUpdateMessageCancelClick,
-    handleEditingMessageChange,
   } = useChatChannel();
   return (
     <Wrapper>
@@ -36,25 +34,23 @@ export default function ChatChannel() {
         <ChatMessages
           serverUserData={serverUserData}
           messages={messages}
-          editingMessage={editingMessage}
-          setEditingMessage={setEditingMessage}
+          editinMessageInputRef={editinMessageInputRef}
           currentEditingMessageId={currentEditingMessageId}
           onUpdateMessageClick={handleUpdateMessageClick}
           onDeleteMessageClick={handleDeleteMessageClick}
           onUpdateMessageKeyDown={handleUpdateMessageKeyDown}
           onUpdateMessageCancelClick={handleUpdateMessageCancelClick}
-          onEditingMessageChange={handleEditingMessageChange}
         />
-        {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯, 서버 데이터 필요 */}
+        {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯, 채널 데이터 필요 */}
         {isNoMoreMessages ? (
           <ChatChannelIntro>
             <ChannelName>{'# 채팅 채널1'}의 첫 시작 부분이에요</ChannelName>
             <CreationDate>생성일 : {'2024년 04월 11일'}</CreationDate>
           </ChatChannelIntro>
         ) : null}
+        {/* 무한 스크롤 로딩 스피너 */}
         {lastKey ? (
           <>
-            {/* LoadingSpinner */}
             <ChatLoadingSpinner ref={infiniteScrollTriggerRef}>
               <Spinner delay='0s' />
               <Spinner delay='0.2s' />

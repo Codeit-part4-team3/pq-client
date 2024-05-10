@@ -33,16 +33,18 @@ export default function useChatChannel() {
   // 유틸리티 버튼
   const [isClickedUtilityButton, setIsClickedUtilityButton] = useState<boolean>(false);
   // 메시지 수정
-  const [editingMessage, setEditingMessage] = useState<string>('');
+  const editinMessageInputRef = useRef<HTMLInputElement | null>(null);
   // 메시지 수정 상태, 수정중인 메시지의 messageId를 저장
   const [currentEditingMessageId, setCurrentEditingMessageId] = useState<string | null>(null);
   // 구독 여부에 따라 채팅 글자수 제한
   const { messageMaxLength } = useSubscription();
 
+  // input 옆 유틸리티 버튼 클릭
   const handleUiilityButtonClick = () => {
     setIsClickedUtilityButton(!isClickedUtilityButton);
   };
 
+  // 메시지 전송
   const handleSendMessageKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (messageInputRef.current) {
       if (messageInputRef.current.value === '') return;
@@ -72,13 +74,10 @@ export default function useChatChannel() {
     socketRef.current?.emit('update_message_editing', { messageId, createdAt, roomName });
   };
 
-  const handleEditingMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditingMessage(e.target.value);
-  };
-
   // 메시지 수정 완료
   const handleUpdateMessageKeyDown = ({ messageId, createdAt }: { messageId: string; createdAt: number }) => {
-    if (editingMessage === '') return;
+    if (!editinMessageInputRef.current) return;
+    if (editinMessageInputRef.current.value === '') return;
     // 낙관적 업데이트
     setMessages((prevMessages) => {
       return prevMessages.map((message) => {
@@ -93,8 +92,15 @@ export default function useChatChannel() {
     });
     setCurrentEditingMessageId(null);
 
-    socketRef.current?.emit('update_message_complete', { messageId, createdAt, message: editingMessage, roomName });
-    setEditingMessage('');
+    socketRef.current?.emit('update_message_complete', {
+      messageId,
+      createdAt,
+      message: editinMessageInputRef.current.value,
+      roomName,
+    });
+    if (editinMessageInputRef.current) {
+      editinMessageInputRef.current.value = '';
+    }
     console.log('메시지 업데이트 완료');
   };
 
@@ -230,8 +236,7 @@ export default function useChatChannel() {
     chatContainerRef,
     infiniteScrollTriggerRef,
     lastKey,
-    editingMessage,
-    setEditingMessage,
+    editinMessageInputRef,
     currentEditingMessageId,
     messageMaxLength,
     isClickedUtilityButton,
@@ -241,6 +246,5 @@ export default function useChatChannel() {
     handleDeleteMessageClick,
     handleUpdateMessageKeyDown,
     handleUpdateMessageCancelClick,
-    handleEditingMessageChange,
   };
 }

@@ -13,10 +13,8 @@ interface ChatMessagesProps {
   onDeleteMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
   onUpdateMessageKeyDown: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
   onUpdateMessageCancelClick: ({ messageId }: { messageId: string }) => void;
-  editingMessage: string;
-  setEditingMessage: React.Dispatch<React.SetStateAction<string>>;
-  onEditingMessageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   currentEditingMessageId: string | null;
+  editinMessageInputRef: React.RefObject<HTMLInputElement>;
 }
 
 interface ContextMenu {
@@ -35,10 +33,8 @@ export default function ChatMessages({
   onDeleteMessageClick,
   onUpdateMessageKeyDown,
   onUpdateMessageCancelClick,
-  editingMessage,
-  setEditingMessage,
-  onEditingMessageChange,
   currentEditingMessageId,
+  editinMessageInputRef,
 }: ChatMessagesProps) {
   // 마우스 오른쪽 클릭시 메뉴창 뜨게 하기
   const [isContextMenuOpen, setIsContextMenuOpen] = useState<ContextMenu>({
@@ -65,7 +61,9 @@ export default function ChatMessages({
           createdAt,
         };
       });
-      setEditingMessage(message);
+      if (editinMessageInputRef.current) {
+        editinMessageInputRef.current.value = message;
+      }
     };
 
   // input창에서 enter키 또는 esc키 누를 때
@@ -166,8 +164,7 @@ export default function ChatMessages({
                     {messageItem.status === 'editing' ? (
                       <ChatMessageTextEditingBox>
                         <ChatMessageTextEditingInput
-                          value={editingMessage}
-                          onChange={onEditingMessageChange}
+                          ref={editinMessageInputRef}
                           onKeyDown={(e) => {
                             handleMessageTextEditingKeyDown(e, messageItem.messageId, messageItem.createdAt);
                           }}
@@ -206,8 +203,7 @@ export default function ChatMessages({
                   <SameUserMessage isOnEdit={currentEditingMessageId === messageItem.messageId}>
                     <ChatMessageTextEditingBox>
                       <ChatMessageTextEditingInput
-                        value={editingMessage}
-                        onChange={onEditingMessageChange}
+                        ref={editinMessageInputRef}
                         onKeyDown={(e) => {
                           handleMessageTextEditingKeyDown(e, messageItem.messageId, messageItem.createdAt);
                         }}
