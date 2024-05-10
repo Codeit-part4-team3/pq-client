@@ -3,6 +3,7 @@ export interface UserInfo {
   email: string;
   nickname: string;
   state?: string;
+  imageUrl?: string;
 }
 
 export interface ResponseUserData {

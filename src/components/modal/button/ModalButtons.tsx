@@ -7,6 +7,7 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   closeClick?: () => void;
   closeText?: string;
   $bgColor?: string;
+  $hoverColor?: string;
 }
 
 export default function ModalButtons({ ctaText, okClick, closeClick, closeText = '취소', ...rest }: Props) {
@@ -15,7 +16,7 @@ export default function ModalButtons({ ctaText, okClick, closeClick, closeText =
       <CloseButton type='button' onClick={closeClick}>
         {closeText}
       </CloseButton>
-      <CtaButton $bgColor='#258dff' {...rest} onClick={okClick}>
+      <CtaButton $bgColor='#258dff' $hoverColor='#0056b3' {...rest} onClick={okClick}>
         {ctaText}
       </CtaButton>
     </Area>
@@ -44,7 +45,7 @@ const CloseButton = styled.button`
   }
 `;
 
-const CtaButton = styled.button<{ $bgColor: string }>`
+const CtaButton = styled.button<{ $bgColor: string; $hoverColor: string }>`
   color: #fff;
   display: flex;
   width: 100%;
@@ -59,6 +60,6 @@ const CtaButton = styled.button<{ $bgColor: string }>`
 
   &:hover {
     cursor: pointer;
-    background: #0056b3;
+    background: ${(props) => props.$hoverColor};
   }
 `;

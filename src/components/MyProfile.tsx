@@ -5,6 +5,8 @@ import InvitedServerListModal from './modal/contents/InvitedServerListModal';
 import { MyDropdownType } from 'src/constants/enum';
 import useUserStore from 'src/store/userStore';
 import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
+import LogoutModal from './modal/contents/LogoutModal';
+import MyPageModal from './modal/contents/MyPageModal';
 
 /**
  * get user profile image, status, and user id
@@ -13,6 +15,7 @@ export default function MyProfile() {
   const [isShow, setIsShow] = useState<boolean>(false);
   const [isDropdown, setIsDropdown] = useState<boolean>(false);
   const [dropdownType, setDropdownType] = useState<MyDropdownType>(MyDropdownType.INVITED_SERVER_LIST);
+
   const { userInfo } = useUserStore();
 
   const handleCloseModal = () => {
@@ -34,13 +37,13 @@ export default function MyProfile() {
       <Area>
         <Wrapper>
           <ProfileImageWrapper>
-            <ProfileImage imageUrl={undefined} onClick={toggleDropdown} />
+            <ProfileImage imageUrl={userInfo.imageUrl as string} onClick={toggleDropdown} />
           </ProfileImageWrapper>
           <InfoWrapper>
             <strong>{userInfo.nickname}</strong>
             <div>
               <Status />
-              <div>온라인</div>
+              <div>{userInfo.state}</div>
             </div>
           </InfoWrapper>
           <MyDropDown isDropDown={isDropdown} selectItem={handleSelectItem} />
@@ -51,6 +54,8 @@ export default function MyProfile() {
           [MyDropdownType.INVITED_SERVER_LIST]: (
             <InvitedServerListModal closeModal={handleCloseModal} isOpen={isShow} />
           ),
+          [MyDropdownType.LOGOUT]: <LogoutModal closeModal={handleCloseModal} isOpen={isShow} />,
+          [MyDropdownType.MYPAGE]: <MyPageModal closeModal={handleCloseModal} isOpen={isShow} />,
         }[dropdownType]
       }
     </>

@@ -20,6 +20,7 @@ const useUserStore = create<UserState>((set) => ({
     email: '',
     nickname: '',
     state: '',
+    imageUrl: '',
   },
   setUserInfo: (userInfo: UserInfo) => set({ userInfo }),
 

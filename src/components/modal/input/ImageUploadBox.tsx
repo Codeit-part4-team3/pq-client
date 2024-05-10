@@ -22,8 +22,8 @@ const ImageInput = styled.input`
 
 const ImageLabel = styled.label`
   display: flex;
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   justify-content: center;
   align-items: center;
   gap: 10px;

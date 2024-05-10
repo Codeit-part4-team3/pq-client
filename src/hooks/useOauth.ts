@@ -3,6 +3,7 @@ import Cookies from 'js-cookie';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'src/apis/instance/axiosInstance';
+import { USER_URL } from 'src/constants/apiUrl';
 import { ERROR_MESSAGES } from 'src/constants/error';
 import useUserStore from 'src/store/userStore';
 import { ResponseUserData } from 'src/types/userType';
@@ -43,6 +44,7 @@ export function useOauth({ googleUrl, kakaoUrl, redirectUri }: OauthProps) {
           setAccessToken(data.token.accessToken);
           setUserInfo(data.userInfo);
           Cookies.set('refreshToken', data.token.refreshToken, { expires: 7, secure: true, sameSite: 'strict' });
+          axiosInstance.put(`${USER_URL.USER}/me/state/update`, { state: '온라인' });
           navigate('/server');
           return;
         }

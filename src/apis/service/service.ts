@@ -17,9 +17,9 @@ export const useQueryGet = <Res>(queryKey: string, url: string, options: object 
   return query;
 };
 
-export const useMutationPost = <Res, Req>(url: string, options: object = {}) => {
+export const useMutationPost = <Res, Req>(url: string, options: object = {}, axiosOptions: object = {}) => {
   const mutationFn: MutationFunction<Res, Req> = async (body) => {
-    const res: AxiosResponse<Res> = await axiosInstance.post(url, body);
+    const res: AxiosResponse<Res> = await axiosInstance.post(url, body, axiosOptions);
     return res.data;
   };
 

@@ -17,13 +17,18 @@ interface Props extends ModalProps {
 
 export default function CreateServerModal({ isUpdate = false, closeModal, isOpen }: Props) {
   const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [serverName, setServerName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const location = useLocation();
   const userId = useContext<number>(UserIdContext);
   const serverId = location.pathname.split('/')[2];
 
-  const createMutation = useMutationPost<ServerResponse, ServerRequest>(`/chat/v1/server?userId=${userId}`);
+  const createMutation = useMutationPost<ServerResponse, ServerRequest>(
+    `/chat/v1/server?userId=${userId}`,
+    {},
+    { headers: { 'Content-Type': 'multipart/form-data' } },
+  );
   const updateMutation = useMutationPatch<ServerResponse, ServerRequest>(`/chat/v1/server/${serverId}`);
 
   const handleSubmit: FormEventHandler = async (e) => {
@@ -34,9 +39,11 @@ export default function CreateServerModal({ isUpdate = false, closeModal, isOpen
       return;
     }
     isUpdate
-      ? await updateMutation.mutate({ name: serverName, imageUrl: imagePreviewUrl })
-      : await createMutation.mutate({ name: serverName, imageUrl: imagePreviewUrl });
-    setServerName('');
+      ? await updateMutation.mutate({ name: serverName, imageFile })
+      : await createMutation.mutate({ name: serverName, imageFile });
+
+    await setServerName('');
+    await setImagePreviewUrl('');
     await closeModal();
   };
 
@@ -56,6 +63,7 @@ export default function CreateServerModal({ isUpdate = false, closeModal, isOpen
 
     if (file) {
       reader.readAsDataURL(file);
+      setImageFile(file);
     }
   };
 
