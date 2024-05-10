@@ -109,6 +109,7 @@ export default function ChatChannel() {
       roomName,
     });
     setEditingMessage('');
+    console.log('메시지 업데이트 완료');
   };
 
   // 메시지 수정 취소
