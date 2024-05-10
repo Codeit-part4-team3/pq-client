@@ -24,7 +24,7 @@ export default function useChatChannel() {
   const { socketRef } = useSocketConnect();
   // 메시지 관련
   const [messages, setMessages] = useState<MessageItem[]>([]);
-  const [inputValue, setInputValue] = useState<string>('');
+  const messageInputRef = useRef<HTMLInputElement | null>(null);
   // 무한 스크롤
   const [isNoMoreMessages, setIsNoMoreMessages] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
@@ -43,15 +43,13 @@ export default function useChatChannel() {
     setIsClickedUtilityButton(!isClickedUtilityButton);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
   const handleSendMessageKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (inputValue === '') return;
-    if (e.key === 'Enter') {
-      socketRef.current?.emit('send_message', { message: e.currentTarget.value, roomName, userId });
-      setInputValue('');
+    if (messageInputRef.current) {
+      if (messageInputRef.current.value === '') return;
+      if (e.key === 'Enter') {
+        socketRef.current?.emit('send_message', { message: e.currentTarget.value, roomName, userId });
+        messageInputRef.current.value = '';
+      }
     }
   };
 
@@ -210,14 +208,14 @@ export default function useChatChannel() {
         }
       },
     );
-  }, [roomName]);
+  }, [roomName, socketRef, userId]);
 
   useEffect(() => {
     // 페이지 진입시, 채팅이 추가될 때마다 스크롤을 맨 아래로 내려준다
-    if (inputValue === '' && chatContainerRef.current) {
+    if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [inputValue]);
+  }, []);
 
   useEffect(() => {
     infiniteScroll();
@@ -227,7 +225,7 @@ export default function useChatChannel() {
   return {
     serverUserData,
     messages,
-    inputValue,
+    messageInputRef,
     isNoMoreMessages,
     chatContainerRef,
     infiniteScrollTriggerRef,
@@ -238,7 +236,6 @@ export default function useChatChannel() {
     messageMaxLength,
     isClickedUtilityButton,
     handleUiilityButtonClick,
-    handleInputChange,
     handleSendMessageKeyDown,
     handleUpdateMessageClick,
     handleDeleteMessageClick,

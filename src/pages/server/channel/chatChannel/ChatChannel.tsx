@@ -10,7 +10,7 @@ export default function ChatChannel() {
   const {
     serverUserData,
     messages,
-    inputValue,
+    messageInputRef,
     isNoMoreMessages,
     chatContainerRef,
     infiniteScrollTriggerRef,
@@ -21,7 +21,6 @@ export default function ChatChannel() {
     messageMaxLength,
     isClickedUtilityButton,
     handleUiilityButtonClick,
-    handleInputChange,
     handleSendMessageKeyDown,
     handleUpdateMessageClick,
     handleDeleteMessageClick,
@@ -70,8 +69,7 @@ export default function ChatChannel() {
         <ChatInput
           type='text'
           placeholder={`${'#채팅방 이름'}에 메시지 보내기`}
-          value={inputValue}
-          onChange={handleInputChange}
+          ref={messageInputRef}
           onKeyDown={handleSendMessageKeyDown}
           maxLength={messageMaxLength}
         />
