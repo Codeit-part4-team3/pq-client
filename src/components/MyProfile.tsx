@@ -105,7 +105,18 @@ const ProfileImage = styled.img<{ $src: string }>`
   background-image: ${(props) => (props.$src ? `url(${props.$src})` : `url('/images/minji-profile-image.png')`)};
 
   &:hover {
-    cursor: pointer;
+    animation: opacity 2.5s ease-in-out infinite;
+  }
+  @keyframes opacity {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+    100% {
+      opacity: 1;
+    }
   }
 `;
 

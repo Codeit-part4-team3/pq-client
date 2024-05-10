@@ -7,6 +7,7 @@ import { ModalProps } from 'src/types/modalType';
 import ModalButtons from '../button/ModalButtons';
 import axiosInstance from 'src/apis/instance/axiosInstance';
 import { USER_URL } from 'src/constants/apiUrl';
+import styled from 'styled-components';
 
 export default function MyPageModal({ closeModal, isOpen }: ModalProps) {
   const { userInfo, setUserInfo } = useUserStore();
@@ -53,24 +54,57 @@ export default function MyPageModal({ closeModal, isOpen }: ModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
       <ModalContainer>
-        <ModalTitle>마이페이지</ModalTitle>
+        <Title>마이페이지</Title>
         <ModalForm onSubmit={onSubmit}>
-          <ModalInputBox>
+          <InputBox>
             <ModalInputLabel>프로필 이미지</ModalInputLabel>
             <ImageUploadBox imagePreviewUrl={imagePreviewUrl} onChange={handleImageChange} />
-          </ModalInputBox>
-          <ModalInputBox>
+          </InputBox>
+          <InputBox>
             <ModalInputLabel>닉네임</ModalInputLabel>
-            <NameInput
+            <NickNameInput
               type='text'
               value={nickname}
               placeholder={userInfo.nickname}
               onChange={(e) => setNickname(e.target.value)}
             />
-          </ModalInputBox>
+          </InputBox>
           <ModalButtons ctaText='수정하기' closeClick={closeModal} />
         </ModalForm>
       </ModalContainer>
     </Modal>
   );
 }
+
+const InputBox = styled(ModalInputBox)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Title = styled(ModalTitle)`
+  animation: myAnimation 1s ease-in-out infinite;
+
+  @keyframes myAnimation {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+`;
+
+const NickNameInput = styled(NameInput)`
+  border: 2px solid #ccc;
+  padding: 10px;
+  font-size: 16px;
+  width: 50%;
+
+  &::placeholder {
+    color: #999;
+  }
+`;

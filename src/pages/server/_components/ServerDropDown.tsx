@@ -71,8 +71,7 @@ type ButtonContainerProps = {
 
 const Area = styled.section`
   width: 100%;
-  height: 100%;
-
+  height: 0;
   padding: 10px;
   background: transparent;
 

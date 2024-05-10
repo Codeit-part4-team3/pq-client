@@ -78,8 +78,8 @@ export default function CalenderModal({ isOpen, closeModal }: ModalProps) {
             {currentYear}.{currentMonth + 1}
           </YearMonth>
           <ButtonBox>
-            <Button onClick={() => onMonthChange(-1)}>pre</Button>
-            <Button onClick={() => onMonthChange(1)}>next</Button>
+            <Button onClick={() => onMonthChange(-1)}>{'<'}</Button>
+            <Button onClick={() => onMonthChange(1)}>{'>'}</Button>
           </ButtonBox>
 
           <Calender>
@@ -118,25 +118,55 @@ const Week = styled.div`
 const Day = styled.button`
   outline: none;
   border: none;
-  background-color: #f1f1f1;
+  background-color: transparent; /* Change the background color to a lighter shade of gray */
+
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 4px;
   flex-direction: column;
-  height: 40px;
+  height: 44px;
+  width: 40px;
 
   cursor: pointer;
+
+  transition: background-color 0.3s ease-in-out;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+
+  &:active {
+    background-color: #d1d1d1;
+  }
 `;
 
 const ButtonBox = styled.div`
+  margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
 `;
 
-const Button = styled.button``;
+const Button = styled.button`
+  width: 40px;
+  height: 44px;
+  color: #000;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  transition: background-color 0.3s ease-in-out;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+
+  &:active {
+    background-color: #d1d1d1;
+  }
+`;
 
 const YearMonth = styled.h2`
+  margin: 0 auto;
   text-align: center;
   color: #333;
 `;
@@ -144,7 +174,7 @@ const YearMonth = styled.h2`
 const Circle = styled.div`
   width: 7px;
   height: 7px;
-  background-color: #fff;
+  background-color: #258dff;
   content: '';
   border-radius: 50%;
 `;

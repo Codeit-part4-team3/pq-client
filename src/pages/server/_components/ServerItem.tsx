@@ -20,13 +20,21 @@ export default function ServerItem({ data, ...rest }: ServerItemProps) {
   return (
     <Button key={`${lid}-${data.id}`} {...rest}>
       {data.imageUrl ? (
-        <img src={data.imageUrl} alt='img' data-serverid={data.id} />
+        <Image src={data.imageUrl} alt={`${data.name} 서버 이미지`} data-serverid={data.id} />
       ) : (
         <strong data-serverid={data.id}>{data.name}</strong>
       )}
     </Button>
   );
 }
+
+const Image = styled.img`
+  transition: transform 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+`;
 
 const Button = styled.button`
   width: 48px;
