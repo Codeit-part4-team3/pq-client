@@ -48,7 +48,7 @@ export default function Channel() {
     <Area>
       <ChannelHeader title={data?.name ?? '없음'} userCount={userData?.length ?? 0} onClickMembers={handleMembers} />
       <Container>
-        {Number(channelId) % 2 === 0 ? <ChatChannel /> : <VoiceChannel />}
+        {data?.isVoice ? <VoiceChannel /> : <ChatChannel />}
         {isShowMembers && (
           <MembersContainer>
             {userData?.map((user) => {
