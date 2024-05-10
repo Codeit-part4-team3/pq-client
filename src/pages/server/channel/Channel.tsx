@@ -114,5 +114,6 @@ const Member = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  font-size: 14px;
   gap: 10px;
 `;

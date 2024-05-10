@@ -290,17 +290,10 @@ export default function VoiceChannel() {
 
   return (
     <Wrapper>
-      <button
-        onClick={() => {
-          console.log('localStreamRef.current', localStreamRef.current?.getTracks());
-        }}
-      ></button>
       <ContentBox>
         <MediaBox>
           <VideoContainer>
-            {/* myVideo */}
             <LocalMedia {...localMediaData} />
-            {/* otherVideos */}
             {users.map((user) => (
               <RemoteMedia key={user.socketId} {...user} isMutedAllRemoteStreams={isMutedAllRemoteStreams} />
             ))}
