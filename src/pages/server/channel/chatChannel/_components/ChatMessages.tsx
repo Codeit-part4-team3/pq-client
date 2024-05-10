@@ -142,7 +142,7 @@ export default function ChatMessages({
                   isOnEdit={currentEditingMessageId === messageItem.messageId}
                 >
                   <UserProfileImage>
-                    <Image />
+                    <Image profileImage={user?.profileImage ? user.profileImage : '/images/minji-profile-image.png'} />
                   </UserProfileImage>
 
                   <ChatMessageContent>
@@ -256,12 +256,12 @@ const UserProfileImage = styled.div`
   overflow: hidden;
 `;
 
-const Image = styled.img`
+const Image = styled.img<{ profileImage: string }>`
   width: 100%;
   height: 100%;
 
   background-size: cover;
-  background-image: url('/images/minji-profile-image.png');
+  background-image: url(${({ profileImage }) => (profileImage ? profileImage : '/images/minji-profile-image.png')});
 
   &:hover {
     cursor: pointer;
