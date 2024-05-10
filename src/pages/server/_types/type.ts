@@ -11,11 +11,11 @@ export type ServerData = IServer;
 
 export interface IChannel {
   id: number;
-  name: string;
+  name?: string;
   groupId?: number;
-  serverId: number;
-  isVoice: boolean;
-  isPrivate: boolean;
+  serverId?: number;
+  isVoice?: boolean;
+  isPrivate?: boolean;
 }
 
 export type ChannelRequest = Omit<IChannel, 'id' | 'serverId'>;
