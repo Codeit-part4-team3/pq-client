@@ -27,6 +27,16 @@ export type ChannelGroupResponse = IChannel | null;
 export type ChannelData = IChannel;
 export type ChannelGroupData = Pick<IChannel, 'id' | 'name'>;
 
+export interface IUser {
+  id: number;
+  nickname: string;
+  email: string;
+  imageUrl?: string;
+  state: string;
+}
+
+export type UserResponse = Pick<IUser, 'id' | 'nickname' | 'email'> | null;
+
 /**
  * Invite
  */

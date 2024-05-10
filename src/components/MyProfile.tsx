@@ -4,6 +4,7 @@ import MyDropDown from './dropdown/MyDropDown';
 import InvitedServerListModal from './modal/contents/InvitedServerListModal';
 import { MyDropdownType } from 'src/constants/enum';
 import useUserStore from 'src/store/userStore';
+import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
 
 /**
  * get user profile image, status, and user id
@@ -32,9 +33,9 @@ export default function MyProfile() {
     <>
       <Area>
         <Wrapper>
-          <ImageWrapper>
+          <ProfileImageWrapper>
             <ProfileImage imageUrl={undefined} onClick={toggleDropdown} />
-          </ImageWrapper>
+          </ProfileImageWrapper>
           <InfoWrapper>
             <strong>{userInfo.nickname}</strong>
             <div>
@@ -73,34 +74,6 @@ const Wrapper = styled.div`
   justify-content: flex-start;
   align-items: center;
   gap: 10px;
-`;
-
-const ImageWrapper = styled.div`
-  width: 42px;
-  height: 42px;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  overflow: hidden;
-
-  margin-left: 10px;
-`;
-
-const ProfileImage = styled.img<{ imageUrl?: string }>`
-  width: 100%;
-  height: 100%;
-
-  border-radius: 50%;
-  overflow: hidden;
-  background-size: cover;
-  background-image: ${(props) => (props.imageUrl ? `url(${props.imageUrl})` : `url('/images/landing.webp')`)};
-
-  &:hover {
-    cursor: pointer;
-  }
 `;
 
 const InfoWrapper = styled.div`
