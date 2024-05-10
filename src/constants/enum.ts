@@ -20,6 +20,7 @@ export enum ServerDropdownType {
   CREATE_CATEORY = 1,
   INVITE_LINK,
   INVITE_MEMBER,
+  DELETE_SERVER,
 }
 
 export enum MyDropdownType {

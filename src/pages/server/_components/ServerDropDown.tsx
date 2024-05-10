@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import CreateCategoryModal from 'src/components/modal/contents/CreateCategoryModal';
 import InviteLinkModal from 'src/components/modal/contents/InviteLinkModal';
 import InviteMemberModal from 'src/components/modal/contents/InviteMemberModal';
+import DefaultModal from 'src/components/modal/DefaultModal';
 import { ServerDropdownType } from 'src/constants/enum';
 import styled from 'styled-components';
 
@@ -17,6 +18,9 @@ const DropdownList = [
   { name: '초대', type: ServerDropdownType.LABEL },
   { name: '초대링크 생성', type: ServerDropdownType.INVITE_LINK },
   { name: '이메일로 초대하기', type: ServerDropdownType.INVITE_MEMBER },
+  { name: '삭제', type: ServerDropdownType.LABEL },
+  { name: '서버 삭제하기', type: ServerDropdownType.DELETE_SERVER },
+  { name: '', type: ServerDropdownType.LABEL },
 ];
 
 export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
@@ -28,6 +32,12 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
 
   // const serverId = useContext(ServerIdContext);
   // const deleteMutation = useMutationDelete(`/chat/v1/server/${serverId}`);
+
+  const handleDeleteServer = () => {
+    console.log('delete server');
+    // deleteMutation.mutate();
+    handleCloseModal();
+  };
 
   const handleCloseModal = () => {
     setIsShow(false);
@@ -64,6 +74,15 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
             <InviteLinkModal closeModal={handleCloseModal} isOpen={isShow} serverId={Number(serverId)} />
           ),
           [ServerDropdownType.INVITE_MEMBER]: <InviteMemberModal closeModal={handleCloseModal} isOpen={isShow} />,
+          [ServerDropdownType.DELETE_SERVER]: (
+            <DefaultModal
+              title='서버삭제'
+              desc='정말 삭제하시겠습니까?'
+              okClick={handleDeleteServer}
+              closeModal={handleCloseModal}
+              isOpen={isShow}
+            />
+          ),
         }[dropdownType]
       }
     </Area>

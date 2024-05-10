@@ -160,25 +160,25 @@ export default function Server() {
         <UserIdContext.Provider value={userId}>
           <Container>
             <LeftContainer>
-              <ServerContainer onClick={onClickServer}>
+              <FirstContainer onClick={onClickServer}>
                 <ServerBox>
                   <ListBody>{createServerItemList(serverList)}</ListBody>
                 </ServerBox>
                 <ServerFuncButton onClick={openModal}>+</ServerFuncButton>
                 <CreateServerModal isOpen={isOpen} closeModal={closeModalHandler} />
-              </ServerContainer>
-              <ChannelContainer>
+              </FirstContainer>
+              <SecondContainer>
                 {isExist ? (
-                  <ChannelBox>
+                  <SecondBox>
                     <ServerMenu serverName={serverName} />
                     <CalendarContainer />
                     {createChannelGroupList(channelGroupList)}
-                  </ChannelBox>
+                  </SecondBox>
                 ) : (
                   <div></div>
                 )}
                 <MyProfile />
-              </ChannelContainer>
+              </SecondContainer>
             </LeftContainer>
             {!isExist && !isLoading && userId ? (
               <NotFoundServer
@@ -223,7 +223,7 @@ const LeftContainer = styled.div`
   z-index: 10;
 `;
 
-const ServerContainer = styled.div`
+const FirstContainer = styled.div`
   height: 100%;
 
   background: transparent;
@@ -282,7 +282,7 @@ const ServerFuncButton = styled.button`
   }
 `;
 
-const ChannelContainer = styled.div`
+const SecondContainer = styled.div`
   width: 260px;
   height: 100%;
 
@@ -296,7 +296,7 @@ const ChannelContainer = styled.div`
   background-color: var(--primary_light_color);
 `;
 
-const ChannelBox = styled.div`
+const SecondBox = styled.div`
   height: 100%;
 
   color: white;
