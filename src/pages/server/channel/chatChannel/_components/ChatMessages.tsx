@@ -68,6 +68,19 @@ export default function ChatMessages({
       setEditingMessage(message);
     };
 
+  // input창에서 enter키 또는 esc키 누를 때
+  const handleMessageTextEditingKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    messageId: string,
+    createdAt: number,
+  ) => {
+    if (e.key === 'Enter') {
+      onUpdateMessageKeyDown({ messageId, createdAt });
+    } else if (e.key === 'Escape') {
+      onUpdateMessageCancelClick({ messageId });
+    }
+  };
+
   // ContextMenu가 열려있을 때만 handleContextMenuClose 이벤트리스너 추가
   useEffect(() => {
     const handleContextMenuClose = () => {
@@ -152,7 +165,13 @@ export default function ChatMessages({
                     </ChatMessageContentHeader>
                     {messageItem.status === 'editing' ? (
                       <ChatMessageTextEditingBox>
-                        <ChatMessageTextEditingInput value={editingMessage} onChange={onEditingMessageChange} />
+                        <ChatMessageTextEditingInput
+                          value={editingMessage}
+                          onChange={onEditingMessageChange}
+                          onKeyDown={(e) => {
+                            handleMessageTextEditingKeyDown(e, messageItem.messageId, messageItem.createdAt);
+                          }}
+                        />
                         <ChatMessageTextEditingDescription>
                           ESC 키로
                           <button
@@ -186,7 +205,13 @@ export default function ChatMessages({
                 {messageItem.status === 'editing' ? (
                   <SameUserMessage isOnEdit={currentEditingMessageId === messageItem.messageId}>
                     <ChatMessageTextEditingBox>
-                      <ChatMessageTextEditingInput value={editingMessage} onChange={onEditingMessageChange} />
+                      <ChatMessageTextEditingInput
+                        value={editingMessage}
+                        onChange={onEditingMessageChange}
+                        onKeyDown={(e) => {
+                          handleMessageTextEditingKeyDown(e, messageItem.messageId, messageItem.createdAt);
+                        }}
+                      />
                       <ChatMessageTextEditingDescription>
                         ESC 키로
                         <button

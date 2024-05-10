@@ -104,6 +104,7 @@ export default function ChatChannel() {
 
     socketRef.current?.emit('update_message_complete', { messageId, createdAt, message: editingMessage, roomName });
     setEditingMessage('');
+    console.log('메시지 업데이트 완료');
   };
 
   // 메시지 수정 취소
