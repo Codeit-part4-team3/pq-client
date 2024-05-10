@@ -1,29 +1,25 @@
 import styled from 'styled-components';
 
 interface ChannelHeaderProps {
+  title: string;
+  userCount: number;
   onClickMembers: () => void;
 }
 
-// voiceChannel, chatChannel 공통
-// @ToDo 채널 이름, 채널 설명, 채널 참여자 수를 서버에서 받아와서 렌더링
-export default function ChannelHeader({ onClickMembers }: ChannelHeaderProps) {
-  const MockChannelName = '채팅방 이름1';
-  const MockChannelDescription = '채팅방 이름1을 소개하는 설명입니다.';
-  const MockChannelParticipants = '5명';
-
+export default function ChannelHeader({ title, userCount, onClickMembers }: ChannelHeaderProps) {
   return (
     <Wrapper>
       <LeftBox>
         <ChannelName>
           <TagImage />
-          <span>{MockChannelName}</span>
+          <span>{title}</span>
         </ChannelName>
-        <ChannelDescription>{MockChannelDescription}</ChannelDescription>
+        <ChannelDescription>{}</ChannelDescription>
       </LeftBox>
       <RightBox>
         <ChannelParticipants type='button' onClick={onClickMembers}>
           <GroupImage />
-          <span>{MockChannelParticipants}</span>
+          <span>{userCount}</span>
         </ChannelParticipants>
       </RightBox>
     </Wrapper>

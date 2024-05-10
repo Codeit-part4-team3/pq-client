@@ -313,9 +313,7 @@ export default function VoiceChannel() {
       <ContentBox>
         <MediaBox>
           <VideoContainer>
-            {/* myVideo */}
             <LocalMedia {...localMediaData} />
-            {/* otherVideos */}
             {users.map((user) => (
               <RemoteMedia key={user.socketId} {...user} isMutedAllRemoteStreams={isMutedAllRemoteStreams} />
             ))}

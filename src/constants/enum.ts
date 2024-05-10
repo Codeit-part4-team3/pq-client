@@ -16,11 +16,16 @@ export enum MediaQueryType {
 }
 
 export enum ServerDropdownType {
-  CREATE_CATEORY = 1,
+  LABEL = 0,
+  UPDATE_SERVER,
+  CREATE_CATEORY,
   INVITE_LINK,
   INVITE_MEMBER,
+  DELETE_SERVER,
 }
 
 export enum MyDropdownType {
   INVITED_SERVER_LIST = 1,
+  LOGOUT = 2,
+  MYPAGE = 3,
 }

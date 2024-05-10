@@ -7,45 +7,56 @@ import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import VoiceChannel from './voiceChannel/VoiceChannel';
 import ChatChannel from './chatChannel/ChatChannel';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ChannelHeader from 'src/pages/server/channel/_conponents/ChannelHeader';
+import { useQueryGet } from 'src/apis/service/service';
+import { ChannelResponse, UserResponse } from '../_types/type';
+import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
 
 export default function Channel() {
   const [isShowMembers, setIsShowMembers] = useState(true);
   const { serverId, channelId } = useParams();
-  console.log('serverId:', serverId, 'channelId:', channelId);
+
+  const { data, refetch } = useQueryGet<ChannelResponse>(
+    'getChannel',
+    `/chat/v1/server/${serverId}/channel/${channelId}`,
+  );
+
+  const { data: userData, refetch: userRefetch } = useQueryGet<UserResponse[]>(
+    'getUsers',
+    `/chat/v1/server/${serverId}/users`,
+  );
 
   const handleMembers = () => {
     setIsShowMembers(!isShowMembers);
   };
 
-  /**@ToDo channel 데이터의 onVoice의 boolean에 따라 ChatChannel을 보여줄지 VoiceChannel을 보여줄지 생각 */
-  // const [onVoice] = useState('false');
+  useEffect(() => {
+    refetch();
+  }, [channelId]);
+
+  useEffect(() => {
+    userRefetch();
+  }, [serverId]);
+
   return (
     <Area>
-      <ChannelHeader onClickMembers={handleMembers} />
+      <ChannelHeader title={data?.name ?? '없음'} userCount={userData?.length ?? 0} onClickMembers={handleMembers} />
       <Container>
-        {Number(channelId) % 2 === 0 ? <ChatChannel /> : <VoiceChannel />}
+        {data?.isVoice ? <VoiceChannel /> : <ChatChannel />}
         {isShowMembers && (
           <MembersContainer>
-            <Member>
-              <ImageWrapper>
-                <Image />
-              </ImageWrapper>
-              <span>구성원</span>
-            </Member>
-            <Member>
-              <ImageWrapper>
-                <Image />
-              </ImageWrapper>
-              <span>구성원</span>
-            </Member>
-            <Member>
-              <ImageWrapper>
-                <Image />
-              </ImageWrapper>
-              <span>구성원</span>
-            </Member>
+            {userData?.map((user) => {
+              if (!user) return null;
+              return (
+                <Member key={user.id}>
+                  <ProfileImageWrapper>
+                    <ProfileImage imageUrl={undefined} />
+                  </ProfileImageWrapper>
+                  <span>{user.nickname}</span>
+                </Member>
+              );
+            })}
           </MembersContainer>
         )}
       </Container>
@@ -98,30 +109,6 @@ const Member = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  gap: 5px;
-`;
-
-const ImageWrapper = styled.div`
-  width: 40px;
-  height: 40px;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  overflow: hidden;
-`;
-
-const Image = styled.img`
-  width: 100%;
-  height: 100%;
-
-  border-radius: 50%;
-  background-size: cover;
-  background-image: url('/images/minji-profile-image.png');
-
-  &:hover {
-    cursor: pointer;
-  }
+  font-size: 14px;
+  gap: 10px;
 `;

@@ -6,7 +6,7 @@ import { GOOGLE_CLIENT_ID, LOGIN_REDIRECT } from 'src/constants/apiUrl';
 export default function SocialButtons() {
   const handleKakaoLogin = () => {
     const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${LOGIN_REDIRECT}&response_type=code&state=kakao`;
-    console.log('kakao login');
+
     window.location.href = kakaoUrl;
   };
 

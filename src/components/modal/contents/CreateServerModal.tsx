@@ -6,18 +6,30 @@ import ModalButtons from '../button/ModalButtons';
 import { ModalProps } from '../../../types/modalType';
 import { ModalContainer, ModalForm, ModalInputBox, ModalTitle } from './../CommonStyles';
 import EssentialInput from '../input/EssentialInput';
-import { useMutationPost } from 'src/apis/service/service';
+import { useMutationPatch, useMutationPost } from 'src/apis/service/service';
 import { ServerRequest, ServerResponse } from 'src/pages/server/_types/type';
 import { UserIdContext } from 'src/pages/server/Server';
+import { useLocation } from 'react-router-dom';
 
-interface Props extends ModalProps {}
+interface Props extends ModalProps {
+  isUpdate?: boolean;
+}
 
-export default function CreateServerModal({ closeModal, isOpen }: Props) {
+export default function CreateServerModal({ isUpdate = false, closeModal, isOpen }: Props) {
   const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [serverName, setServerName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const location = useLocation();
   const userId = useContext<number>(UserIdContext);
-  const createMutation = useMutationPost<ServerResponse, ServerRequest>(`/chat/v1/server?userId=${userId}`);
+  const serverId = location.pathname.split('/')[2];
+
+  const createMutation = useMutationPost<ServerResponse, ServerRequest>(
+    `/chat/v1/server?userId=${userId}`,
+    {},
+    { headers: { 'Content-Type': 'multipart/form-data' } },
+  );
+  const updateMutation = useMutationPatch<ServerResponse, ServerRequest>(`/chat/v1/server/${serverId}`);
 
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
@@ -26,8 +38,12 @@ export default function CreateServerModal({ closeModal, isOpen }: Props) {
       setErrorMessage('이름은 필수입니다.');
       return;
     }
-    await createMutation.mutate({ name: serverName, imageUrl: imagePreviewUrl });
-    setServerName('');
+    isUpdate
+      ? await updateMutation.mutate({ name: serverName, imageFile })
+      : await createMutation.mutate({ name: serverName, imageFile });
+
+    await setServerName('');
+    await setImagePreviewUrl('');
     await closeModal();
   };
 
@@ -47,13 +63,14 @@ export default function CreateServerModal({ closeModal, isOpen }: Props) {
 
     if (file) {
       reader.readAsDataURL(file);
+      setImageFile(file);
     }
   };
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
       <ModalContainer>
-        <ModalTitle>서버 생성하기</ModalTitle>
+        <ModalTitle>{isUpdate ? '서버 수정하기' : '서버 생성하기'}</ModalTitle>
         <ModalForm onSubmit={handleSubmit}>
           <ModalInputBox>
             <ServerSpan>서버 대표 이미지</ServerSpan>
@@ -65,7 +82,7 @@ export default function CreateServerModal({ closeModal, isOpen }: Props) {
             state={serverName}
             setState={setServerName}
           />
-          <ModalButtons closeClick={closeModal} ctaText='생성' type='submit' />
+          <ModalButtons closeClick={closeModal} ctaText={isUpdate ? '수정' : '생성'} type='submit' />
         </ModalForm>
       </ModalContainer>
     </Modal>

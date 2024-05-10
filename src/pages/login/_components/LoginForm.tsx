@@ -12,6 +12,7 @@ import { USER_URL } from 'src/constants/apiUrl';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { ResponseUserData } from 'src/types/userType';
+import axiosInstance from 'src/apis/instance/axiosInstance';
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -72,6 +73,7 @@ export default function LoginForm() {
         sameSite: 'None',
         domain: '.pqsoft.net',
       });
+      axiosInstance.put(`${USER_URL.USER}/me/state/update`, { state: '온라인' });
       navigate('/server');
     },
   });
