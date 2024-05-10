@@ -14,10 +14,15 @@ interface Props extends ModalProps {}
 
 export default function CreateServerModal({ closeModal, isOpen }: Props) {
   const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [serverName, setServerName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const userId = useContext<number>(UserIdContext);
-  const createMutation = useMutationPost<ServerResponse, ServerRequest>(`/chat/v1/server?userId=${userId}`);
+  const createMutation = useMutationPost<ServerResponse, ServerRequest>(
+    `/chat/v1/server?userId=${userId}`,
+    {},
+    { headers: { 'Content-Type': 'multipart/form-data' } },
+  );
 
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
@@ -26,8 +31,13 @@ export default function CreateServerModal({ closeModal, isOpen }: Props) {
       setErrorMessage('이름은 필수입니다.');
       return;
     }
-    await createMutation.mutate({ name: serverName, imageUrl: imagePreviewUrl });
-    setServerName('');
+
+    const res = await createMutation.mutate({ name: serverName, imageFile });
+
+    console.log(res);
+
+    await setServerName('');
+    await setImagePreviewUrl('');
     await closeModal();
   };
 
@@ -47,6 +57,7 @@ export default function CreateServerModal({ closeModal, isOpen }: Props) {
 
     if (file) {
       reader.readAsDataURL(file);
+      setImageFile(file);
     }
   };
 

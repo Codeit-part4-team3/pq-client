@@ -1,9 +1,11 @@
 import styled from 'styled-components';
-import { UserIdContext } from '../pages/server/Server';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import MyDropDown from './dropdown/MyDropDown';
 import InvitedServerListModal from './modal/contents/InvitedServerListModal';
 import { MyDropdownType } from 'src/constants/enum';
+import useUserStore from 'src/store/userStore';
+import LogoutModal from './modal/contents/LogoutModal';
+import MyPageModal from './modal/contents/MyPageModal';
 
 /**
  * get user profile image, status, and user id
@@ -12,7 +14,8 @@ export default function MyProfile() {
   const [isShow, setIsShow] = useState<boolean>(false);
   const [isDropdown, setIsDropdown] = useState<boolean>(false);
   const [dropdownType, setDropdownType] = useState<MyDropdownType>(MyDropdownType.INVITED_SERVER_LIST);
-  const user = useContext<number>(UserIdContext);
+
+  const { userInfo } = useUserStore();
 
   const handleCloseModal = () => {
     setIsShow(false);
@@ -33,13 +36,13 @@ export default function MyProfile() {
       <Area>
         <Wrapper>
           <ImageWrapper>
-            <ProfileImage onClick={toggleDropdown} />
+            <ProfileImage $src={userInfo.imageUrl as string} onClick={toggleDropdown} />
           </ImageWrapper>
           <InfoWrapper>
-            <strong>{user}</strong>
+            <strong>{userInfo.nickname}</strong>
             <div>
               <Status />
-              <div>온라인</div>
+              <div>{userInfo.state}</div>
             </div>
           </InfoWrapper>
           <MyDropDown isDropDown={isDropdown} selectItem={handleSelectItem} />
@@ -50,6 +53,8 @@ export default function MyProfile() {
           [MyDropdownType.INVITED_SERVER_LIST]: (
             <InvitedServerListModal closeModal={handleCloseModal} isOpen={isShow} />
           ),
+          [MyDropdownType.LOGOUT]: <LogoutModal closeModal={handleCloseModal} isOpen={isShow} />,
+          [MyDropdownType.MYPAGE]: <MyPageModal closeModal={handleCloseModal} isOpen={isShow} />,
         }[dropdownType]
       }
     </>
@@ -90,14 +95,14 @@ const ImageWrapper = styled.div`
   margin-left: 10px;
 `;
 
-const ProfileImage = styled.img`
+const ProfileImage = styled.img<{ $src: string }>`
   width: 100%;
   height: 100%;
 
   border-radius: 50%;
   overflow: hidden;
   background-size: cover;
-  background-image: url('/images/minji-profile-image.png');
+  background-image: ${(props) => (props.$src ? `url(${props.$src})` : `url('/images/minji-profile-image.png')`)};
 
   &:hover {
     cursor: pointer;
