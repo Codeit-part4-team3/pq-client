@@ -19,6 +19,7 @@ export default function useChatChannel() {
     refetchInterval: 5000,
     enabled: !!userId,
   });
+
   // 소켓
   const { socketRef } = useSocketConnect();
   // 메시지 관련
@@ -124,20 +125,20 @@ export default function useChatChannel() {
   // infinite scroll : InfiniteScrollTrigger에 닿으면 추가로 메시지를 가져온다.
   const infiniteScroll = async () => {
     if (infiniteScrollTriggerRef.current) {
-      const infiniteScrollTriggerIo = new IntersectionObserver(
+      const Io = new IntersectionObserver(
         (entries) => {
           entries.forEach(async (entry) => {
             if (entry.isIntersecting && infiniteScrollTriggerRef.current && lastKey) {
               socketRef.current?.emit('more_messages', { roomName, userSocketId: socketRef.current?.id, lastKey });
 
-              infiniteScrollTriggerIo.disconnect();
+              Io.disconnect();
             }
           });
         },
         { threshold: 0.3 },
       );
 
-      infiniteScrollTriggerIo.observe(infiniteScrollTriggerRef.current);
+      Io.observe(infiniteScrollTriggerRef.current);
     }
   };
 
