@@ -6,6 +6,7 @@ import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatM
 import UtilityButton from './_components/UtilityButton';
 import { useSubscription } from 'src/hooks/useSubscription';
 import { useParams } from 'react-router-dom';
+import useUserStore from 'src/store/userStore';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
@@ -14,11 +15,10 @@ const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
  */
 export default function ChatChannel() {
   // 유저, 서버, 채널 데이터
-  const userId = 'minji';
-  const { serverId, channelId } = useParams();
-  console.log('serverId', serverId, 'channelId', channelId);
-  const roomName = channelId || '1';
-  console.log('roomName', roomName);
+  const { userInfo } = useUserStore();
+  const { id: userId } = userInfo;
+  const { channelId } = useParams();
+  const roomName = channelId;
   // 소켓
   const socketRef = useRef<Socket | null>(null);
   // 메시지 관련
@@ -211,7 +211,9 @@ export default function ChatChannel() {
     );
 
     return () => {
-      socketRef.current?.disconnect();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
     };
   }, [roomName]);
 
