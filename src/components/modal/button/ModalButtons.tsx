@@ -3,19 +3,20 @@ import styled from 'styled-components';
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   ctaText: string;
+  okClick?: () => void;
   closeClick?: () => void;
   closeText?: string;
   $bgColor?: string;
   $hoverColor?: string;
 }
 
-export default function ModalButtons({ ctaText, closeClick, closeText = '취소', ...rest }: Props) {
+export default function ModalButtons({ ctaText, okClick, closeClick, closeText = '취소', ...rest }: Props) {
   return (
     <Area>
       <CloseButton type='button' onClick={closeClick}>
         {closeText}
       </CloseButton>
-      <CtaButton $bgColor='#258dff' $hoverColor='#0056b3' {...rest}>
+      <CtaButton $bgColor='#258dff' $hoverColor='#0056b3' {...rest} onClick={okClick}>
         {ctaText}
       </CtaButton>
     </Area>

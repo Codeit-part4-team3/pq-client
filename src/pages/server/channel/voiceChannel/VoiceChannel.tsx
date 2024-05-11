@@ -7,6 +7,7 @@ import LocalMedia from './_components/LocalMedia';
 import RemoteMedia from './_components/RemoteMedia';
 import MeetingNote from './_components/MeetingNote';
 import { useParams } from 'react-router-dom';
+import useUserStore from 'src/store/userStore';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
@@ -27,7 +28,11 @@ export default function VoiceChannel() {
   const { serverId, channelId } = useParams();
   console.log('serverId', serverId, 'channelId', channelId);
   const roomName = channelId || 'test';
-  const userId = 'userId';
+
+  // myUserData
+  const { userInfo } = useUserStore();
+  const { id: userId, nickname: userNickname } = userInfo;
+  console.log('UserInfo', userInfo);
 
   // socket
   const socketRef = useRef<Socket | null>(null);
@@ -38,6 +43,7 @@ export default function VoiceChannel() {
     {
       socketId: string;
       userId: string;
+      userNickname: string;
       stream: MediaStream;
       showVideo: boolean;
     }[]
@@ -52,6 +58,7 @@ export default function VoiceChannel() {
 
   const localMediaData = {
     userId,
+    userNickname,
     stream: localStreamRef.current,
     isMutedLocalStream,
     showLocalVideo,
@@ -109,7 +116,7 @@ export default function VoiceChannel() {
       localStreamRef.current = stream;
 
       if (socketRef.current) {
-        socketRef.current.emit('join_voice_channel', { roomName, userId });
+        socketRef.current.emit('join_voice_channel', { roomName, userId, userNickname });
       }
     } catch (error) {
       console.error('failed to get user media :', error);
@@ -150,7 +157,13 @@ export default function VoiceChannel() {
           setUsers((prevUsers) => prevUsers.filter((user) => user.socketId !== participant.socketId));
           setUsers((prevUsers) => [
             ...prevUsers,
-            { socketId: participant.socketId, userId: participant.userId, stream: e.streams[0], showVideo: true },
+            {
+              socketId: participant.socketId,
+              userId: participant.userId,
+              userNickname: participant.userNickname,
+              stream: e.streams[0],
+              showVideo: true,
+            },
           ]);
         };
 
@@ -170,6 +183,7 @@ export default function VoiceChannel() {
               sdp,
               offerSenderSocketId: socketRef.current.id,
               offerSenderId: userId,
+              offerSenderNickname: userNickname,
               offerReceiverSocketId: participant.socketId,
             });
           }
@@ -179,8 +193,8 @@ export default function VoiceChannel() {
       }
     });
 
-    socketRef.current.on('get_offer', async ({ sdp, offerSenderSocketId, offerSenderId }) => {
-      console.log('get_offer : ', sdp, offerSenderSocketId, offerSenderId);
+    socketRef.current.on('get_offer', async ({ sdp, offerSenderSocketId, offerSenderNickname, offerSenderId }) => {
+      console.log('get_offer : ', sdp, offerSenderSocketId, offerSenderNickname, offerSenderId);
       // pc 설정
       const pc = new RTCPeerConnection(pc_config);
       pcsRef.current[offerSenderSocketId] = pc;
@@ -206,7 +220,13 @@ export default function VoiceChannel() {
         setUsers((prevUsers) => prevUsers.filter((user) => user.socketId !== offerSenderSocketId));
         setUsers((prevUsers) => [
           ...prevUsers,
-          { socketId: offerSenderSocketId, userId: offerSenderId, stream: e.streams[0], showVideo: true },
+          {
+            socketId: offerSenderSocketId,
+            userId: offerSenderId,
+            userNickname: offerSenderNickname,
+            stream: e.streams[0],
+            showVideo: true,
+          },
         ]);
       };
 
@@ -286,21 +306,14 @@ export default function VoiceChannel() {
         socketRef.current.disconnect();
       }
     };
-  }, [roomName, userId, getLocalStream]);
+  }, [roomName, userId, userNickname, getLocalStream]);
 
   return (
     <Wrapper>
-      <button
-        onClick={() => {
-          console.log('localStreamRef.current', localStreamRef.current?.getTracks());
-        }}
-      ></button>
       <ContentBox>
         <MediaBox>
           <VideoContainer>
-            {/* myVideo */}
             <LocalMedia {...localMediaData} />
-            {/* otherVideos */}
             {users.map((user) => (
               <RemoteMedia key={user.socketId} {...user} isMutedAllRemoteStreams={isMutedAllRemoteStreams} />
             ))}

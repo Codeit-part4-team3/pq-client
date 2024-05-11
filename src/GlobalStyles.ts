@@ -129,6 +129,34 @@ export const InputNormal = styled.input`
   white-space: nowrap;
 `;
 
+export const ProfileImageWrapper = styled.div`
+  width: 42px;
+  height: 42px;
+
+  border: 2px solid var(--primary_basic_color);
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  margin-left: 10px;
+`;
+
+export const ProfileImage = styled.div<{ imageUrl?: string }>`
+  width: 100%;
+  height: 100%;
+
+  background-image: ${(props) => (props.imageUrl ? `url(${props.imageUrl})` : `url('/images/landing.webp')`)};
+  background-size: cover;
+  background-position: center;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 //
 // Animations
 //
