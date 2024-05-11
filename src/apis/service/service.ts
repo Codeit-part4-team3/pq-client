@@ -27,9 +27,9 @@ export const useMutationPost = <Res, Req>(url: string, options: object = {}, axi
   return mutation;
 };
 
-export const useMutationPatch = <Res, Req>(url: string, options: object = {}) => {
+export const useMutationPatch = <Res, Req>(url: string, options: object = {}, axiosOptions: object = {}) => {
   const mutationFn: MutationFunction<Res, Req> = async (body) => {
-    const res: AxiosResponse<Res> = await axiosInstance.patch(url, body);
+    const res: AxiosResponse<Res> = await axiosInstance.patch(url, body, axiosOptions);
     return res.data;
   };
 
