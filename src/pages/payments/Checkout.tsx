@@ -96,7 +96,7 @@ export default function Checkout() {
       <div id='agreement' />
       {/* 결제하기 버튼 */}
       <ButtonBox>
-        <Button onClick={handlePaymentRequest}>구독하기</Button>
+        <Button onClick={handlePaymentRequest}>결제</Button>
       </ButtonBox>
     </Area>
   );
@@ -114,5 +114,5 @@ const ButtonBox = styled.div`
 `;
 
 const Button = styled(CtaButton)`
-  width: 70%;
+  width: 30%;
 `;

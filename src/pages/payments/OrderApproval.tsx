@@ -83,5 +83,6 @@ const Container = styled.div`
 `;
 
 const Button = styled(CtaButton)`
-  width: 50%;
+  width: 30%;
+  margin-top: 20px;
 `;
