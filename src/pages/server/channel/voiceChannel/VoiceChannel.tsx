@@ -6,10 +6,6 @@ import RemoteMedia from './_components/RemoteMedia';
 import MeetingNote from './_components/MeetingNote';
 import useVoiceChannel from './_hook/VoiceChannel.hook';
 
-/**@ToDo
- * 1. 유저 데이터들 처리하는 로직 짜야함
- * 2. Channel 컴포넌트로 부터 channel date를 prop로 받고 데이터 바인딩 예정 */
-
 export default function VoiceChannel() {
   const {
     users,

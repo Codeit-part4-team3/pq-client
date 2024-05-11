@@ -35,6 +35,7 @@ export default function useVoiceChannel() {
     }[]
   >([]);
 
+  // localMediaControlPanel
   // remoteMediaControl
   const [isMutedAllRemoteStreams, setIsMutedAllRemoteStreams] = useState<boolean>(false);
   // localMediaControl
@@ -56,7 +57,6 @@ export default function useVoiceChannel() {
   const handleMuteLocalStream = () => {
     if (localStreamRef.current) {
       const audioTrack = localStreamRef.current.getAudioTracks()[0];
-      console.log(audioTrack);
       if (audioTrack) {
         audioTrack.enabled = !audioTrack.enabled;
       }
@@ -68,7 +68,6 @@ export default function useVoiceChannel() {
   const handleOffLocalCamera = () => {
     if (localStreamRef.current) {
       const videoTrack = localStreamRef.current.getVideoTracks()[0];
-      console.log(videoTrack);
       if (videoTrack) {
         videoTrack.enabled = !videoTrack.enabled;
         socketRef.current?.emit('video_track_enabled_changed', {
@@ -88,7 +87,6 @@ export default function useVoiceChannel() {
 
   // 로컬 미디어 스트림 가져오기
   const getLocalStream = useCallback(async () => {
-    console.log('getLocalStream');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       if (localVideoRef.current) {
@@ -108,7 +106,6 @@ export default function useVoiceChannel() {
     if (!socketRef.current) return;
 
     socketRef.current.on('participants_list', async ({ participants }) => {
-      console.log('participants_list', participants);
       // participant를 순회하면서 RTCPeerConnection을 생성하고 offer를 보낸다.
       for (const participant of participants) {
         // pc 설정

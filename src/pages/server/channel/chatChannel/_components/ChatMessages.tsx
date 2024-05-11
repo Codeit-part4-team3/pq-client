@@ -107,6 +107,7 @@ export default function ChatMessages({
   // 다음 메시지의 유저와 현재 메시지의 유저가 다르면 true로 변경
   let isDifferentUser = false;
 
+  // message render
   if (!messages || messages.length === 0) return null;
   return (
     <>
