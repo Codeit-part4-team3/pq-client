@@ -2,20 +2,21 @@ export interface IServer {
   id: number;
   name: string;
   imageUrl?: string;
+  imageFile?: File | null;
 }
 
-export type ServerRequest = Omit<IServer, 'id'> & { imageFile: File | null };
-export type ServerResponse = IServer | null;
+export type ServerRequest = Omit<IServer, 'id'>;
+export type ServerResponse = Omit<IServer, 'imageFile'> | null;
 
 export type ServerData = IServer;
 
 export interface IChannel {
   id: number;
-  name: string;
+  name?: string;
   groupId?: number;
-  serverId: number;
-  isVoice: boolean;
-  isPrivate: boolean;
+  serverId?: number;
+  isVoice?: boolean;
+  isPrivate?: boolean;
 }
 
 export type ChannelRequest = Omit<IChannel, 'id' | 'serverId'>;
