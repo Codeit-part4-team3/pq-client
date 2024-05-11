@@ -29,7 +29,13 @@ export default function CreateServerModal({ isUpdate = false, closeModal, isOpen
     {},
     { headers: { 'Content-Type': 'multipart/form-data' } },
   );
-  const updateMutation = useMutationPatch<ServerResponse, ServerRequest>(`/chat/v1/server/${serverId}`);
+  const updateMutation = useMutationPatch<ServerResponse, ServerRequest>(
+    `/chat/v1/server/${serverId}`,
+    {},
+    {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    },
+  );
 
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();

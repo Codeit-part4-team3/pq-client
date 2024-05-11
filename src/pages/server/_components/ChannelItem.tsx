@@ -5,15 +5,21 @@ import tagSvg from '/images/tag_small_white.svg';
 import { ButtonIcon } from 'src/GlobalStyles';
 import { useState } from 'react';
 import DefaultModal from 'src/components/modal/DefaultModal';
-import { useMutationDelete } from 'src/apis/service/service';
+import { useMutationDelete, useMutationPatch } from 'src/apis/service/service';
+import { ChannelRequest, ChannelResponse } from '../_types/type';
 
 export default function ChannelItem({ data }: ChannelItemProps) {
   const path = useLocation();
   const [isToggle, setIsToggle] = useState<boolean>(false);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
+  const [updateName, setUpdateName] = useState<string>('');
   const serverId = path.pathname.split('/')[2];
   const channelId = Number(path.pathname.split('/')[4]);
+
   const deleteMutation = useMutationDelete(`/chat/v1/server/${serverId}/channel/${data.id}`);
+  const patchMutation = useMutationPatch<ChannelResponse, ChannelRequest>(
+    `/chat/v1/server/${serverId}/channel/${data.id}`,
+  );
 
   const handleDeleteModal = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -34,9 +40,11 @@ export default function ChannelItem({ data }: ChannelItemProps) {
   const handleKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       setIsUpdate(false);
+      patchMutation.mutate({ name: updateName });
     }
     if (e.key === 'Escape') {
       setIsUpdate(false);
+      setUpdateName('');
     }
   };
 
@@ -45,7 +53,13 @@ export default function ChannelItem({ data }: ChannelItemProps) {
       <Title>
         <img src={tagSvg} alt='채널 태그 이미지' />
         {data.name}
-        <InputChannel isUpdate={isUpdate} onKeyDown={handleKeydown} placeholder='취소는 ESC / 저장은 Enter' />
+        <InputChannel
+          value={updateName}
+          isUpdate={isUpdate}
+          onKeyDown={handleKeydown}
+          onChange={(e) => setUpdateName(e.target.value)}
+          placeholder='취소는 ESC / 저장은 Enter'
+        />
       </Title>
       <ButtonGroup>
         <UpdateButton onClick={handleUpdate} />

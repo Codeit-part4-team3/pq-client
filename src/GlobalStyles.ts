@@ -167,8 +167,9 @@ export const ProfileImage = styled.div<{ imageUrl?: string }>`
   width: 100%;
   height: 100%;
 
-  background-size: cover;
   background-image: ${(props) => (props.imageUrl ? `url(${props.imageUrl})` : `url('/images/landing.webp')`)};
+  background-size: cover;
+  background-position: center;
 
   &:hover {
     cursor: pointer;
