@@ -13,10 +13,7 @@ interface Props extends ModalProps {
 
 export default function InviteLinkModal({ closeModal, isOpen, serverId }: Props) {
   const [msg, setMsg] = useState<string>('');
-  const { refetch, data } = useQueryGet<GetInviteLinkResponse>('inviteLink', `/chat/v1/server/${serverId}/inviteLink`, {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
+  const { refetch, data } = useQueryGet<GetInviteLinkResponse>('inviteLink', `/chat/v1/server/${serverId}/inviteLink`);
 
   const linkUrl = `${APP_ORIGIN}/login/invite/${data?.inviteLink}`;
 
@@ -29,7 +26,7 @@ export default function InviteLinkModal({ closeModal, isOpen, serverId }: Props)
   useEffect(() => {
     refetch();
     setMsg('');
-  }, []);
+  }, [serverId]);
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
