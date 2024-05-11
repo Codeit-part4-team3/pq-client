@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useId } from 'react';
 import { ServerItemProps } from '../_types/props';
+import { ProfileImage } from 'src/GlobalStyles';
 
 /**
  *
@@ -20,7 +21,7 @@ export default function ServerItem({ data, ...rest }: ServerItemProps) {
   return (
     <Button key={`${lid}-${data.id}`} {...rest}>
       {data.imageUrl ? (
-        <img src={data.imageUrl} alt='img' data-serverid={data.id} />
+        <ProfileImage imageUrl={data.imageUrl} data-serverid={data.id} />
       ) : (
         <strong data-serverid={data.id}>{data.name}</strong>
       )}
@@ -35,25 +36,15 @@ const Button = styled.button`
   border: none;
   border-radius: 50%;
   background-color: #d8980e;
-
+  padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 16px;
+  overflow: hidden;
 
   &:hover {
     border: 3px solid #d9d9d9;
     cursor: pointer;
-  }
-
-  > * {
-    width: 48px;
-    height: 48px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-size: cover;
-    white-space: nowrap;
   }
 `;
