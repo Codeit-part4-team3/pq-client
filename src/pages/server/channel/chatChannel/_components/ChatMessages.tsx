@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { MessageItem } from '../_types/type';
+import { MessageItem, User } from '../_types/type';
 import extractDate from 'src/utils/extractDate';
 import ChatDayDivider from './ChatDayDivider';
 import addZero from 'src/utils/addZero';
@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import ContextMenu from './ContextMenu';
 
 interface ChatMessagesProps {
+  serverUserData: User[] | undefined;
   messages: MessageItem[];
   onUpdateMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
   onDeleteMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
@@ -28,6 +29,7 @@ interface ContextMenu {
 }
 
 export default function ChatMessages({
+  serverUserData,
   messages,
   onUpdateMessageClick,
   onDeleteMessageClick,
@@ -105,6 +107,9 @@ export default function ChatMessages({
         />
       ) : null}
       {messages.map((messageItem, index) => {
+        // 현재 메시지에 해당하는 유저를 찾음
+        const user = serverUserData?.find((user) => user.id === messageItem.userId);
+
         // 다음 메시지의 유저와 현재 메시지의 유저가 다르면 true로 변경
         isDifferentUser = messages[index + 1]?.userId !== messageItem.userId;
 
@@ -137,12 +142,12 @@ export default function ChatMessages({
                   isOnEdit={currentEditingMessageId === messageItem.messageId}
                 >
                   <UserProfileImage>
-                    <Image />
+                    <Image profileImage={user?.profileImage ? user.profileImage : '/images/minji-profile-image.png'} />
                   </UserProfileImage>
 
                   <ChatMessageContent>
                     <ChatMessageContentHeader>
-                      <ChatMessageSender>{messageItem.userId}</ChatMessageSender>
+                      <ChatMessageSender>{user?.nickname}</ChatMessageSender>
                       <ChatMessageCreatedAt>{messageCreatedAt}</ChatMessageCreatedAt>
                     </ChatMessageContentHeader>
                     {messageItem.status === 'editing' ? (
@@ -251,12 +256,12 @@ const UserProfileImage = styled.div`
   overflow: hidden;
 `;
 
-const Image = styled.img`
+const Image = styled.img<{ profileImage: string }>`
   width: 100%;
   height: 100%;
 
   background-size: cover;
-  background-image: url('/images/minji-profile-image.png');
+  background-image: url(${({ profileImage }) => (profileImage ? profileImage : '/images/minji-profile-image.png')});
 
   &:hover {
     cursor: pointer;

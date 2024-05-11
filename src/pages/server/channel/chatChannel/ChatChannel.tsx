@@ -1,11 +1,13 @@
 import styled, { keyframes } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { lastKey, MessageItem } from 'src/pages/server/channel/chatChannel/_types/type';
+import { lastKey, MessageItem, User } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
 import UtilityButton from './_components/UtilityButton';
 import { useSubscription } from 'src/hooks/useSubscription';
 import { useParams } from 'react-router-dom';
+import useUserStore from 'src/store/userStore';
+import { useQueryGet } from 'src/apis/service/service';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
@@ -14,11 +16,17 @@ const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
  */
 export default function ChatChannel() {
   // 유저, 서버, 채널 데이터
-  const userId = 'minji';
+  const { userInfo } = useUserStore();
+  const { id: userId } = userInfo;
   const { serverId, channelId } = useParams();
-  console.log('serverId', serverId, 'channelId', channelId);
-  const roomName = channelId || '1';
-  console.log('roomName', roomName);
+  const roomName = channelId;
+
+  // 서버내의 모든 유저 데이터
+  const { data: serverUserData } = useQueryGet<User[]>('getServerAllUser', `/chat/v1/server/${serverId}/users`, {
+    staleTime: 5000,
+    refetchInterval: 5000,
+    enabled: !!userId,
+  });
   // 소켓
   const socketRef = useRef<Socket | null>(null);
   // 메시지 관련
@@ -211,7 +219,9 @@ export default function ChatChannel() {
     );
 
     return () => {
-      socketRef.current?.disconnect();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
     };
   }, [roomName]);
 
@@ -233,6 +243,7 @@ export default function ChatChannel() {
         {/* flex: column-reverse상태 */}
         {/* 가장 아래쪽 */}
         <ChatMessages
+          serverUserData={serverUserData}
           messages={messages}
           editingMessage={editingMessage}
           setEditingMessage={setEditingMessage}
