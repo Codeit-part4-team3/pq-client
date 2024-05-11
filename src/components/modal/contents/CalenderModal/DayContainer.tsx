@@ -26,12 +26,12 @@ export default function DayContainer({ currentDay, currentMonth, currentYear, se
   const [eId, setEId] = useState<number>(0);
   const newStartDate = new Date(currentYear, currentMonth, currentDay, 0, 0, 0, 0).toISOString();
   const newEndDate = new Date(currentYear, currentMonth, currentDay + 1, 0, 0, 0, 0).toISOString();
-  const { data, refetch: eventRefetch } = useQueryGet<Event[]>(
-    'oneDayEvents',
-    `/chat/v1/server/events?serverId=${1}&startDate=${newStartDate}&endDate=${newEndDate}`,
-  );
 
   const serverId = useContext<number>(ServerIdContext);
+  const { data, refetch: eventRefetch } = useQueryGet<Event[]>(
+    'oneDayEvents',
+    `/chat/v1/server/events?serverId=${serverId}&startDate=${newStartDate}&endDate=${newEndDate}`,
+  );
 
   const reset = () => {
     setIsUpdate(false);
