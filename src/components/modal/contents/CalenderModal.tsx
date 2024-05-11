@@ -3,7 +3,6 @@ import { ModalProps } from 'src/types/modalType';
 import styled from 'styled-components';
 import Modal from '../modal';
 import { useQueryGet } from 'src/apis/service/service';
-import axiosInstance from 'src/apis/instance/axiosInstance';
 import DayContainer from './CalenderModal/DayContainer';
 import { Event } from './CalenderModal/type/type';
 import { ServerIdContext } from 'src/pages/server/Server';
@@ -32,10 +31,6 @@ export default function CalenderModal({ isOpen, closeModal }: ModalProps) {
   const onDayClick = async (day: number) => {
     SetCurrentDay(day);
     setIsDay(true);
-    const startDate = new Date(currentYear, currentMonth, day);
-    const endDate = new Date(currentYear, currentMonth, day);
-
-    axiosInstance.get(`/chat/v1/server/events?serverId=${serverId}&startDate=${startDate}&endDate=${endDate}`);
   };
 
   const onMonthChange = async (month: number) => {

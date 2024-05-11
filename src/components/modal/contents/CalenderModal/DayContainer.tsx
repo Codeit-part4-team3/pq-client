@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import ModalButtons from '../../button/ModalButtons';
 import { ModalContainer, ModalForm, ModalTitle } from '../../CommonStyles';
 import axiosInstance from 'src/apis/instance/axiosInstance';
-import { Event } from './type/type';
-import { useQueryGet } from 'src/apis/service/service';
+import { Event, EventReqeust } from './type/type';
+import { useMutationPost, useQueryGet } from 'src/apis/service/service';
 import { ServerIdContext } from 'src/pages/server/Server';
 import { getTimes } from 'src/utils/dateFuntion';
 
@@ -32,6 +32,12 @@ export default function DayContainer({ currentDay, currentMonth, currentYear, se
     'oneDayEvents',
     `/chat/v1/server/events?serverId=${serverId}&startDate=${newStartDate}&endDate=${newEndDate}`,
   );
+  const createMutation = useMutationPost<Event, EventReqeust>(`/chat/v1/server/event`, {
+    onSuccess: () => {
+      eventRefetch();
+      refetch();
+    },
+  });
 
   const reset = () => {
     setIsUpdate(false);
@@ -70,11 +76,7 @@ export default function DayContainer({ currentDay, currentMonth, currentYear, se
       Number(time.split(':')[1]),
     );
     if (!isUpdate) {
-      await axiosInstance.post('/chat/v1/server/event', {
-        title,
-        start: startDate,
-        serverId,
-      });
+      await createMutation.mutate({ title, start: startDate, serverId });
     }
 
     if (isUpdate) {
@@ -83,11 +85,11 @@ export default function DayContainer({ currentDay, currentMonth, currentYear, se
         start: startDate,
         serverId,
       });
+      eventRefetch();
+      refetch();
     }
 
     reset();
-    eventRefetch();
-    refetch();
   };
 
   useEffect(() => {
