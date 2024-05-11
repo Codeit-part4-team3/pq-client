@@ -7,6 +7,7 @@ import useUserStore from 'src/store/userStore';
 import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
 import LogoutModal from './modal/contents/LogoutModal';
 import MyPageModal from './modal/contents/MyPageModal';
+import SubscriptionModal from './modal/contents/SubscriptionModal';
 
 /**
  * get user profile image, status, and user id
@@ -56,6 +57,7 @@ export default function MyProfile() {
           ),
           [MyDropdownType.LOGOUT]: <LogoutModal closeModal={handleCloseModal} isOpen={isShow} />,
           [MyDropdownType.MYPAGE]: <MyPageModal closeModal={handleCloseModal} isOpen={isShow} />,
+          [MyDropdownType.SUBSCRIPTION]: <SubscriptionModal closeModal={handleCloseModal} isOpen={isShow} />,
         }[dropdownType]
       }
     </>

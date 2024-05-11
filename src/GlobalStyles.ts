@@ -87,6 +87,25 @@ export const ButtonNormal = styled.button`
   }
 `;
 
+export const CtaButton = styled.button`
+  color: #fff;
+  display: flex;
+  width: 100%;
+  padding: 13px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  background: #258dff;
+  border: 1px solid #258dff;
+  outline: none;
+
+  &:hover {
+    cursor: pointer;
+    background: #0056b3;
+  }
+`;
+
 export const ButtonEmphasis = styled.button`
   color: #fff;
   border-radius: 8px;

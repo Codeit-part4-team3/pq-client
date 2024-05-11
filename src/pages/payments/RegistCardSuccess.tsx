@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ErrorResponse, RegistCardResponse, RegistCardRequest } from './_type/type';
+import { ErrorResponse } from './_type/type';
 import { useMutationPost } from 'src/apis/service/service';
 import { USER_URL } from 'src/constants/apiUrl';
+import styled from 'styled-components';
+import { CtaButton } from 'src/GlobalStyles';
+import { RegistCardRequest, RegistCardResponse } from 'src/types/subscriptionType';
 
 export function RegistCardSuccess() {
   const navigate = useNavigate();
@@ -40,11 +43,30 @@ export function RegistCardSuccess() {
   }, [mutate, searchParams]);
 
   return (
-    <div className='result wrapper'>
-      <div className='box_section'>
+    <Area className='result wrapper'>
+      <Container className='box_section'>
         <img src='https://static.toss.im/illusts/check-blue-spot-ending-frame.png' width='120' height='120' />
         <h2>카드 등록 성공</h2>
-      </div>
-    </div>
+        <Button onClick={() => navigate('/server')}>처음으로 돌아가기</Button>
+      </Container>
+    </Area>
   );
 }
+
+const Area = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Container = styled.div`
+  padding-top: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+const Button = styled(CtaButton)`
+  width: 50%;
+  margin-top: 20px;
+`;

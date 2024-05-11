@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ErrorResponse, ConfirmRequest, ConfirmResponse } from './_type/type';
+import { ConfirmRequest, ConfirmResponse } from './_type/type';
 import { useMutationPost, useQueryGet } from 'src/apis/service/service';
 import { USER_URL } from 'src/constants/apiUrl';
 import useUserStore from 'src/store/userStore';
 import { UserInfo } from 'src/types/userType';
+import { CtaButton } from 'src/GlobalStyles';
+import styled from 'styled-components';
+import axios from 'axios';
 
 /**
  * 결제 요청 승인 후 실제 결제 진행
@@ -31,8 +34,13 @@ export function OrderApproval() {
       );
     },
     onError: (err: unknown) => {
-      const error = err as ErrorResponse;
-      navigate(`/order-fail?code=${error.code}&message=${encodeURIComponent(error.message)}`);
+      if (axios.isAxiosError(err)) {
+        const message = err.response?.data?.message || 'Unknown error occurred';
+        navigate(`/order-fail?code=${err.code}&message=${encodeURIComponent(message)}`);
+        return;
+      }
+
+      console.error(err);
     },
   });
 
@@ -52,11 +60,28 @@ export function OrderApproval() {
   };
 
   return (
-    <div className='result wrapper'>
-      <div className='box_section'>
+    <Area className='result wrapper'>
+      <Container className='box_section'>
         <h2>결제 정보가 확인되었습니다.</h2>
-        <button onClick={handlePaymentClick}>이어서 결제하기</button>
-      </div>
-    </div>
+        <Button onClick={handlePaymentClick}>이어서 결제하기</Button>
+      </Container>
+    </Area>
   );
 }
+
+const Area = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Container = styled.div`
+  padding-top: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+`;
+
+const Button = styled(CtaButton)`
+  width: 50%;
+`;

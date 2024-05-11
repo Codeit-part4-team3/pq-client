@@ -3,6 +3,8 @@ import { PaymentWidgetInstance, loadPaymentWidget } from '@tosspayments/payment-
 import useUserStore from 'src/store/userStore';
 import { usePlanStore, useTempOrderStore } from 'src/store/paymentStore';
 import { PaymentMethodsWidget } from './_type/type';
+import styled from 'styled-components';
+import { CtaButton } from 'src/GlobalStyles';
 
 const widgetClientKey = import.meta.env.VITE_APP_TOSS_CLIENT_KEY;
 
@@ -88,12 +90,29 @@ export default function Checkout() {
   };
 
   return (
-    <div>
+    <Area>
       {/* 결제 UI, 이용약관 UI 영역 */}
       <div id='payment-widget' />
       <div id='agreement' />
       {/* 결제하기 버튼 */}
-      <button onClick={handlePaymentRequest}>구독하기</button>
-    </div>
+      <ButtonBox>
+        <Button onClick={handlePaymentRequest}>구독하기</Button>
+      </ButtonBox>
+    </Area>
   );
 }
+
+const Area = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const ButtonBox = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const Button = styled(CtaButton)`
+  width: 70%;
+`;
