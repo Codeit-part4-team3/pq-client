@@ -2,10 +2,11 @@ export interface IServer {
   id: number;
   name: string;
   imageUrl?: string;
+  imageFile?: File | null;
 }
 
-export type ServerRequest = Omit<IServer, 'id'> & { imageFile: File | null };
-export type ServerResponse = IServer | null;
+export type ServerRequest = Omit<IServer, 'id'>;
+export type ServerResponse = Omit<IServer, 'imageFile'> | null;
 
 export type ServerData = IServer;
 
