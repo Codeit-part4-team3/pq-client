@@ -73,6 +73,7 @@ const Body = styled.div`
 
   display: flex;
   flex-direction: column;
+  gap: 5px;
 `;
 
 const DropDownButton = styled(ButtonIcon)`

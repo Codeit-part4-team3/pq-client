@@ -5,14 +5,13 @@ import micOnSvg from '../../../../../../public/images/mic_on_FILL0_wght200_GRAD0
 import { useEffect, useRef } from 'react';
 
 interface VideoProps {
-  // stream: MediaStream;
-  userId: string;
+  userNickname: string;
   stream: MediaStream | null;
   isMutedLocalStream: boolean;
   showLocalVideo: boolean;
 }
 
-export default function LocalMedia({ userId, stream, isMutedLocalStream, showLocalVideo }: VideoProps) {
+export default function LocalMedia({ userNickname, stream, isMutedLocalStream, showLocalVideo }: VideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -30,7 +29,7 @@ export default function LocalMedia({ userId, stream, isMutedLocalStream, showLoc
           </NotShowVideoWrapper>
         ) : null}
         <Media ref={videoRef} autoPlay playsInline muted />
-        <NameTag>{userId}</NameTag>
+        <NameTag>{userNickname}</NameTag>
         {isMutedLocalStream ? (
           <MicOff>
             <img src={micOffSvg} alt='마이크 off 이미지' width={24} height={24} />

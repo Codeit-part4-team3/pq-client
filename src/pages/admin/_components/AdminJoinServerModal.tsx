@@ -1,4 +1,3 @@
-import DeleteCategoryModal from 'src/components/modal/contents/DeleteCategoryModal';
 import JoinServerModal from '../../../components/modal/contents/JoinServerModal';
 import { useOpenModal } from '../../../hooks/useOpenModal';
 import DeleteChannelModal from 'src/components/modal/contents/DeleteChannelModal';

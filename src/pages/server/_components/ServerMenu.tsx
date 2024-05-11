@@ -33,6 +33,8 @@ const Area = styled.section`
   height: 48px;
 
   flex-shrink: 0;
+
+  z-index: 10;
 `;
 
 const H2 = styled.h2`

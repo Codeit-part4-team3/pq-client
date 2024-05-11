@@ -1,7 +1,7 @@
 import SocialButtons from './_components/SocialButtons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import EmailLogin from './EmailLogin';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Line from 'src/components/sign/Line';
 import Header from 'src/components/sign/Header';
 import { Area, Container, Button, Prompt } from 'src/components/sign/CommonStyles';
@@ -11,11 +11,22 @@ import { USER_URL } from 'src/constants/apiUrl';
 
 export default function Login() {
   const [isEmailLogin, setIsEmailLogin] = useState(false);
+  const location = useLocation();
+
   useOauth({
     googleUrl: `${USER_URL.AUTH}/google/login`,
     kakaoUrl: `${USER_URL.AUTH}/kakao/login`,
     redirectUri: '/login',
   });
+
+  useEffect(() => {
+    const pathnames = location.pathname.split('/');
+    if (pathnames.length > 3) {
+      if ('invite' === pathnames[2]) {
+        sessionStorage.setItem('invite', pathnames[3]);
+      }
+    }
+  }, []);
 
   const renderContent = () => {
     if (isEmailLogin) {

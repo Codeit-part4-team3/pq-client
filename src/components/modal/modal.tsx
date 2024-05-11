@@ -19,12 +19,8 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 };
 
 const Overlay = styled.div`
-  /* Add your modal-overlay styles here */
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,15 +29,11 @@ const Overlay = styled.div`
 
 const Background = styled.div`
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
 `;
 
 const ModalWrapper = styled.div`
-  /* Add your modal styles here */
   padding: 32px;
   color: black;
   background-color: var(--landing_background_color);

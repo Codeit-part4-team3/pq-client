@@ -6,12 +6,12 @@ import { useEffect, useRef } from 'react';
 
 interface RemoteMediaProps {
   stream: MediaStream | null;
-  userId: string;
+  userNickname: string;
   isMutedAllRemoteStreams: boolean;
   showVideo: boolean;
 }
 
-export default function RemoteMedia({ stream, userId, isMutedAllRemoteStreams, showVideo }: RemoteMediaProps) {
+export default function RemoteMedia({ stream, userNickname, isMutedAllRemoteStreams, showVideo }: RemoteMediaProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const isMutedRemoteStream = false;
 
@@ -30,7 +30,7 @@ export default function RemoteMedia({ stream, userId, isMutedAllRemoteStreams, s
           </NotShowVideoWrapper>
         ) : null}
         <Media ref={videoRef} autoPlay playsInline muted={isMutedAllRemoteStreams} />
-        <NameTag>{userId}</NameTag>
+        <NameTag>{userNickname}</NameTag>
         {isMutedRemoteStream ? (
           <MicOff>
             <img src={micOffSvg} alt='마이크 off 이미지' width={24} height={24} />

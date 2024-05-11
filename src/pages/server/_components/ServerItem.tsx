@@ -33,7 +33,7 @@ const Button = styled.button`
   height: 48px;
 
   border: none;
-  border-radius: 10px;
+  border-radius: 50%;
   background-color: #d8980e;
 
   display: flex;
@@ -41,22 +41,19 @@ const Button = styled.button`
   align-items: center;
   font-size: 16px;
 
-  overflow: hidden;
-  white-space: nowrap;
-
   &:hover {
-    outline: 3px solid #d9d9d9;
+    border: 3px solid #d9d9d9;
     cursor: pointer;
   }
 
   > * {
-    width: 100%;
-    height: 100%;
+    width: 48px;
+    height: 48px;
 
     display: flex;
     justify-content: center;
     align-items: center;
-
     background-size: cover;
+    white-space: nowrap;
   }
 `;
