@@ -6,6 +6,7 @@ import { AllPaymentsResponse, PaymentResponse } from 'src/pages/payments/_type/t
 import styled from 'styled-components';
 import { formatTime } from 'src/utils/extractDate';
 import { translatePaymentStatus } from 'src/utils/translatePaymentStatus';
+import { ERROR_MESSAGES } from 'src/constants/error';
 
 interface CancelProps {
   selectedPayment: PaymentResponse | null;
@@ -24,7 +25,7 @@ export default function CancelContainer({
   const sortedPayments = allPayments?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   const handleSelectPayment = (payment: PaymentResponse) => {
-    if (!payment) return alert('주문을 찾을 수 없습니다.');
+    if (!payment) return alert(ERROR_MESSAGES.PAYMENT.NO_PAYMENT);
 
     setSelectedPayment(payment);
   };

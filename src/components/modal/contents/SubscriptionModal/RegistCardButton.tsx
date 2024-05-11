@@ -1,5 +1,6 @@
 import { loadTossPayments } from '@tosspayments/payment-sdk';
 import { MouseEvent } from 'react';
+import { ERROR_MESSAGES } from 'src/constants/error';
 import useUserStore from 'src/store/userStore';
 import styled from 'styled-components';
 
@@ -24,12 +25,12 @@ export default function RegistCardButton({ isRecurring }: RegistCardButtonProps)
         })
         .catch(function (error) {
           if (error.code === 'USER_CANCEL') {
-            throw new Error('사용자가 등록을 취소했습니다.');
+            throw new Error(ERROR_MESSAGES.CARD.USER_CANCEL);
           }
           if (error.code === 'INVALID_CARD_COMPANY') {
-            throw new Error('지원하지 않는 카드사입니다.');
+            throw new Error(ERROR_MESSAGES.CARD.INVALID_CARD_COMPANY);
           }
-          throw new Error('카드 등록에 실패했습니다. 카드 정보를 다시 확인해주세요.');
+          throw new Error(ERROR_MESSAGES.CARD.REGIST_FAILED);
         });
     });
   };

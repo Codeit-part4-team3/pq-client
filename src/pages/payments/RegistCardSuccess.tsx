@@ -6,6 +6,7 @@ import { USER_URL } from 'src/constants/apiUrl';
 import styled from 'styled-components';
 import { CtaButton } from 'src/GlobalStyles';
 import { RegistCardRequest, RegistCardResponse } from 'src/types/subscriptionType';
+import { ERROR_MESSAGES } from 'src/constants/error';
 
 export function RegistCardSuccess() {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export function RegistCardSuccess() {
 
     if (!customerKey || !authKey) {
       console.error('Invalid payment data', { customerKey, authKey });
-      navigate('/regist-fail?code=INVALID_SUBSCRIPTION_DATA&message=카드 등록 정보가 올바르지 않습니다.');
+      navigate(`/regist-fail?code=INVALID_SUBSCRIPTION_DATA&message=${ERROR_MESSAGES.PAYMENT.INVALID_CARD_DATA}`);
       return;
     }
 

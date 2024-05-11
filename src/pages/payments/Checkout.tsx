@@ -5,6 +5,7 @@ import { usePlanStore, useTempOrderStore } from 'src/store/paymentStore';
 import { PaymentMethodsWidget } from './_type/type';
 import styled from 'styled-components';
 import { CtaButton } from 'src/GlobalStyles';
+import { ERROR_MESSAGES } from 'src/constants/error';
 
 const widgetClientKey = import.meta.env.VITE_APP_TOSS_CLIENT_KEY;
 
@@ -25,7 +26,7 @@ export default function Checkout() {
   // 결제 위젯 불러오기
   useEffect(() => {
     if (!userInfo.email) {
-      return console.error('결제 위젯을 불러오기 위해 사용자 정보가 필요합니다.');
+      return console.error(ERROR_MESSAGES.PAYMENT.NO_USER_INFO);
     }
 
     const customerKey = userInfo.email;

@@ -20,6 +20,7 @@ import ModalButtons from '../button/ModalButtons';
 import { PaymentResponse } from 'src/pages/payments/_type/type';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { ERROR_MESSAGES } from 'src/constants/error';
 
 export default function SubscriptionModal({ closeModal, isOpen }: ModalProps) {
   const [selectedPlan, setSelectedPlan] = useState<Plan | undefined>(undefined);
@@ -41,14 +42,14 @@ export default function SubscriptionModal({ closeModal, isOpen }: ModalProps) {
     `${USER_URL.PAYMENTS}/temp-order`,
     {
       onError: () => {
-        alert('결제에 실패했습니다. 잠시 후 다시 시도해주세요.');
-        throw new Error('가주문 요청 실패');
+        alert(ERROR_MESSAGES.PAYMENT.FAILED);
+        throw new Error(ERROR_MESSAGES.TEMP_ORDER.FAILED);
       },
 
       onSuccess: (data: TempOrderResponse) => {
         if (!data?.tempOrderId) {
-          alert('결제에 실패했습니다. 잠시 후 다시 시도해주세요.');
-          throw new Error('가주문 ID가 없습니다.');
+          alert(ERROR_MESSAGES.PAYMENT.FAILED);
+          throw new Error(ERROR_MESSAGES.TEMP_ORDER.NO_TEMP_ORDER_ID);
         }
 
         setTempOrderId(data?.tempOrderId);
@@ -67,12 +68,12 @@ export default function SubscriptionModal({ closeModal, isOpen }: ModalProps) {
           return alert(`환불 실패: ${message}`);
         }
 
-        alert('환불 요청 실패');
+        alert(ERROR_MESSAGES.PAYMENT.CANCEL_FAILED);
         console.error(err);
       },
 
       onSuccess: () => {
-        alert('환불되었습니다.');
+        alert(ERROR_MESSAGES.PAYMENT.CANCEL_SUCCESS);
         queryClient.invalidateQueries({ queryKey: ['getAllPayments'], exact: true });
         queryClient.invalidateQueries({ queryKey: ['getSubscription'], exact: true });
       },
@@ -81,7 +82,7 @@ export default function SubscriptionModal({ closeModal, isOpen }: ModalProps) {
 
   const handleSubscribe = () => {
     if (isCreating) return;
-    if (!selectedPlan) return alert('선택된 플랜이 없습니다.');
+    if (!selectedPlan) return alert(ERROR_MESSAGES.PAYMENT.NO_SELECTED_PLAN);
 
     const tempOrder: TempOrderRequest = {
       orderName: selectedPlan.type,
@@ -97,9 +98,10 @@ export default function SubscriptionModal({ closeModal, isOpen }: ModalProps) {
 
   const handleCancel = () => {
     if (isCanceling) return;
-    if (!selectedPayment) return alert('주문을 선택해 주세요.');
-    if (!selectedPayment.orderId) return console.error('주문번호를 찾을 수 없습니다.');
-    if (subscription && selectedPayment.planId < subscription?.planId) return alert('환불할 수 없는 주문입니다.');
+    if (!selectedPayment) return alert(ERROR_MESSAGES.PAYMENT.SELECT_PAYMENT);
+    if (!selectedPayment.orderId) return console.error(ERROR_MESSAGES.PAYMENT.NO_ORDER_ID);
+    if (subscription && selectedPayment.planId < subscription?.planId)
+      return alert(ERROR_MESSAGES.PAYMENT.REFUND_NOT_ALLOWED);
 
     const cancelData = {
       orderId: selectedPayment.orderId,
