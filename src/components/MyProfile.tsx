@@ -36,9 +36,9 @@ export default function MyProfile() {
     <>
       <Area>
         <Wrapper>
-          <ProfileImageWrapper>
-            <ProfileImage imageUrl={userInfo.imageUrl as string} onClick={toggleDropdown} />
-          </ProfileImageWrapper>
+          <ProfileImageWapperAinmation>
+            <ProfileImageAinmation imageUrl={userInfo.imageUrl as string} onClick={toggleDropdown} />
+          </ProfileImageWapperAinmation>
           <InfoWrapper>
             <strong>{userInfo.nickname}</strong>
             <div>
@@ -71,6 +71,29 @@ const Area = styled.div`
   backdrop-filter: blur(10px);
 
   position: relative;
+`;
+
+const ProfileImageWapperAinmation = styled(ProfileImageWrapper)`
+  &:hover {
+    transform: scale(1.2);
+  }
+`;
+
+const ProfileImageAinmation = styled(ProfileImage)`
+  &:hover {
+    animation: myAnimation 3s infinite;
+    @keyframes myAnimation {
+      0% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.3;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  }
 `;
 
 const Wrapper = styled.div`

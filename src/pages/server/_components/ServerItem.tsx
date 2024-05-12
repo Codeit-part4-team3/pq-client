@@ -29,6 +29,14 @@ export default function ServerItem({ data, ...rest }: ServerItemProps) {
   );
 }
 
+// const Image = styled.img`
+//   transition: transform 0.3s ease-in-out;
+
+//   &:hover {
+//     transform: scale(1.2);
+//   }
+// `;
+
 const Button = styled.button`
   width: 48px;
   height: 48px;

@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { ChannelItemProps } from '../_types/props';
 import { Link, useLocation } from 'react-router-dom';
 import tagSvg from '/images/tag_small_white.svg';
+import voiceSvg from '/images/volume_on_white.svg';
 import { ButtonIcon } from 'src/GlobalStyles';
 import { useState } from 'react';
 import DefaultModal from 'src/components/modal/DefaultModal';
@@ -51,7 +52,7 @@ export default function ChannelItem({ data }: ChannelItemProps) {
   return (
     <ChannelItemWrapper to={`/server/${serverId}/channel/${data.id}`} isSelect={channelId === data.id}>
       <Title>
-        <img src={tagSvg} alt='채널 태그 이미지' />
+        {data.isVoice ? <img src={tagSvg} alt='채널 태그 이미지' /> : <img src={voiceSvg} alt='음성 태그 이미지' />}
         {data.name}
         <InputChannel
           value={updateName}
