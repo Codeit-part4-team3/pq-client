@@ -6,7 +6,6 @@ import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
 import InviteLinkModal from 'src/components/modal/contents/InviteLinkModal';
 import InviteMemberModal from 'src/components/modal/contents/InviteMemberModal';
 import DefaultModal from 'src/components/modal/DefaultModal';
-import { APP_ORIGIN } from 'src/constants/apiUrl';
 import { ServerDropdownType } from 'src/constants/enum';
 import styled from 'styled-components';
 
@@ -36,7 +35,7 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
 
   const handleDeleteServer = async () => {
     await deleteMutation.mutate();
-    window.location.href = `${APP_ORIGIN}/server/-1`;
+    // window.location.href = `${APP_ORIGIN}/server/-1`; // TODO: 서버 삭제 후 이동할 페이지
     handleCloseModal();
   };
 

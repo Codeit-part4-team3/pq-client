@@ -2,14 +2,12 @@ import styled from 'styled-components';
 
 import MediaControlPanel from './_components/MediaControlPanel';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
 import LocalMedia from './_components/LocalMedia';
 import RemoteMedia from './_components/RemoteMedia';
 import MeetingNote from './_components/MeetingNote';
 import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
-
-const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
+import useSocket from 'src/hooks/useSocket';
 
 const pc_config = {
   iceServers: [
@@ -35,7 +33,7 @@ export default function VoiceChannel() {
   console.log('UserInfo', userInfo);
 
   // socket
-  const socketRef = useRef<Socket | null>(null);
+  const socketRef = useSocket();
   const pcsRef = useRef<{ [socketId: string]: RTCPeerConnection }>({});
   const localVideoRef = useRef<HTMLVideoElement | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
@@ -125,7 +123,7 @@ export default function VoiceChannel() {
 
   useEffect(() => {
     console.log('useEffect');
-    socketRef.current = io(SOCKET_SERVER_URL);
+    if (!socketRef.current) return;
 
     socketRef.current.on('participants_list', async ({ participants }) => {
       console.log('participants_list', participants);
@@ -303,7 +301,12 @@ export default function VoiceChannel() {
 
     return () => {
       if (socketRef.current) {
-        socketRef.current.disconnect();
+        socketRef.current.off('participants_list');
+        socketRef.current.off('get_offer');
+        socketRef.current.off('get_answer');
+        socketRef.current.off('get_candidate');
+        socketRef.current.off('video_track_enabled_changed');
+        socketRef.current.off('user_exit');
       }
     };
   }, [roomName, userId, userNickname, getLocalStream]);

@@ -1,6 +1,5 @@
 import styled, { keyframes } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
 import { lastKey, MessageItem, User } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
 import UtilityButton from './_components/UtilityButton';
@@ -8,8 +7,8 @@ import { useSubscription } from 'src/hooks/useSubscription';
 import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
 import { useQueryGet } from 'src/apis/service/service';
-
-const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
+import { LOCAL_STORAGE_ALRAM_KEY } from 'src/constants/common';
+import useSocket from 'src/hooks/useSocket';
 
 /**@Todo Channel 컴포넌트로 부터 channel date를 prop로 받고 데이터 바인딩 예정
  * 유저 데이터들 처리하는 로직 짜야함
@@ -27,8 +26,9 @@ export default function ChatChannel() {
     refetchInterval: 5000,
     enabled: !!userId,
   });
+
   // 소켓
-  const socketRef = useRef<Socket | null>(null);
+  const socketRef = useSocket();
   // 메시지 관련
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
@@ -149,7 +149,7 @@ export default function ChatChannel() {
   };
 
   useEffect(() => {
-    socketRef.current = io(SOCKET_SERVER_URL);
+    if (!socketRef.current) return;
 
     socketRef.current.emit('join_chat_channel', roomName);
 
@@ -163,12 +163,17 @@ export default function ChatChannel() {
         console.log('initial messages data : ', initialMessages);
         setMessages([...initialMessages]);
         setLastKey(lastKey);
+
+        // 알림표시 제거를 위한 localStroage update
+        const alramMessageId = localStorage.getItem(`${LOCAL_STORAGE_ALRAM_KEY}:${channelId}`);
+        initialMessages.forEach((msg) => {
+          msg.messageId === alramMessageId && localStorage.removeItem(`${LOCAL_STORAGE_ALRAM_KEY}:${channelId}`);
+        });
       },
     );
 
     socketRef.current.on('receive_message', (newMessage: MessageItem) => {
-      console.log('new message data : ', newMessage);
-      setMessages((prevMessages) => [newMessage, ...prevMessages]);
+      if (channelId === newMessage.channelId) setMessages((prevMessages) => [newMessage, ...prevMessages]);
     });
 
     // 메시지 수정 완료
@@ -220,7 +225,12 @@ export default function ChatChannel() {
 
     return () => {
       if (socketRef.current) {
-        socketRef.current.disconnect();
+        socketRef.current.off('join_chat_channel_user_join');
+        socketRef.current.off('initial_chat_messages');
+        socketRef.current.off('receive_message');
+        socketRef.current.off('update_message_complete');
+        socketRef.current.off('delete_message');
+        socketRef.current.off('more_messages');
       }
     };
   }, [roomName]);

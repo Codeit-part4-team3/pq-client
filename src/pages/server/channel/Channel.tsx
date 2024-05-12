@@ -1,17 +1,14 @@
-// import { useState } from 'react';
-
 import styled from 'styled-components';
 
-// import ChatChannel from './chatChannel/ChatChannel';
-
 import { useParams } from 'react-router-dom';
-import VoiceChannel from './voiceChannel/VoiceChannel';
-import ChatChannel from './chatChannel/ChatChannel';
 import { useEffect, useState } from 'react';
-import ChannelHeader from 'src/pages/server/channel/_conponents/ChannelHeader';
 import { useQueryGet } from 'src/apis/service/service';
+
 import { ChannelResponse, UserResponse } from '../_types/type';
 import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
+import VoiceChannel from './voiceChannel/VoiceChannel';
+import ChatChannel from './chatChannel/ChatChannel';
+import ChannelHeader from 'src/pages/server/channel/_conponents/ChannelHeader';
 
 export default function Channel() {
   const [isShowMembers, setIsShowMembers] = useState(true);
