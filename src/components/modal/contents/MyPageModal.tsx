@@ -16,7 +16,7 @@ export default function MyPageModal({ closeModal, isOpen }: ModalProps) {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>(userInfo.imageUrl || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
 
-  const mutationPut = useMutationPut<UserInfo, RequestUpdateUserData>(
+  const updateMutation = useMutationPut<UserInfo, RequestUpdateUserData>(
     `${USER_URL.USER}/me/update`,
     {
       onSuccess: (res: UserInfo) => {
@@ -31,7 +31,7 @@ export default function MyPageModal({ closeModal, isOpen }: ModalProps) {
 
   const onSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
-    mutationPut.mutate({ nickname, imageFile });
+    updateMutation.mutate({ nickname, imageFile });
   };
 
   const handleImageChange: ChangeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
