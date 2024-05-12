@@ -2,10 +2,9 @@ import styled from 'styled-components';
 import extractDate from 'src/utils/extractDate';
 import ChatDayDivider from './ChatDayDivider';
 import addZero from 'src/utils/addZero';
-import { useEffect, useState } from 'react';
 import ContextMenu from './ContextMenu';
 import { ChatMessagesProps } from '../../_types/props';
-import { IContextMenu } from '../../_types/type';
+import useChatContextMenu from '../../_hooks/useChatContextMenu';
 
 export default function ChatMessages({
   serverUserData,
@@ -19,33 +18,7 @@ export default function ChatMessages({
   onEditingMessageChange,
   currentEditingMessageId,
 }: ChatMessagesProps) {
-  // 마우스 오른쪽 클릭시 메뉴창 뜨게 하기
-  const [isContextMenuOpen, setIsContextMenuOpen] = useState<IContextMenu>({
-    isOpen: false,
-    positionX: 0,
-    positionY: 0,
-    messageId: '',
-    message: '',
-    createdAt: 0,
-  });
-
-  // message에 대고 우클릭하면 ContextMenu가 열리게 하기
-  const handleContextMenuOpen =
-    (messageId: string, message: string, createdAt: number) => (e: React.MouseEvent<HTMLDivElement>) => {
-      console.log('right click');
-      e.preventDefault();
-      setIsContextMenuOpen(() => {
-        return {
-          isOpen: !isContextMenuOpen.isOpen,
-          positionX: e.clientX,
-          positionY: e.clientY,
-          messageId,
-          message,
-          createdAt,
-        };
-      });
-      setEditingMessage(message);
-    };
+  const { isContextMenuOpen, handleContextMenuOpen } = useChatContextMenu(setEditingMessage);
 
   // input창에서 enter키 또는 esc키 누를 때
   const handleMessageTextEditingKeyDown = (
@@ -59,31 +32,6 @@ export default function ChatMessages({
       onUpdateMessageCancelClick({ messageId });
     }
   };
-
-  // ContextMenu가 열려있을 때만 handleContextMenuClose 이벤트리스너 추가
-  useEffect(() => {
-    const handleContextMenuClose = () => {
-      setIsContextMenuOpen({
-        isOpen: false,
-        positionX: 0,
-        positionY: 0,
-        messageId: '',
-        message: '',
-        createdAt: 0,
-      });
-    };
-
-    if (isContextMenuOpen.isOpen) {
-      document.addEventListener('click', handleContextMenuClose);
-    } else {
-      document.removeEventListener('click', handleContextMenuClose);
-    }
-
-    // 메모리 누수 방지를 위해 이벤트리스너 제거
-    return () => {
-      document.removeEventListener('click', handleContextMenuClose);
-    };
-  }, [isContextMenuOpen]);
 
   // 다음 메시지의 유저와 현재 메시지의 유저가 다르면 true로 변경
   let isDifferentUser = false;
