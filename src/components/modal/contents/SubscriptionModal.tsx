@@ -12,7 +12,7 @@ import {
   SubscriptionResponse,
   TempOrderRequest,
   TempOrderResponse,
-} from 'src/types/subscriptionType';
+} from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
 import { useTempOrderStore, usePlanStore } from 'src/store/paymentStore';
 import SubscriptionContainer from './SubscriptionModal/SubscriptionContainer';
 import CancelContainer from './SubscriptionModal/CancelContainer';

@@ -1,6 +1,7 @@
 import { GlobalStyles } from './GlobalStyles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Router from './routes/routes';
+import { ToastProvider } from './context/toast';
 
 function App() {
   const queryClient = new QueryClient();
@@ -9,7 +10,9 @@ function App() {
     <>
       <GlobalStyles />
       <QueryClientProvider client={queryClient}>
-        <Router />
+        <ToastProvider>
+          <Router />
+        </ToastProvider>
       </QueryClientProvider>
     </>
   );

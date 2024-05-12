@@ -1,11 +1,11 @@
-import { useState, MouseEvent, Dispatch, SetStateAction, useCallback, memo } from 'react';
+import { useState, Dispatch, SetStateAction, useCallback, memo, useEffect } from 'react';
 import { ModalTitle } from '../../CommonStyles';
 import { USER_URL } from 'src/constants/apiUrl';
 import RegistCardButton from 'src/components/modal/contents/SubscriptionModal/RegistCardButton';
-import { Plan, PlansResponse } from 'src/types/subscriptionType';
+import { Plan, PlansResponse } from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
 import styled from 'styled-components';
 import { useQueryGet } from 'src/apis/service/service';
-import { SubscriptionResponse } from 'src/types/subscriptionType';
+import { SubscriptionResponse } from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
 
 interface SubscriptionContainerProps {
   subscription: SubscriptionResponse | undefined;
@@ -21,11 +21,19 @@ export default function SubscriptionContainer({
   setIsCancelSelected,
 }: SubscriptionContainerProps) {
   const [isRecurring, setIsRecurring] = useState(false);
+  const [isEventActive, setIsEventActive] = useState(false);
 
   const { data: plans } = useQueryGet<PlansResponse>('getPlan', `${USER_URL.PLANS}/all`);
+  const { data: event } = useQueryGet<{ amount: number }>('getEventAmount', `${USER_URL.PAYMENTS}/event`);
+
+  useEffect(() => {
+    if (event) {
+      setIsEventActive(true);
+    }
+  }, [event]);
 
   const handlePlanButtonClick = useCallback(
-    (e: MouseEvent<HTMLButtonElement>, id: number) => {
+    (id: number) => {
       if (plans) {
         const plan = plans.find((plan) => plan.id === id);
         setSelectedPlan(plan);
@@ -48,22 +56,40 @@ export default function SubscriptionContainer({
       <SubscriptionBox>
         <PlanButtonContainer>
           {plans &&
-            plans.map((plan) => (
-              <PlanButton
-                type='button'
-                key={plan.id}
-                onClick={(e) => handlePlanButtonClick(e, plan.id)}
-                $isSelected={selectedPlan?.id === plan.id}
-                $isSubscribed={isSubscribedPlan(plan.id)}
-                disabled={isSubscribedPlan(plan.id)}
-              >
-                {isSubscribedPlan(plan.id) && <SubscribedToast>Subscribed</SubscribedToast>}
-                <PlanName>{plan.type.toUpperCase()}</PlanName>
-                <br />
-                <br />₩{plan.price.toLocaleString()}
-              </PlanButton>
-            ))}
+            plans.map(
+              (plan, index) =>
+                index !== 2 && (
+                  <PlanButton
+                    type='button'
+                    key={plan.id}
+                    onClick={() => handlePlanButtonClick(plan.id)}
+                    $isSelected={selectedPlan?.id === plan.id}
+                    $isSubscribed={isSubscribedPlan(plan.id)}
+                    disabled={isSubscribedPlan(plan.id)}
+                  >
+                    {isSubscribedPlan(plan.id) && <SubscribedToast>Subscribed</SubscribedToast>}
+                    <PlanName>{plan.type.toUpperCase()}</PlanName>
+                    <br />
+                    <br />₩{plan.price.toLocaleString()}
+                  </PlanButton>
+                ),
+            )}
         </PlanButtonContainer>
+        {plans?.[2] && isEventActive && (
+          <PlanButton
+            type='button'
+            key={plans[2].id}
+            onClick={() => handlePlanButtonClick(plans[2].id)}
+            $isSelected={selectedPlan?.id === plans[2].id}
+            $isSubscribed={isSubscribedPlan(plans[2].id)}
+            disabled={isSubscribedPlan(plans[2].id)}
+          >
+            {isSubscribedPlan(plans[2].id) && <SubscribedToast>참여해주셔서 감사합니다!</SubscribedToast>}
+            <PlanName>{plans[2].type.toUpperCase()}</PlanName>
+            <br />
+            <br />₩{plans[2].price.toLocaleString()}
+          </PlanButton>
+        )}
         <SubscriptionCancelButton onClick={() => setIsCancelSelected(true)}>구독 취소 & 환불</SubscriptionCancelButton>
       </SubscriptionBox>
 
@@ -95,7 +121,9 @@ const SubscriptionBox = styled.div`
 const PlanButtonContainer = styled.div`
   height: 150px;
   display: flex;
+  justify-content: space-between;
   gap: 20px;
+  margin-bottom: 20px;
 `;
 
 const PlanButton = memo(styled.button<{ $isSelected: boolean; $isSubscribed: boolean }>`
@@ -125,7 +153,7 @@ const PlanButton = memo(styled.button<{ $isSelected: boolean; $isSubscribed: boo
 
 const SubscribedToast = styled.div`
   padding: 5px 10px;
-  width: 200px;
+  width: 100%;
   position: absolute;
   font-size: 25px;
   font-weight: bold;

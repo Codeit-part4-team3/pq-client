@@ -38,3 +38,15 @@ export const usePlanStore = create<PlanState>((set) => ({
 
   removeAll: () => set({ planId: 0, planType: '', amount: 0 }),
 }));
+
+interface EventWinnerState {
+  eventWinner: string | undefined;
+  setEventWinner: (eventWinner: string | undefined) => void;
+  removeEventWinner: () => void;
+}
+
+export const useEventWinnerStore = create<EventWinnerState>((set) => ({
+  eventWinner: undefined,
+  setEventWinner: (eventWinner: string | undefined) => set({ eventWinner }),
+  removeEventWinner: () => set({ eventWinner: undefined }),
+}));
