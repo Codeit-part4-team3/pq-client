@@ -1,4 +1,4 @@
-import { MessageItem, User } from './type';
+import { handleMessageTextEditingKeyDown, MessageItem, User } from './type';
 
 export interface ChatChannelProps {
   channeId: string;
@@ -32,4 +32,13 @@ export interface ContextMenuProps {
   createdAt: number;
   onDeleteMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
   onUpdateMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
+}
+
+export interface ChatMessageTextEditingBoxProps {
+  messageItem: MessageItem;
+  editingMessage: string;
+  onEditingMessageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onUpdateKeyDown: (message: { messageId: string; createdAt: number }) => void;
+  onUpdateCancelClick: (message: { messageId: string }) => void;
+  onKeyDown: ({ e, messageId, createdAt }: handleMessageTextEditingKeyDown) => void;
 }

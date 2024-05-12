@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 import ChatDayDivider from './ChatDayDivider';
 import ContextMenu from './ContextMenu';
-
 import useChatContextMenu from '../_hooks/useChatContextMenu';
 import { ChatMessagesProps } from '../_types/props';
 import { formatMessageData } from '../_utils/formatMessageData';
 import { useRef } from 'react';
+import ChatMessageTextEditingBox from './ChatMessageTextEditingBox';
+import { handleMessageTextEditingKeyDown } from '../_types/type';
 
 export default function ChatMessages({
   serverUserData,
@@ -20,22 +21,17 @@ export default function ChatMessages({
   currentEditingMessageId,
 }: ChatMessagesProps) {
   const { isContextMenuOpen, handleContextMenuOpen } = useChatContextMenu(setEditingMessage);
+  // 다음 메시지의 유저와 현재 메시지의 유저가 다르면 true로 변경
+  const isDifferentUserRef = useRef(false);
 
   // input창에서 enter키 또는 esc키 누를 때
-  const handleMessageTextEditingKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    messageId: string,
-    createdAt: number,
-  ) => {
+  const handleMessageTextEditingKeyDown = ({ e, messageId, createdAt }: handleMessageTextEditingKeyDown) => {
     if (e.key === 'Enter') {
       onUpdateMessageKeyDown({ messageId, createdAt });
     } else if (e.key === 'Escape') {
       onUpdateMessageCancelClick({ messageId });
     }
   };
-
-  // 다음 메시지의 유저와 현재 메시지의 유저가 다르면 true로 변경
-  const isDifferentUserRef = useRef(false);
 
   if (!messages || messages.length === 0) return null;
   return (
@@ -71,43 +67,20 @@ export default function ChatMessages({
                   <UserProfileImage>
                     <Image profileImage={user?.profileImage ? user.profileImage : '/images/minji-profile-image.png'} />
                   </UserProfileImage>
-
                   <ChatMessageContent>
                     <ChatMessageContentHeader>
                       <ChatMessageSender>{user?.nickname}</ChatMessageSender>
                       <ChatMessageCreatedAt>{messageCreatedAt}</ChatMessageCreatedAt>
                     </ChatMessageContentHeader>
                     {messageItem.status === 'editing' ? (
-                      <ChatMessageTextEditingBox>
-                        <ChatMessageTextEditingInput
-                          value={editingMessage}
-                          onChange={onEditingMessageChange}
-                          onKeyDown={(e) => {
-                            handleMessageTextEditingKeyDown(e, messageItem.messageId, messageItem.createdAt);
-                          }}
-                        />
-                        <ChatMessageTextEditingDescription>
-                          ESC 키로
-                          <button
-                            onClick={() => {
-                              onUpdateMessageCancelClick({ messageId: messageItem.messageId });
-                            }}
-                          >
-                            취소
-                          </button>
-                          • Enter 키로
-                          <button
-                            onClick={() => {
-                              onUpdateMessageKeyDown({
-                                messageId: messageItem.messageId,
-                                createdAt: messageItem.createdAt,
-                              });
-                            }}
-                          >
-                            저장
-                          </button>
-                        </ChatMessageTextEditingDescription>
-                      </ChatMessageTextEditingBox>
+                      <ChatMessageTextEditingBox
+                        messageItem={messageItem}
+                        editingMessage={editingMessage}
+                        onEditingMessageChange={onEditingMessageChange}
+                        onUpdateKeyDown={onUpdateMessageKeyDown}
+                        onUpdateCancelClick={onUpdateMessageCancelClick}
+                        onKeyDown={handleMessageTextEditingKeyDown}
+                      />
                     ) : (
                       <ChatMessageText>{messageItem.message}</ChatMessageText>
                     )}
@@ -118,36 +91,14 @@ export default function ChatMessages({
               <>
                 {messageItem.status === 'editing' ? (
                   <SameUserMessage isOnEdit={currentEditingMessageId === messageItem.messageId}>
-                    <ChatMessageTextEditingBox>
-                      <ChatMessageTextEditingInput
-                        value={editingMessage}
-                        onChange={onEditingMessageChange}
-                        onKeyDown={(e) => {
-                          handleMessageTextEditingKeyDown(e, messageItem.messageId, messageItem.createdAt);
-                        }}
-                      />
-                      <ChatMessageTextEditingDescription>
-                        ESC 키로
-                        <button
-                          onClick={() => {
-                            onUpdateMessageCancelClick({ messageId: messageItem.messageId });
-                          }}
-                        >
-                          취소
-                        </button>
-                        • Enter 키로
-                        <button
-                          onClick={() => {
-                            onUpdateMessageKeyDown({
-                              messageId: messageItem.messageId,
-                              createdAt: messageItem.createdAt,
-                            });
-                          }}
-                        >
-                          저장
-                        </button>
-                      </ChatMessageTextEditingDescription>
-                    </ChatMessageTextEditingBox>
+                    <ChatMessageTextEditingBox
+                      messageItem={messageItem}
+                      editingMessage={editingMessage}
+                      onEditingMessageChange={onEditingMessageChange}
+                      onUpdateKeyDown={onUpdateMessageKeyDown}
+                      onUpdateCancelClick={onUpdateMessageCancelClick}
+                      onKeyDown={handleMessageTextEditingKeyDown}
+                    />
                   </SameUserMessage>
                 ) : (
                   <SameUserMessage
@@ -251,40 +202,5 @@ const SameUserMessage = styled.div<{ isOnEdit: boolean }>`
 
   &:hover {
     background-color: var(--light_blue_0);
-  }
-`;
-
-const ChatMessageTextEditingBox = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  padding-right: 52px;
-
-  margin-top: 6px;
-`;
-
-const ChatMessageTextEditingInput = styled.input`
-  width: 100%;
-  border: none;
-  border-radius: 8px;
-  font-family: pretendard;
-  font-size: 16px;
-  outline: none;
-  padding: 12px 18px;
-
-  background-color: var(--landing_background_color);
-`;
-
-const ChatMessageTextEditingDescription = styled.div`
-  font-family: Pretendard;
-  font-size: 12px;
-  padding-bottom: 6px;
-
-  button {
-    background-color: transparent;
-    border: none;
-    color: var(--light_blue_5);
-    font-weight: 700;
-    cursor: pointer;
   }
 `;

@@ -19,3 +19,9 @@ export interface User {
   nickname: string;
   profileImage?: string;
 }
+
+export interface handleMessageTextEditingKeyDown {
+  e: React.KeyboardEvent<HTMLInputElement>;
+  messageId: string;
+  createdAt: number;
+}
