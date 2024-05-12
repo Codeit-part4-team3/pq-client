@@ -76,8 +76,8 @@ export default function ChannelItem({ data }: ChannelItemProps) {
         />
       </Title>
       <ButtonGroup>
-        <UpdateButton onClick={handleUpdate} />
         <CloseButton onClick={handleDeleteModal} />
+        <UpdateButton onClick={handleUpdate} />
       </ButtonGroup>
       {
         <DefaultModal
@@ -171,6 +171,8 @@ const CloseButton = styled(Button)`
 `;
 
 const UpdateButton = styled(Button)`
+  width: 16px;
+  height: 16px;
   background-image: url('/images/pencil-white.png');
 `;
 
@@ -180,6 +182,8 @@ const ButtonGroup = styled.div`
   justify-content: center;
   align-items: center;
   gap: 4px;
+
+  margin-right: 4px;
 `;
 
 const InputChannel = styled.input<{ isUpdate: boolean }>`

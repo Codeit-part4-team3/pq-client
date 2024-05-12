@@ -76,9 +76,9 @@ export default function ChannelGroup({ data, children }: ChannelGroupProps) {
           />
         </Title>
         <ButtonGroup>
-          <PlusButton type='button' onClick={openModal} />
-          <UpdateButton onClick={handleUpdate} />
           <CloseButton onClick={handleDeleteModal} />
+          <UpdateButton onClick={handleUpdate} />
+          <PlusButton type='button' onClick={openModal} />
         </ButtonGroup>
         <CreateChannelModal isOpen={isOpen} closeModal={closeModal} groupId={data.id} />
         {
@@ -131,14 +131,6 @@ const Body = styled.div`
   gap: 5px;
 `;
 
-const DropDownButton = styled(ButtonIcon)`
-  background-image: url('/images/arrow-down.svg');
-`;
-
-const PlusButton = styled(ButtonIcon)`
-  background-image: url('/images/plus_white.svg');
-`;
-
 const Title = styled.div`
   width: 100%;
 
@@ -153,6 +145,10 @@ const Title = styled.div`
   }
 `;
 
+const DropDownButton = styled(ButtonIcon)`
+  background-image: url('/images/arrow-down.svg');
+`;
+
 const Button = styled(ButtonIcon)`
   width: 20px;
   height: 20px;
@@ -162,6 +158,7 @@ const Button = styled(ButtonIcon)`
   background-size: cover;
   background-position: center;
   transition: 0.2s;
+  display: none;
 
   &:hover {
     cursor: pointer;
@@ -169,11 +166,17 @@ const Button = styled(ButtonIcon)`
   }
 `;
 
+const PlusButton = styled(ButtonIcon)`
+  background-image: url('/images/plus_white.svg');
+`;
+
 const CloseButton = styled(Button)`
   background-image: url('/images/close.png');
 `;
 
 const UpdateButton = styled(Button)`
+  width: 16px;
+  height: 16px;
   background-image: url('/images/pencil-white.png');
 `;
 
@@ -183,6 +186,12 @@ const ButtonGroup = styled.div`
   justify-content: center;
   align-items: center;
   gap: 4px;
+
+  &:hover {
+    & > * {
+      display: block;
+    }
+  }
 `;
 
 const InputChannel = styled.input<{ isUpdate: boolean }>`

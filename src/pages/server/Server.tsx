@@ -260,7 +260,6 @@ const Container = styled.main`
 const LeftContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 10px;
 
   z-index: 10;
 `;
@@ -270,9 +269,10 @@ const FirstContainer = styled.div`
 
   background: transparent;
   padding: 10px;
+  padding-bottom: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   gap: 10px;
   border-radius: 10px;

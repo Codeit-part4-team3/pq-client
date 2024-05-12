@@ -78,6 +78,6 @@ export const Status = styled.div<{ $state: string }>`
   width: 10px;
   height: 10px;
   background-color: ${(props) =>
-    props.$state === '온라인' ? 'green' : props.$state === '자리비움' ? 'yellow' : 'gray'};
+    props.$state === '온라인' ? 'green' : props.$state === '자리비움' ? 'orange' : 'gray'};
   border-radius: 50%;
 `;

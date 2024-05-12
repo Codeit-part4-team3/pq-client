@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { useEffect, useId, useState } from 'react';
 import { ServerItemProps } from '../_types/props';
-import { ProfileImage } from 'src/GlobalStyles';
 import { LOCAL_STORAGE_ALRAM_KEY } from 'src/constants/common';
 
 export default function ServerItem({ data, channelDataList, ...rest }: ServerItemProps) {
@@ -31,7 +30,7 @@ export default function ServerItem({ data, channelDataList, ...rest }: ServerIte
     <Wrapper>
       <Button key={`${lid}-${data.id}`} {...rest}>
         {data.imageUrl ? (
-          <ProfileImage imageUrl={data.imageUrl} data-serverid={data.id} />
+          <Image imageUrl={data.imageUrl} data-serverid={data.id} />
         ) : (
           <strong data-serverid={data.id}>{data.name}</strong>
         )}
@@ -88,5 +87,18 @@ const Alram = styled.div`
 
     border-radius: 50%;
     background-color: var(--specific_color);
+  }
+`;
+
+export const Image = styled.div<{ imageUrl?: string }>`
+  width: 100%;
+  height: 100%;
+
+  background-image: ${(props) => (props.imageUrl ? `url(${props.imageUrl})` : ``)};
+  background-size: cover;
+  background-position: center;
+
+  &:hover {
+    cursor: pointer;
   }
 `;
