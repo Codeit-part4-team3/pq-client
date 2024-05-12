@@ -45,6 +45,7 @@ export default function VoiceChannel() {
       userNickname: string;
       stream: MediaStream;
       showVideo: boolean;
+      isTalking: boolean;
     }[]
   >([]);
 
@@ -162,6 +163,7 @@ export default function VoiceChannel() {
               userNickname: participant.userNickname,
               stream: e.streams[0],
               showVideo: true,
+              isTalking: false,
             },
           ]);
         };
@@ -227,6 +229,7 @@ export default function VoiceChannel() {
               userNickname: offerSenderNickname,
               stream: e.streams[0],
               showVideo: true,
+              isTalking: false,
             },
           ]);
         };

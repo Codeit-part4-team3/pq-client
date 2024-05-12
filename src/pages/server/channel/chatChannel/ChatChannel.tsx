@@ -31,7 +31,7 @@ export default function ChatChannel() {
   const socketRef = useSocket();
   // 메시지 관련
   const [messages, setMessages] = useState<MessageItem[]>([]);
-  const [inputValue, setInputValue] = useState<string>('');
+  const messageInputRef = useRef<HTMLInputElement | null>(null);
   // 무한 스크롤
   const [isNoMoreMessages, setIsNoMoreMessages] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
@@ -50,15 +50,13 @@ export default function ChatChannel() {
     setIsClickedUtilityButton(!isClickedUtilityButton);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
   const handleSendMessageKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (inputValue === '') return;
-    if (e.key === 'Enter') {
-      socketRef.current?.emit(SOCKET_EMIT.SEND_MESSAGE, { message: e.currentTarget.value, roomName, userId });
-      setInputValue('');
+    if (messageInputRef.current) {
+      if (messageInputRef.current?.value === '') return;
+      if (e.key === 'Enter') {
+        socketRef.current?.emit(SOCKET_EMIT.SEND_MESSAGE, { message: e.currentTarget.value, roomName, userId });
+        messageInputRef.current.value = '';
+      }
     }
   };
 
@@ -247,10 +245,10 @@ export default function ChatChannel() {
 
   useEffect(() => {
     // 페이지 진입시, 채팅이 추가될 때마다 스크롤을 맨 아래로 내려준다
-    if (inputValue === '' && chatContainerRef.current) {
+    if (messageInputRef.current?.value === '' && chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [inputValue]);
+  }, []);
 
   useEffect(() => {
     infiniteScroll();
@@ -298,8 +296,7 @@ export default function ChatChannel() {
         <ChatInput
           type='text'
           placeholder={`${'#채팅방 이름'}에 메시지 보내기`}
-          value={inputValue}
-          onChange={handleInputChange}
+          ref={messageInputRef}
           onKeyDown={handleSendMessageKeyDown}
           maxLength={messageMaxLength}
         />
