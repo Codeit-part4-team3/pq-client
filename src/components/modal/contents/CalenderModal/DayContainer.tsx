@@ -3,9 +3,9 @@ import EssentialInput from '../../input/EssentialInput';
 import styled from 'styled-components';
 import ModalButtons from '../../button/ModalButtons';
 import { ModalContainer, ModalForm, ModalTitle } from '../../CommonStyles';
-import axiosInstance from 'src/apis/instance/axiosInstance';
+
 import { Event, EventReqeust } from './type/type';
-import { useMutationPost, useQueryGet } from 'src/apis/service/service';
+import { useMutationDelete, useMutationPost, useMutationPut, useQueryGet } from 'src/apis/service/service';
 import { ServerIdContext } from 'src/pages/server/Server';
 import { getTimes } from 'src/utils/dateFuntion';
 
@@ -38,6 +38,18 @@ export default function DayContainer({ currentDay, currentMonth, currentYear, se
       refetch();
     },
   });
+  const updateMutation = useMutationPut<Event, EventReqeust>(`/chat/v1/server/event/update?eId=${eId}`, {
+    onSuccess: () => {
+      eventRefetch();
+      refetch();
+    },
+  });
+  const deleteMutation = useMutationDelete(`/chat/v1/server/event/delete?eId=${eId}`, {
+    onSuccess: () => {
+      eventRefetch();
+      refetch();
+    },
+  });
 
   const reset = () => {
     setIsUpdate(false);
@@ -60,9 +72,8 @@ export default function DayContainer({ currentDay, currentMonth, currentYear, se
   };
 
   const deleteButtonClick = async (id: number) => {
-    await axiosInstance.delete(`/chat/v1/server/event/delete?eId=${id}`);
-    eventRefetch();
-    refetch();
+    await setEId(id);
+    deleteMutation.mutate();
   };
 
   const onSubmit: FormEventHandler = async (e) => {
@@ -80,13 +91,7 @@ export default function DayContainer({ currentDay, currentMonth, currentYear, se
     }
 
     if (isUpdate) {
-      await axiosInstance.put(`/chat/v1/server/event/update?eId=${eId}`, {
-        title,
-        start: startDate,
-        serverId,
-      });
-      eventRefetch();
-      refetch();
+      updateMutation.mutate({ title, start: startDate, serverId });
     }
 
     reset();

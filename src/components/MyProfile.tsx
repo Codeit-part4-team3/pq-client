@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { MouseEventHandler, useState } from 'react';
 import MyDropDown from './dropdown/MyDropDown';
 import InvitedServerListModal from './modal/contents/InvitedServerListModal';
 import { MyDropdownType } from 'src/constants/enum';
@@ -7,6 +7,7 @@ import useUserStore from 'src/store/userStore';
 import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
 import LogoutModal from './modal/contents/LogoutModal';
 import MyPageModal from './modal/contents/MyPageModal';
+import MyState, { Status } from './MyState';
 import SubscriptionModal from './modal/contents/SubscriptionModal';
 
 /**
@@ -16,6 +17,7 @@ export default function MyProfile() {
   const [isShow, setIsShow] = useState<boolean>(false);
   const [isDropdown, setIsDropdown] = useState<boolean>(false);
   const [dropdownType, setDropdownType] = useState<MyDropdownType>(MyDropdownType.INVITED_SERVER_LIST);
+  const [isState, setIsState] = useState<boolean>(false);
 
   const { userInfo } = useUserStore();
 
@@ -33,6 +35,15 @@ export default function MyProfile() {
     setDropdownType(item);
   };
 
+  const onMouseEnter: MouseEventHandler = (e) => {
+    e.preventDefault();
+    setIsState(true);
+  };
+  const onMouseLeave: MouseEventHandler = (e) => {
+    e.preventDefault();
+    setIsState(false);
+  };
+
   return (
     <>
       <Area>
@@ -42,9 +53,10 @@ export default function MyProfile() {
           </ProfileImageWapperAinmation>
           <InfoWrapper>
             <strong>{userInfo.nickname}</strong>
-            <div>
-              <Status />
+            <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+              <Status $state={userInfo.state || '온라인'} />
               <div>{userInfo.state}</div>
+              {isState ? <MyState /> : null}
             </div>
           </InfoWrapper>
           <MyDropDown isDropDown={isDropdown} selectItem={handleSelectItem} />
@@ -123,11 +135,4 @@ const InfoWrapper = styled.div`
     align-items: center;
     gap: 5px;
   }
-`;
-
-const Status = styled.div`
-  width: 10px;
-  height: 10px;
-  background-color: #00cc00;
-  border-radius: 50%;
 `;

@@ -5,30 +5,33 @@ import ImageUploadBox from '../input/ImageUploadBox';
 import Modal from '../modal';
 import { ModalProps } from 'src/types/modalType';
 import ModalButtons from '../button/ModalButtons';
-import axiosInstance from 'src/apis/instance/axiosInstance';
 import { USER_URL } from 'src/constants/apiUrl';
 import styled from 'styled-components';
+import { RequestUpdateUserData, UserInfo } from 'src/types/userType';
+import { useMutationPut } from 'src/apis/service/service';
 
 export default function MyPageModal({ closeModal, isOpen }: ModalProps) {
   const { userInfo, setUserInfo } = useUserStore();
   const [nickname, setNickname] = useState<string>(userInfo.nickname);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>(userInfo.imageUrl || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
-  //   const [state, setState] = useState<string>(userInfo.state || '');
+
+  const updateMutation = useMutationPut<UserInfo, RequestUpdateUserData>(
+    `${USER_URL.USER}/me/update`,
+    {
+      onSuccess: (res: UserInfo) => {
+        setUserInfo(res);
+        closeModal();
+      },
+    },
+    {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    },
+  );
 
   const onSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
-    const res = await axiosInstance.put(
-      `${USER_URL.USER}/me/update`,
-      { nickname, imageFile },
-      {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      },
-    );
-
-    if (res.status === 200) {
-      setUserInfo(res.data);
-    }
+    updateMutation.mutate({ nickname, imageFile });
   };
 
   const handleImageChange: ChangeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
