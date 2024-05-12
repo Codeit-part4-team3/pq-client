@@ -26,7 +26,7 @@ import useUserStore from 'src/store/userStore';
 import MyProfile from '../../components/MyProfile';
 import useSocket from 'src/hooks/useSocket';
 import { MessageItem } from './channel/chatChannel/_types/type';
-import { LOCAL_STORAGE_ALRAM_KEY } from 'src/constants/common';
+import { LOCAL_STORAGE_ALRAM_KEY, SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
 
 export const ServerIdContext = React.createContext<number>(0);
 export const UserIdContext = React.createContext<number>(0);
@@ -160,10 +160,10 @@ export default function Server() {
     // TODO : 유저가 참여해 있는 모든 체널에 대해 join을 해야함
     if (socketRef.current) {
       allChannelByUser?.forEach((channel) => {
-        socketRef.current?.emit('join', `${channel?.id}`);
+        socketRef.current?.emit(SOCKET_EMIT.JOIN, `${channel?.id}`);
       });
 
-      socketRef.current.on('receive_message', (newMessage: MessageItem) => {
+      socketRef.current.on(SOCKET_ON.RECEIVE_MESSAGE, (newMessage: MessageItem) => {
         if (String(channelId) !== newMessage.channelId) {
           // storage에 하나의 string이 아닌 객체를 JSON.stringfy로 저장할 수도 있음
           localStorage.setItem(`${LOCAL_STORAGE_ALRAM_KEY}:${newMessage.channelId}`, `${newMessage.messageId}`);
@@ -173,7 +173,7 @@ export default function Server() {
 
     return () => {
       if (socketRef.current) {
-        socketRef.current.off('receive_message');
+        socketRef.current.off(SOCKET_ON.RECEIVE_MESSAGE);
       }
     };
   }, [allChannelByUser, channelId]);

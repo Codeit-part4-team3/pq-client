@@ -8,6 +8,7 @@ import MeetingNote from './_components/MeetingNote';
 import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
 import useSocket from 'src/hooks/useSocket';
+import { SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
 
 const pc_config = {
   iceServers: [
@@ -89,7 +90,7 @@ export default function VoiceChannel() {
       console.log(videoTrack);
       if (videoTrack) {
         videoTrack.enabled = !videoTrack.enabled;
-        socketRef.current?.emit('video_track_enabled_changed', {
+        socketRef.current?.emit(SOCKET_EMIT.VIDEO_TRACK_ENABLED_CHANGED, {
           enabled: videoTrack.enabled,
           userSocketId: socketRef.current.id,
           roomName,
@@ -114,7 +115,7 @@ export default function VoiceChannel() {
       localStreamRef.current = stream;
 
       if (socketRef.current) {
-        socketRef.current.emit('join_voice_channel', { roomName, userId, userNickname });
+        socketRef.current.emit(SOCKET_EMIT.JOIN_VOICE_CHANNEL, { roomName, userId, userNickname });
       }
     } catch (error) {
       console.error('failed to get user media :', error);
@@ -125,7 +126,7 @@ export default function VoiceChannel() {
     console.log('useEffect');
     if (!socketRef.current) return;
 
-    socketRef.current.on('participants_list', async ({ participants }) => {
+    socketRef.current.on(SOCKET_ON.PARTICIPANTS_LIST, async ({ participants }) => {
       console.log('participants_list', participants);
       // participant를 순회하면서 RTCPeerConnection을 생성하고 offer를 보낸다.
       for (const participant of participants) {
@@ -137,7 +138,7 @@ export default function VoiceChannel() {
         // onicecandidate
         pc.onicecandidate = (e) => {
           if (e.candidate) {
-            socketRef.current?.emit('candidate', {
+            socketRef.current?.emit(SOCKET_EMIT.CANDIDATE, {
               candidate: e.candidate,
               candidateSenderId: socketRef.current?.id,
               candidateReceiverId: participant.socketId,
@@ -191,68 +192,71 @@ export default function VoiceChannel() {
       }
     });
 
-    socketRef.current.on('get_offer', async ({ sdp, offerSenderSocketId, offerSenderNickname, offerSenderId }) => {
-      console.log('get_offer : ', sdp, offerSenderSocketId, offerSenderNickname, offerSenderId);
-      // pc 설정
-      const pc = new RTCPeerConnection(pc_config);
-      pcsRef.current[offerSenderSocketId] = pc;
+    socketRef.current.on(
+      SOCKET_ON.GET_OFFER,
+      async ({ sdp, offerSenderSocketId, offerSenderNickname, offerSenderId }) => {
+        console.log('get_offer : ', sdp, offerSenderSocketId, offerSenderNickname, offerSenderId);
+        // pc 설정
+        const pc = new RTCPeerConnection(pc_config);
+        pcsRef.current[offerSenderSocketId] = pc;
 
-      // onicecandidate
-      pc.onicecandidate = (e) => {
-        if (e.candidate) {
-          socketRef.current?.emit('candidate', {
-            candidate: e.candidate,
-            candidateSenderId: socketRef.current?.id,
-            candidateReceiverId: offerSenderSocketId,
+        // onicecandidate
+        pc.onicecandidate = (e) => {
+          if (e.candidate) {
+            socketRef.current?.emit(SOCKET_EMIT.CANDIDATE, {
+              candidate: e.candidate,
+              candidateSenderId: socketRef.current?.id,
+              candidateReceiverId: offerSenderSocketId,
+            });
+          }
+        };
+
+        pc.oniceconnectionstatechange = (e) => {
+          console.log(e);
+        };
+
+        // 미디어 스트림 수신
+        pc.ontrack = (e) => {
+          console.log('ontrack', e.streams[0]);
+          setUsers((prevUsers) => prevUsers.filter((user) => user.socketId !== offerSenderSocketId));
+          setUsers((prevUsers) => [
+            ...prevUsers,
+            {
+              socketId: offerSenderSocketId,
+              userId: offerSenderId,
+              userNickname: offerSenderNickname,
+              stream: e.streams[0],
+              showVideo: true,
+            },
+          ]);
+        };
+
+        // 로컬 미디어 스트림 송신
+        if (localStreamRef.current) {
+          localStreamRef.current.getTracks().forEach((track) => {
+            pc.addTrack(track, localStreamRef.current!);
           });
         }
-      };
 
-      pc.oniceconnectionstatechange = (e) => {
-        console.log(e);
-      };
-
-      // 미디어 스트림 수신
-      pc.ontrack = (e) => {
-        console.log('ontrack', e.streams[0]);
-        setUsers((prevUsers) => prevUsers.filter((user) => user.socketId !== offerSenderSocketId));
-        setUsers((prevUsers) => [
-          ...prevUsers,
-          {
-            socketId: offerSenderSocketId,
-            userId: offerSenderId,
-            userNickname: offerSenderNickname,
-            stream: e.streams[0],
-            showVideo: true,
-          },
-        ]);
-      };
-
-      // 로컬 미디어 스트림 송신
-      if (localStreamRef.current) {
-        localStreamRef.current.getTracks().forEach((track) => {
-          pc.addTrack(track, localStreamRef.current!);
-        });
-      }
-
-      // setRemoteDescription
-      try {
-        await pc.setRemoteDescription(new RTCSessionDescription(sdp));
-        const answer = await pc.createAnswer();
-        await pc.setLocalDescription(new RTCSessionDescription(answer));
-        if (socketRef.current) {
-          socketRef.current.emit('answer', {
-            sdp: answer,
-            answerSenderSocketId: socketRef.current.id,
-            answerReceiverSocketId: offerSenderSocketId,
-          });
+        // setRemoteDescription
+        try {
+          await pc.setRemoteDescription(new RTCSessionDescription(sdp));
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(new RTCSessionDescription(answer));
+          if (socketRef.current) {
+            socketRef.current.emit(SOCKET_EMIT.ANSWER, {
+              sdp: answer,
+              answerSenderSocketId: socketRef.current.id,
+              answerReceiverSocketId: offerSenderSocketId,
+            });
+          }
+        } catch (error) {
+          console.error('failed to set remote description :', error);
         }
-      } catch (error) {
-        console.error('failed to set remote description :', error);
-      }
-    });
+      },
+    );
 
-    socketRef.current.on('get_answer', async ({ sdp, answerSenderSocketId }) => {
+    socketRef.current.on(SOCKET_ON.GET_ANSWER, async ({ sdp, answerSenderSocketId }) => {
       console.log('get_answer : ', sdp, answerSenderSocketId);
       try {
         const pc: RTCPeerConnection = pcsRef.current[answerSenderSocketId];
@@ -265,7 +269,7 @@ export default function VoiceChannel() {
       }
     });
 
-    socketRef.current.on('get_candidate', async ({ candidate, candidateSenderId }) => {
+    socketRef.current.on(SOCKET_ON.GET_CANDIDATE, async ({ candidate, candidateSenderId }) => {
       const pc: RTCPeerConnection = pcsRef.current[candidateSenderId];
       if (pc) {
         try {
@@ -278,7 +282,7 @@ export default function VoiceChannel() {
     });
 
     // 다른 유저가 자신의 비디오를 껐을 때
-    socketRef.current.on('video_track_enabled_changed', ({ enabled, userSocketId }) => {
+    socketRef.current.on(SOCKET_ON.VIDEO_TRACK_ENABLED_CHANGED, ({ enabled, userSocketId }) => {
       setUsers((prevUsers) => {
         const user = prevUsers.find((user) => user.socketId === userSocketId);
         if (user) {
@@ -289,7 +293,7 @@ export default function VoiceChannel() {
     });
 
     // 다른 유저가 나갔을 때
-    socketRef.current.on('user_exit', ({ exitSocketId }) => {
+    socketRef.current.on(SOCKET_ON.USER_EXIT, ({ exitSocketId }) => {
       console.log('user_exit', exitSocketId);
       // 해당 유저의 RTCPeerConnection을 종료하고 users에서 제거
       pcsRef.current[exitSocketId].close();
@@ -301,12 +305,12 @@ export default function VoiceChannel() {
 
     return () => {
       if (socketRef.current) {
-        socketRef.current.off('participants_list');
-        socketRef.current.off('get_offer');
-        socketRef.current.off('get_answer');
-        socketRef.current.off('get_candidate');
-        socketRef.current.off('video_track_enabled_changed');
-        socketRef.current.off('user_exit');
+        socketRef.current.off(SOCKET_ON.PARTICIPANTS_LIST);
+        socketRef.current.off(SOCKET_ON.GET_OFFER);
+        socketRef.current.off(SOCKET_ON.GET_ANSWER);
+        socketRef.current.off(SOCKET_ON.GET_CANDIDATE);
+        socketRef.current.off(SOCKET_ON.VIDEO_TRACK_ENABLED_CHANGED);
+        socketRef.current.off(SOCKET_ON.USER_EXIT);
       }
     };
   }, [roomName, userId, userNickname, getLocalStream]);
