@@ -44,6 +44,7 @@ export const GlobalStyles = createGlobalStyle`
 
     --text_gray: #d9d9d9; // 텍스트 and border
     --landing_background_color: #ecf3fc; // 랜딩페이지 배경색( 하늘색 ) // hover시 fafafa
+    --specific_color: #d8980e;
   }
 
   * {

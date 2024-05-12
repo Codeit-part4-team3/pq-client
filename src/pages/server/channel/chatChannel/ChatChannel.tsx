@@ -1,6 +1,5 @@
 import styled, { keyframes } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
 import { lastKey, MessageItem, User } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
 import UtilityButton from './_components/UtilityButton';
@@ -8,8 +7,8 @@ import { useSubscription } from 'src/hooks/useSubscription';
 import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
 import { useQueryGet } from 'src/apis/service/service';
-
-const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
+import { LOCAL_STORAGE_ALRAM_KEY, SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
+import useSocket from 'src/hooks/useSocket';
 
 /**@Todo Channel 컴포넌트로 부터 channel date를 prop로 받고 데이터 바인딩 예정
  * 유저 데이터들 처리하는 로직 짜야함
@@ -27,8 +26,9 @@ export default function ChatChannel() {
     refetchInterval: 5000,
     enabled: !!userId,
   });
+
   // 소켓
-  const socketRef = useRef<Socket | null>(null);
+  const socketRef = useSocket();
   // 메시지 관련
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
@@ -57,7 +57,7 @@ export default function ChatChannel() {
   const handleSendMessageKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (inputValue === '') return;
     if (e.key === 'Enter') {
-      socketRef.current?.emit('send_message', { message: e.currentTarget.value, roomName, userId });
+      socketRef.current?.emit(SOCKET_EMIT.SEND_MESSAGE, { message: e.currentTarget.value, roomName, userId });
       setInputValue('');
     }
   };
@@ -78,7 +78,7 @@ export default function ChatChannel() {
       });
     });
     setCurrentEditingMessageId(messageId);
-    socketRef.current?.emit('update_message_editing', { messageId, createdAt, roomName });
+    socketRef.current?.emit(SOCKET_EMIT.UPDATE_MESSAGE_EDITING, { messageId, createdAt, roomName });
   };
 
   const hanedleEditingMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,13 +102,18 @@ export default function ChatChannel() {
     });
     setCurrentEditingMessageId(null);
 
-    socketRef.current?.emit('update_message_complete', { messageId, createdAt, message: editingMessage, roomName });
+    socketRef.current?.emit(SOCKET_EMIT.UPDATE_MESSAGE_COMPLETE, {
+      messageId,
+      createdAt,
+      message: editingMessage,
+      roomName,
+    });
     setEditingMessage('');
   };
 
   // 메시지 수정 취소
   const handleUpdateMessageCancelClick = ({ messageId }: { messageId: string }) => {
-    socketRef.current?.emit('update_message_cancel', { messageId, roomName });
+    socketRef.current?.emit(SOCKET_EMIT.UPDATE_MESSAGE_CANCEL, { messageId, roomName });
     setMessages((prevMessages) => {
       return prevMessages.map((message) => {
         if (message.messageId === messageId) {
@@ -125,7 +130,7 @@ export default function ChatChannel() {
 
   // 메시지 삭제
   const handleDeleteMessageClick = ({ messageId, createdAt }: { messageId: string; createdAt: number }) => {
-    socketRef.current?.emit('delete_message', { messageId, createdAt, roomName });
+    socketRef.current?.emit(SOCKET_EMIT.DELETE_MESSAGE, { messageId, createdAt, roomName });
   };
 
   // infinite scroll : InfiniteScrollTrigger에 닿으면 추가로 메시지를 가져온다.
@@ -135,7 +140,11 @@ export default function ChatChannel() {
         (entries) => {
           entries.forEach(async (entry) => {
             if (entry.isIntersecting && infiniteScrollTriggerRef.current && lastKey) {
-              socketRef.current?.emit('more_messages', { roomName, userSocketId: socketRef.current?.id, lastKey });
+              socketRef.current?.emit(SOCKET_EMIT.MORE_MESSAGES, {
+                roomName,
+                userSocketId: socketRef.current?.id,
+                lastKey,
+              });
 
               infiniteScrollTriggerIo.disconnect();
             }
@@ -149,31 +158,36 @@ export default function ChatChannel() {
   };
 
   useEffect(() => {
-    socketRef.current = io(SOCKET_SERVER_URL);
+    if (!socketRef.current) return;
 
-    socketRef.current.emit('join_chat_channel', roomName);
+    socketRef.current.emit(SOCKET_EMIT.JOIN_CHAT_CHANNEL, roomName);
 
-    socketRef.current.on('join_chat_channel_user_join', (socketId) => {
+    socketRef.current.on(SOCKET_ON.JOIN_CHAT_CHANNEL_USER_JOIN, (socketId) => {
       console.log(socketId + 'is joined');
     });
 
     socketRef.current.on(
-      'initial_chat_messages',
+      SOCKET_ON.INITIAL_CHAT_MESSAGES,
       ({ initialMessages, lastKey }: { initialMessages: MessageItem[]; lastKey: lastKey }) => {
         console.log('initial messages data : ', initialMessages);
         setMessages([...initialMessages]);
         setLastKey(lastKey);
+
+        // 알림표시 제거를 위한 localStroage update
+        const alramMessageId = localStorage.getItem(`${LOCAL_STORAGE_ALRAM_KEY}:${channelId}`);
+        initialMessages.forEach((msg) => {
+          msg.messageId === alramMessageId && localStorage.removeItem(`${LOCAL_STORAGE_ALRAM_KEY}:${channelId}`);
+        });
       },
     );
 
-    socketRef.current.on('receive_message', (newMessage: MessageItem) => {
-      console.log('new message data : ', newMessage);
-      setMessages((prevMessages) => [newMessage, ...prevMessages]);
+    socketRef.current.on(SOCKET_ON.RECEIVE_MESSAGE, (newMessage: MessageItem) => {
+      if (channelId === newMessage.channelId) setMessages((prevMessages) => [newMessage, ...prevMessages]);
     });
 
     // 메시지 수정 완료
     socketRef.current.on(
-      'update_message_complete',
+      SOCKET_ON.UPDATE_MESSAGE_COMPLETE,
       ({ messageId, message }: { messageId: string; message: string }) => {
         console.log('update message data : ', messageId, message);
         setMessages((prevMessages) =>
@@ -192,14 +206,14 @@ export default function ChatChannel() {
     );
 
     // 메시지 삭제
-    socketRef.current.on('delete_message', (messageId: string) => {
+    socketRef.current.on(SOCKET_ON.DELETE_MESSAGE, (messageId: string) => {
       console.log('delete message data : ', messageId);
       setMessages((prevMessages) => prevMessages.filter((message) => message.messageId !== messageId));
     });
 
     // 인피니티 스크롤을 위한 이벤트
     socketRef.current.on(
-      'more_messages',
+      SOCKET_ON.MORE_MESSAGES,
       ({
         moreMessages,
         lastKey,
@@ -220,7 +234,12 @@ export default function ChatChannel() {
 
     return () => {
       if (socketRef.current) {
-        socketRef.current.disconnect();
+        socketRef.current.off(SOCKET_ON.JOIN_CHAT_CHANNEL_USER_JOIN);
+        socketRef.current.off(SOCKET_ON.INITIAL_CHAT_MESSAGES);
+        socketRef.current.off(SOCKET_ON.RECEIVE_MESSAGE);
+        socketRef.current.off(SOCKET_ON.UPDATE_MESSAGE_COMPLETE);
+        socketRef.current.off(SOCKET_ON.DELETE_MESSAGE);
+        socketRef.current.off(SOCKET_ON.MORE_MESSAGES);
       }
     };
   }, [roomName]);

@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import ServerItem from './_components/ServerItem';
 import React, { useEffect, useState } from 'react';
@@ -24,12 +24,9 @@ import ServerMenu from './_components/ServerMenu';
 import { useGetUserInfo } from 'src/hooks/useGetUserInfo';
 import useUserStore from 'src/store/userStore';
 import MyProfile from '../../components/MyProfile';
-
-/**
- *
- * TODO: 서버 Not Found 페이지 구현
- *
- */
+import useSocket from 'src/hooks/useSocket';
+import { MessageItem } from './channel/chatChannel/_types/type';
+import { LOCAL_STORAGE_ALRAM_KEY, SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
 
 export const ServerIdContext = React.createContext<number>(0);
 export const UserIdContext = React.createContext<number>(0);
@@ -37,13 +34,16 @@ export const UserIdContext = React.createContext<number>(0);
 export default function Server() {
   const [isExist, setIsExist] = useState(false);
   const [serverId, setServerId] = useState<number>(NaN);
+  const [channelId, setChannelId] = useState<number>(NaN);
   const [serverList, setServerList] = useState<ServerData[]>([]);
   const [channelGroupList, setChannelGroupList] = useState<ChannelGroupData[]>([]);
   const [channelItemList, setChannelItemList] = useState<ChannelData[]>([]);
   const [serverName, setServerName] = useState<string>('');
+  const location = useLocation();
   const navigate = useNavigate();
   const { userInfo } = useUserStore();
   const userId = userInfo.id;
+  const socketRef = useSocket();
 
   useGetUserInfo();
 
@@ -60,6 +60,16 @@ export default function Server() {
   const { refetch: channelRefetch, data: channelData } = useQueryGet<ChannelResponse[]>(
     'getAllChannels',
     `/chat/v1/server/${serverId}/channel/all`,
+    {
+      staleTime: 5000,
+      refetchInterval: 5000,
+      enabled: !!userId,
+    },
+  );
+
+  const { data: allChannelByUser } = useQueryGet<ChannelResponse[]>(
+    'getAllChannelManyServer',
+    `/chat/v1/common/allChannel?userId=${userId}`,
     {
       staleTime: 5000,
       refetchInterval: 5000,
@@ -87,7 +97,13 @@ export default function Server() {
   };
 
   const createServerItemList = (serverList: ServerData[]) => {
-    return serverList.map((server) => <ServerItem key={server.id} data={server} />);
+    return serverList.map((server) => (
+      <ServerItem
+        key={server.id}
+        data={server}
+        channelDataList={allChannelByUser?.filter((channel) => channel?.serverId === server.id)}
+      />
+    ));
   };
 
   const createChannelItemList = (groupId: number) => {
@@ -127,6 +143,10 @@ export default function Server() {
   }, [serverData]);
 
   useEffect(() => {
+    setChannelId(Number(location.pathname.split('/')[4]));
+  }, [location.pathname]);
+
+  useEffect(() => {
     if (channelData) {
       const cData: IChannel[] = channelData.filter((item): item is IChannel => item !== null);
       const groupList = cData.filter((item) => item.groupId === null);
@@ -135,6 +155,28 @@ export default function Server() {
       setChannelItemList(channelList);
     }
   }, [channelData]);
+
+  useEffect(() => {
+    // TODO : 유저가 참여해 있는 모든 체널에 대해 join을 해야함
+    if (socketRef.current) {
+      allChannelByUser?.forEach((channel) => {
+        socketRef.current?.emit(SOCKET_EMIT.JOIN, `${channel?.id}`);
+      });
+
+      socketRef.current.on(SOCKET_ON.RECEIVE_MESSAGE, (newMessage: MessageItem) => {
+        if (String(channelId) !== newMessage.channelId) {
+          // storage에 하나의 string이 아닌 객체를 JSON.stringfy로 저장할 수도 있음
+          localStorage.setItem(`${LOCAL_STORAGE_ALRAM_KEY}:${newMessage.channelId}`, `${newMessage.messageId}`);
+        }
+      });
+    }
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off(SOCKET_ON.RECEIVE_MESSAGE);
+      }
+    };
+  }, [allChannelByUser, channelId]);
 
   useEffect(() => {
     const secretKey = sessionStorage.getItem('invite');
@@ -218,7 +260,6 @@ const Container = styled.main`
 const LeftContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 10px;
 
   z-index: 10;
 `;
@@ -228,9 +269,10 @@ const FirstContainer = styled.div`
 
   background: transparent;
   padding: 10px;
+  padding-bottom: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   gap: 10px;
   border-radius: 10px;
