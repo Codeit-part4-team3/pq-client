@@ -1,8 +1,5 @@
 import styled, { keyframes } from 'styled-components';
-
-interface MessageLoadingSpinnerProps {
-  infiniteScrollTriggerRef: React.RefObject<HTMLDivElement>;
-}
+import { MessageLoadingSpinnerProps } from '../../_types/props';
 
 export default function MessageLoadingSpinner({ infiniteScrollTriggerRef }: MessageLoadingSpinnerProps) {
   return (

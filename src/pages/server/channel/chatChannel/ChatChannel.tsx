@@ -10,6 +10,8 @@ import { LOCAL_STORAGE_ALRAM_KEY, SOCKET_EMIT, SOCKET_ON } from 'src/constants/c
 import useSocket from 'src/hooks/useSocket';
 import MessageLoadingSpinner from './_components/MessageLoadingSpinner';
 import ChatInputBox from './_components/ChatInputBox';
+import { ChannelData } from '../../_types/type';
+import ChatChannelIntro from './_components/ChatChannelIntro';
 
 /**@Todo Channel 컴포넌트로 부터 channel date를 prop로 받고 데이터 바인딩 예정
  * 유저 데이터들 처리하는 로직 짜야함
@@ -27,6 +29,17 @@ export default function ChatChannel() {
     refetchInterval: 5000,
     enabled: !!userId,
   });
+
+  // 채널 데이터
+  const { data: channelData } = useQueryGet<ChannelData>(
+    'getCurrentChannel',
+    `/chat/v1/server/${serverId}/channel/${channelId}`,
+    {
+      staleTime: 5000,
+      refetchInterval: 5000,
+      enabled: !!userId,
+    },
+  );
 
   // 소켓
   const socketRef = useSocket();
@@ -274,12 +287,7 @@ export default function ChatChannel() {
           onEditingMessageChange={hanedleEditingMessageChange}
         />
         {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯, 서버 데이터 필요 */}
-        {isNoMoreMessages ? (
-          <ChatChannelIntro>
-            <ChannelName>{'# 채팅 채널1'}의 첫 시작 부분이에요</ChannelName>
-            <CreationDate>생성일 : {'2024년 04월 11일'}</CreationDate>
-          </ChatChannelIntro>
-        ) : null}
+        {isNoMoreMessages ? <ChatChannelIntro channelData={channelData} /> : null}
         {/* 무한 스크롤 로딩스피너 */}
         {lastKey ? (
           <>
@@ -328,27 +336,4 @@ const ChatContainer = styled.div`
     border-radius: 2px;
     background: #ccc;
   }
-`;
-
-const ChatChannelIntro = styled.div`
-  margin-top: 495px;
-  padding-left: 20px;
-`;
-
-const ChannelName = styled.h1`
-  color: var(--black_000000);
-  font-family: Pretendard;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 160%; /* 32px */
-  margin: 0;
-`;
-
-const CreationDate = styled.p`
-  color: var(--gray_666666);
-  font-family: Pretendard;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 160%; /* 22.4px */
-  margin: 0;
 `;

@@ -1,32 +1,11 @@
 import styled from 'styled-components';
-import { MessageItem, User } from '../_types/type';
 import extractDate from 'src/utils/extractDate';
 import ChatDayDivider from './ChatDayDivider';
 import addZero from 'src/utils/addZero';
 import { useEffect, useState } from 'react';
 import ContextMenu from './ContextMenu';
-
-interface ChatMessagesProps {
-  serverUserData: User[] | undefined;
-  messages: MessageItem[];
-  onUpdateMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
-  onDeleteMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
-  onUpdateMessageKeyDown: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
-  onUpdateMessageCancelClick: ({ messageId }: { messageId: string }) => void;
-  editingMessage: string;
-  setEditingMessage: React.Dispatch<React.SetStateAction<string>>;
-  onEditingMessageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  currentEditingMessageId: string | null;
-}
-
-interface ContextMenu {
-  isOpen: boolean;
-  positionX: number;
-  positionY: number;
-  messageId: string;
-  message: string;
-  createdAt: number;
-}
+import { ChatMessagesProps } from '../../_types/props';
+import { IContextMenu } from '../../_types/type';
 
 export default function ChatMessages({
   serverUserData,
@@ -41,7 +20,7 @@ export default function ChatMessages({
   currentEditingMessageId,
 }: ChatMessagesProps) {
   // 마우스 오른쪽 클릭시 메뉴창 뜨게 하기
-  const [isContextMenuOpen, setIsContextMenuOpen] = useState<ContextMenu>({
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState<IContextMenu>({
     isOpen: false,
     positionX: 0,
     positionY: 0,

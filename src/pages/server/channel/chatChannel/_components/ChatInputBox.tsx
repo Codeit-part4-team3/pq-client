@@ -1,13 +1,6 @@
 import styled from 'styled-components';
 import UtilityButton from './UtilityButton';
-
-interface ChatInputBoxProps {
-  messageInputRef: React.RefObject<HTMLInputElement>;
-  handleSendMessageKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  messageMaxLength: number;
-  isClickedUtilityButton: boolean;
-  handleUiilityButtonClick: () => void;
-}
+import { ChatInputBoxProps } from '../../_types/props';
 
 export default function ChatInputBox({
   messageInputRef,
