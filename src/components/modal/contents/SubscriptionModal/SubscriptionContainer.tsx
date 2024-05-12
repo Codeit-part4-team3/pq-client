@@ -64,7 +64,7 @@ export default function SubscriptionContainer({
               </PlanButton>
             ))}
         </PlanButtonContainer>
-        <SubscriptionCancelButton onClick={() => setIsCancelSelected(true)}>결제 취소 & 환불</SubscriptionCancelButton>
+        <SubscriptionCancelButton onClick={() => setIsCancelSelected(true)}>구독 취소 & 환불</SubscriptionCancelButton>
       </SubscriptionBox>
 
       <SettingsBox>

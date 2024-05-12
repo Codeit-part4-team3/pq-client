@@ -15,7 +15,7 @@ import {
 } from 'src/types/subscriptionType';
 import { useTempOrderStore, usePlanStore } from 'src/store/paymentStore';
 import SubscriptionContainer from './SubscriptionModal/SubscriptionContainer';
-import CancelContainer from './SubscriptionModal/CamcelContainer';
+import CancelContainer from './SubscriptionModal/CancelContainer';
 import ModalButtons from '../button/ModalButtons';
 import { PaymentResponse } from 'src/pages/payments/_type/type';
 import { useQueryClient } from '@tanstack/react-query';

@@ -47,7 +47,7 @@ export function RegistCardSuccess() {
     <Area className='result wrapper'>
       <Container className='box_section'>
         <img src='https://static.toss.im/illusts/check-blue-spot-ending-frame.png' width='120' height='120' />
-        <h2>카드 등록 성공</h2>
+        <h2>카드 등록 완료</h2>
         <Button onClick={() => navigate('/server')}>처음으로 돌아가기</Button>
       </Container>
     </Area>

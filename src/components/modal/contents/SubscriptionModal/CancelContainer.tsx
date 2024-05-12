@@ -32,7 +32,7 @@ export default function CancelContainer({
 
   return (
     <Contatiner>
-      <ModalTitle>결제 취소 & 환불</ModalTitle>
+      <ModalTitle>구독 취소 & 환불</ModalTitle>
       <Header>결제 내역</Header>
       <Menu>
         <p>주문번호</p>
