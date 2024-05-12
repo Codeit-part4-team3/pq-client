@@ -31,4 +31,28 @@ export const ERROR_MESSAGES = {
     EMAIL_VERIFY_REQUIRED: '이메일 인증을 해주세요.',
     USER_NOT_FOUND: '존재하지 않는 유저입니다.',
   },
+  PAYMENT: {
+    FAILED: '결제에 실패했습니다. 잠시 후 다시 시도해주세요.',
+    CANCEL_FAILED: '환불 요청 실패',
+    CANCEL_SUCCESS: '환불되었습니다.',
+    REFUND_NOT_ALLOWED: '환불할 수 없는 주문입니다.',
+    NO_SELECTED_PLAN: '선택된 플랜이 없습니다.',
+    SELECT_PLAN: '플랜을 선택해주세요.',
+    NO_ORDER_ID: '주문번호를 찾을 수 없습니다.',
+    NO_PAYMENT: '주문을 찾을 수 없습니다.',
+    SELECT_PAYMENT: '주문을 선택해 주세요.',
+    INVALID_CARD_DATA: '카드 정보가 올바르지 않습니다.',
+    NO_USER_INFO: '결제 위젯을 불러오기 위해 사용자 정보가 필요합니다.',
+  },
+  CARD: {
+    INVALID_SUBSCRIPTION_DATA: '카드 등록 정보가 올바르지 않습니다.',
+    REGIST_FAILED: '카드 등록에 실패했습니다. 카드 정보를 다시 확인해주세요.',
+    REGIST_CANCEL: '사용자가 등록을 취소했습니다.',
+    INVALID_CARD_COMPANY: '지원하지 않는 카드사입니다.',
+    USER_CANCEL: '사용자가 등록을 취소했습니다.',
+  },
+  TEMP_ORDER: {
+    FAILED: '가주문 요청 실패',
+    NO_TEMP_ORDER_ID: '가주문 ID가 없습니다.',
+  },
 } as const;

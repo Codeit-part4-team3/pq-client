@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutationPost, useQueryGet } from 'src/apis/service/service';
 import { USER_URL } from 'src/constants/apiUrl';
-import SubscriptionButton from 'src/pages/payments/_components/RegistCardButton';
+import SubscriptionButton from 'src/components/modal/contents/SubscriptionModal/RegistCardButton';
 import {
   CancelOrderRequest,
   CancelOrderResponse,

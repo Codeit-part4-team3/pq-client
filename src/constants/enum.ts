@@ -28,4 +28,5 @@ export enum MyDropdownType {
   INVITED_SERVER_LIST = 1,
   LOGOUT = 2,
   MYPAGE = 3,
+  SUBSCRIPTION = 4,
 }
