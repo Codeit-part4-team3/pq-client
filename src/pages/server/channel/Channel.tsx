@@ -41,8 +41,8 @@ export default function Channel() {
       <ChannelHeader title={data?.name ?? '없음'} userCount={userData?.length ?? 0} onClickMembers={handleMembers} />
       <Container>
         {data?.isVoice ? <VoiceChannel /> : <ChatChannel />}
-        {isShowMembers && (
-          <MembersContainer>
+        <MembersWrapper isShow={isShowMembers}>
+          <MembersContainer isShow={isShowMembers}>
             {userData?.map((user) => {
               if (!user) return null;
               return (
@@ -55,7 +55,7 @@ export default function Channel() {
               );
             })}
           </MembersContainer>
-        )}
+        </MembersWrapper>
       </Container>
     </Area>
   );
@@ -82,7 +82,16 @@ const Container = styled.div`
   position: relative;
 `;
 
-const MembersContainer = styled.div`
+const MembersWrapper = styled.div<{ isShow: boolean }>`
+  width: ${(props) => (props.isShow ? '180px' : '0px')};
+  height: 100%;
+
+  overflow: hidden;
+  transition: 0.3s ease-in-out;
+  transform: ${(props) => (props.isShow ? 'scaleX(1)' : 'scaleX(0)')};
+`;
+
+const MembersContainer = styled.div<{ isShow: boolean }>`
   width: 180px;
   height: 100%;
 
@@ -92,6 +101,11 @@ const MembersContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  transition: 0.3s ease-in-out;
+  transform: ${(props) => (props.isShow ? 'translateX(0)' : 'translateX(180px)')};
+
+  top: 0;
+  right: -180px;
 
   & > * {
     padding: 10px;
