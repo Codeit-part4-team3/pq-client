@@ -16,4 +16,15 @@ const extractDate = (passedMilliseconds: number) => {
   };
 };
 
+export const formatTime = (dateTimeStr: Date) => {
+  return new Date(dateTimeStr).toLocaleString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+};
+
 export default extractDate;
