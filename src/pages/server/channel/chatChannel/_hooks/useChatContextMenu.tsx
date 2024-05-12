@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { IContextMenu } from '../_types/type';
+import { IContextMenu } from '../../_types/type';
 
 export default function useChatContextMenu(setEditingMessage: React.Dispatch<React.SetStateAction<string>>) {
   const [isContextMenuOpen, setIsContextMenuOpen] = useState<IContextMenu>({

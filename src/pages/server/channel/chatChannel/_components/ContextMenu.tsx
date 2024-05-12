@@ -1,13 +1,5 @@
 import styled from 'styled-components';
-
-interface ContextMenuProps {
-  positionX: number;
-  positionY: number;
-  messageId: string;
-  createdAt: number;
-  onDeleteMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
-  onUpdateMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
-}
+import { ContextMenuProps } from '../_types/props';
 
 export default function ContextMenu({
   positionX,
