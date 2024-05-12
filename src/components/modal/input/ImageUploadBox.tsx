@@ -8,10 +8,10 @@ interface Props {
 
 export default function ImageUploadBox({ imagePreviewUrl, onChange }: Props) {
   return (
-    <ImageLabel htmlFor='image-upload'>
+    <ImageLabel>
       {imagePreviewUrl ? <ImagePreview src={imagePreviewUrl} alt='이미지 프리뷰' /> : <div>+</div>}
 
-      <ImageInput type='file' id='image-upload' accept='image/*' onChange={onChange} />
+      <ImageInput type='file' accept='image/*' onChange={onChange} />
     </ImageLabel>
   );
 }
