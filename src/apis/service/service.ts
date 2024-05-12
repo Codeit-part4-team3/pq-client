@@ -46,3 +46,13 @@ export const useMutationDelete = (url: string, options: object = {}) => {
   const mutation = useMutation({ mutationFn, ...options });
   return mutation;
 };
+
+export const useMutationPut = <Res, Req>(url: string, options: object = {}, axiosOptions: object = {}) => {
+  const mutationFn: MutationFunction<Res, Req> = async (body) => {
+    const res: AxiosResponse<Res> = await axiosInstance.put(url, body, axiosOptions);
+    return res.data;
+  };
+
+  const mutation = useMutation<Res, unknown, Req>({ mutationFn, ...options });
+  return mutation;
+};
