@@ -1,12 +1,10 @@
 import styled from 'styled-components';
 import ChatDayDivider from './ChatDayDivider';
 import ContextMenu from './ContextMenu';
-import useChatContextMenu from '../_hooks/useChatContextMenu';
 import { ChatMessagesProps } from '../_types/props';
 import { formatMessageData } from '../_utils/formatMessageData';
-import { useRef } from 'react';
 import ChatMessageTextEditingBox from './ChatMessageTextEditingBox';
-import { handleMessageTextEditingKeyDown } from '../_types/type';
+import useChatMessages from '../_hooks/useChatMessages';
 
 export default function ChatMessages({
   serverUserData,
@@ -20,18 +18,12 @@ export default function ChatMessages({
   onEditingMessageChange,
   currentEditingMessageId,
 }: ChatMessagesProps) {
-  const { isContextMenuOpen, handleContextMenuOpen } = useChatContextMenu(setEditingMessage);
-  // 다음 메시지의 유저와 현재 메시지의 유저가 다르면 true로 변경
-  const isDifferentUserRef = useRef(false);
-
-  // input창에서 enter키 또는 esc키 누를 때
-  const handleMessageTextEditingKeyDown = ({ e, messageId, createdAt }: handleMessageTextEditingKeyDown) => {
-    if (e.key === 'Enter') {
-      onUpdateMessageKeyDown({ messageId, createdAt });
-    } else if (e.key === 'Escape') {
-      onUpdateMessageCancelClick({ messageId });
-    }
-  };
+  const { isContextMenuOpen, handleContextMenuOpen, isDifferentUserRef, handleMessageTextEditingKeyDown } =
+    useChatMessages({
+      onUpdateMessageKeyDown,
+      onUpdateMessageCancelClick,
+      setEditingMessage,
+    });
 
   if (!messages || messages.length === 0) return null;
   return (

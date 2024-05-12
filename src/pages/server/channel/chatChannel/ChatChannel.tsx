@@ -13,8 +13,8 @@ import ChatInputBox from './_components/ChatInputBox';
 import { ChannelData } from '../../_types/type';
 import ChatChannelIntro from './_components/ChatChannelIntro';
 
-/**@Todo Channel 컴포넌트로 부터 channel date를 prop로 받고 데이터 바인딩 예정
- * 유저 데이터들 처리하는 로직 짜야함
+/**@ToDo
+ * 소켓 연결 / 소켓 이벤트 리스너 분리하는 로직 짜면 좋을듯
  */
 export default function ChatChannel() {
   // 유저, 서버, 채널 데이터

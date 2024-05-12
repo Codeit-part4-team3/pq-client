@@ -14,7 +14,6 @@ export default function useChatContextMenu(setEditingMessage: React.Dispatch<Rea
   // message에 대고 우클릭하면 ContextMenu가 열리게 하기
   const handleContextMenuOpen =
     (messageId: string, message: string, createdAt: number) => (e: React.MouseEvent<HTMLDivElement>) => {
-      console.log('right click');
       e.preventDefault();
       setIsContextMenuOpen(() => {
         return {

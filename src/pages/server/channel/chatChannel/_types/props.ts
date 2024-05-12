@@ -42,3 +42,9 @@ export interface ChatMessageTextEditingBoxProps {
   onUpdateCancelClick: (message: { messageId: string }) => void;
   onKeyDown: ({ e, messageId, createdAt }: handleMessageTextEditingKeyDown) => void;
 }
+
+export interface useChatMessagesProps {
+  onUpdateMessageKeyDown: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
+  onUpdateMessageCancelClick: ({ messageId }: { messageId: string }) => void;
+  setEditingMessage: React.Dispatch<React.SetStateAction<string>>;
+}
