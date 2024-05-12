@@ -52,7 +52,7 @@ export default function ChannelItem({ data }: ChannelItemProps) {
   return (
     <ChannelItemWrapper to={`/server/${serverId}/channel/${data.id}`} isSelect={channelId === data.id}>
       <Title>
-        {data.isVoice ? <img src={tagSvg} alt='채널 태그 이미지' /> : <img src={voiceSvg} alt='음성 태그 이미지' />}
+        {data.isVoice ? <img src={voiceSvg} alt='채널 태그 이미지' /> : <img src={tagSvg} alt='음성 태그 이미지' />}
         {data.name}
         <InputChannel
           value={updateName}

@@ -54,6 +54,12 @@ export default function CalenderModal({ isOpen, closeModal }: ModalProps) {
   };
 
   useEffect(() => {
+    if (serverId) {
+      refetch();
+    }
+  }, [serverId]);
+
+  useEffect(() => {
     setEvents(data as Event[]);
   }, [data]);
 
