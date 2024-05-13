@@ -35,6 +35,16 @@ React, Express, NestJS, AWS
     - Git Actions와 AWS Codedeploy를 사용한 자동배포
 <br />
 
+## 서버 별 추가 내용
+
+### 유저서버
+- 처음 개발하는 백엔드여서 빠른 개발을 위해 NestJs 와 Prisma 사용
+- 빠른 개발 및 유저관리와 토큰관리를 위해 AWS Cognito와 userdb 병행 사용
+- 유저 사용감을 높이기 위해 같은 이메일 사용 시 OAuth로 로그인 가능
+- JwtAuthGuard를 만들어 일부 api는 토큰 없을 시 예외 처리
+- 이미지 파일을 받아서 S3에 업로드 후, url으로 바꿔 db에 저장 하여 유저 프로필 이미지 업데이트
+
+
 ## 🎸기타 개발내용
 - Prisma 사용
 - 서버 초대 기능(이메일 초대, 초대링크(암호화))
@@ -42,7 +52,7 @@ React, Express, NestJS, AWS
 - 채팅메시지 알림UI
 - 서버별 일정
 - 스웨거 생성
-- 
+
   <br />
 
 ## 기타 개발 이미지
@@ -73,8 +83,8 @@ API 요청 시 axios instance를 사용하고 있음 -> BaseURL을 구분해주�
 > <strong> 이전에 테라폼 설정을 하면서 시스템 환경변수에 AWS관련 키를 추가했는데 공교롭게도 이름이 똑같아서 발생한 문제였다.<br /></strong>  
 <br />
 
-> ### ❓[EC2 + Nest] AWS EC2 Heap메모리 부족현상 발생
-> <strong>😎</strong>
-> <strong> aws-sdk 전체를 임포트  하니 메모리 부족 <br /></strong>
-> <strong> aws-sdk 내부에서 필요한 부분만 임포트 하여 해결 <br /></strong>
+### ❓[EC2 + Nest] AWS EC2 Heap메모리 부족현상 발생
+<strong>😎</strong>
+<strong> aws-sdk 전체를 임포트  하니 메모리 부족 <br /></strong>
+<strong> aws-sdk 내부에서 필요한 부분만 임포트 하여 해결 <br /></strong>
 <br />  
