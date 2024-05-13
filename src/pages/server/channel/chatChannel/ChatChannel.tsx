@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
-import { lastKey, MessageItem, User } from 'src/pages/server/channel/chatChannel/_types/type';
+import { lastKey, MessageItem, ReadMessageItem, User } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
 import { useSubscription } from 'src/hooks/useSubscription';
 import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
 import { useQueryGet } from 'src/apis/service/service';
-import { LOCAL_STORAGE_ALRAM_KEY, SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
+import { LOCAL_STORAGE_ALRAM_KEY, SOCKET_COMMON, SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
 import useSocket from 'src/hooks/useSocket';
 import MessageLoadingSpinner from './_components/MessageLoadingSpinner';
 import ChatInputBox from './_components/ChatInputBox';
@@ -191,12 +191,40 @@ export default function ChatChannel() {
         initialMessages.forEach((msg) => {
           msg.messageId === alramMessageId && localStorage.removeItem(`${LOCAL_STORAGE_ALRAM_KEY}:${channelId}`);
         });
+
+        // 초기 메시지 수신 후 마지막 메시지 읽음 처리
+        socketRef.current?.emit(SOCKET_COMMON.READ_MESSAGE, {
+          messageId: initialMessages[0].messageId,
+          roomName: roomName,
+          userId,
+        });
       },
     );
 
+    // 메시지 수신 후 읽음 처리
     socketRef.current.on(SOCKET_ON.RECEIVE_MESSAGE, (newMessage: MessageItem) => {
-      if (channelId === newMessage.channelId) setMessages((prevMessages) => [newMessage, ...prevMessages]);
+      console.log('[read] read on receive message');
+      if (channelId === newMessage.channelId) {
+        setMessages((prevMessages) => [newMessage, ...prevMessages]);
+
+        if (socketRef.current) {
+          socketRef.current?.emit(SOCKET_COMMON.READ_MESSAGE, {
+            messageId: newMessage.messageId,
+            roomName: roomName,
+            userId,
+          });
+          console.log('[read] read on emit :', userId, roomName, newMessage.messageId);
+        }
+      }
     });
+
+    socketRef.current.on(
+      SOCKET_COMMON.READ_MESSAGE,
+      ({ prevMessageId, messageId, channelId, userId }: ReadMessageItem) => {
+        // 읽음 ui update
+        console.log('read message : ', prevMessageId, messageId, channelId, userId);
+      },
+    );
 
     // 메시지 수정 완료
     socketRef.current.on(
@@ -223,6 +251,8 @@ export default function ChatChannel() {
       console.log('delete message data : ', messageId);
       setMessages((prevMessages) => prevMessages.filter((message) => message.messageId !== messageId));
     });
+
+    // 메시지 알림
 
     // 인피니티 스크롤을 위한 이벤트
     socketRef.current.on(

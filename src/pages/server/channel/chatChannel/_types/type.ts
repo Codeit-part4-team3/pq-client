@@ -6,6 +6,14 @@ export interface MessageItem {
   userId: number;
   updatedAt: number;
   status: string;
+  notReadCount: number;
+}
+
+export interface ReadMessageItem {
+  prevMessageId: string;
+  messageId: string;
+  channelId: string;
+  userId: number;
 }
 
 export interface lastKey {
