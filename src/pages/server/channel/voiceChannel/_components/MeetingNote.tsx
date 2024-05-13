@@ -1,8 +1,61 @@
 import styled from 'styled-components';
 
 import profileImage from '../../../../../../public/images/minji-profile-image.png';
+import useSocket from 'src/hooks/useSocket';
+import { useEffect, useState } from 'react';
 
 export default function MeetingNote() {
+  const socketRef = useSocket();
+
+  // 음성 인식
+  // 인식된 텍스트
+  const [recognizedText, setRecognizedText] = useState<string>('');
+  // 음성 인식 중인지 여부
+  const [isListening, setIsListening] = useState<boolean>(false);
+
+  const SpeechRecognition = new window.webkitSpeechRecognition();
+  SpeechRecognition.lang = 'ko-KR';
+
+  useEffect(() => {
+    // 음성 인식 시작
+    SpeechRecognition.start();
+
+    // 음성 인식이 시작되면 발생하는 이벤트
+    SpeechRecognition.onstart = () => {
+      setIsListening(true);
+      console.log('음성 인식이 시작되었습니다.');
+    };
+
+    // 음성 인식이 끝나면 텍스트를 출력
+    SpeechRecognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setRecognizedText(transcript);
+      console.log('대화 : ', transcript);
+    };
+
+    // 에러가 발생했을 때
+    SpeechRecognition.onerror = (event) => {
+      console.log('에러가 발생했습니다. : ', event.error);
+      console.log('에러 메시지 : ', event.message);
+    };
+
+    // 음성 인식이 끝나면 다시 시작
+    SpeechRecognition.onend = () => {
+      // 음성 인식이 끝나면 다시 시작
+      SpeechRecognition.start();
+    };
+
+    // 컴포넌트가 언마운트 되면 음성 인식 종료
+    return () => {
+      setIsListening(false);
+      // 이벤트 제거
+      SpeechRecognition.onstart = null;
+      SpeechRecognition.onresult = null;
+      SpeechRecognition.onerror = null;
+      SpeechRecognition.onend = null;
+    };
+  }, []);
+
   return (
     <Wrapper>
       <Header>
@@ -12,7 +65,7 @@ export default function MeetingNote() {
       <Note>
         <Speech>
           <ProfileImage src={profileImage} alt='profile' />
-          <Content></Content>
+          <Content>{recognizedText ? recognizedText : '음성 인식 중입니다.'}</Content>
         </Speech>
       </Note>
     </Wrapper>

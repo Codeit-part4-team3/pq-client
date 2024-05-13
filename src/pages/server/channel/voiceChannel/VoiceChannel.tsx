@@ -61,7 +61,7 @@ export default function VoiceChannel() {
   };
 
   // 회의록
-  const showMeetingNote = true;
+  const [showMeetingNote] = useState(true);
 
   /**
    * audioTrack.enabled의 경우 소리 생산 자체를 관여해서 들리지 않게 한다.
