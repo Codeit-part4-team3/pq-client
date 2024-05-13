@@ -1,11 +1,15 @@
-import { useState, MouseEvent, Dispatch, SetStateAction, useCallback, memo } from 'react';
+import { useState, Dispatch, SetStateAction, useCallback, useEffect, useRef } from 'react';
 import { ModalTitle } from '../../CommonStyles';
 import { USER_URL } from 'src/constants/apiUrl';
 import RegistCardButton from 'src/components/modal/contents/SubscriptionModal/RegistCardButton';
-import { Plan, PlansResponse } from 'src/types/subscriptionType';
+import { Plan, PlansResponse } from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
 import styled from 'styled-components';
 import { useQueryGet } from 'src/apis/service/service';
-import { SubscriptionResponse } from 'src/types/subscriptionType';
+import { SubscriptionResponse } from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
+import { Socket, io } from 'socket.io-client';
+import useEventStore from 'src/store/eventStore';
+
+const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 interface SubscriptionContainerProps {
   subscription: SubscriptionResponse | undefined;
@@ -21,11 +25,22 @@ export default function SubscriptionContainer({
   setIsCancelSelected,
 }: SubscriptionContainerProps) {
   const [isRecurring, setIsRecurring] = useState(false);
+  const { isEventActive, setIsEventActive } = useEventStore();
+  // 소켓
+  const socketRef = useRef<Socket | null>(null);
 
   const { data: plans } = useQueryGet<PlansResponse>('getPlan', `${USER_URL.PLANS}/all`);
 
+  useEffect(() => {
+    socketRef.current = io(SOCKET_SERVER_URL);
+    socketRef.current.on('event_status', (status) => {
+      console.log('Event status changed:', status);
+      setIsEventActive(status);
+    });
+  }, []);
+
   const handlePlanButtonClick = useCallback(
-    (e: MouseEvent<HTMLButtonElement>, id: number) => {
+    (id: number) => {
       if (plans) {
         const plan = plans.find((plan) => plan.id === id);
         setSelectedPlan(plan);
@@ -34,13 +49,10 @@ export default function SubscriptionContainer({
     [plans],
   );
 
-  const isSubscribedPlan = useCallback(
-    (planId: number) => {
-      if (!subscription || !subscription.isActive) return false;
-      return subscription.planId >= planId;
-    },
-    [subscription],
-  );
+  const isSubscribedPlan = (planId: number) => {
+    if (!subscription || !subscription.isActive) return false;
+    return subscription.planId >= planId;
+  };
 
   return (
     <>
@@ -48,22 +60,40 @@ export default function SubscriptionContainer({
       <SubscriptionBox>
         <PlanButtonContainer>
           {plans &&
-            plans.map((plan) => (
-              <PlanButton
-                type='button'
-                key={plan.id}
-                onClick={(e) => handlePlanButtonClick(e, plan.id)}
-                $isSelected={selectedPlan?.id === plan.id}
-                $isSubscribed={isSubscribedPlan(plan.id)}
-                disabled={isSubscribedPlan(plan.id)}
-              >
-                {isSubscribedPlan(plan.id) && <SubscribedToast>Subscribed</SubscribedToast>}
-                <PlanName>{plan.type.toUpperCase()}</PlanName>
-                <br />
-                <br />₩{plan.price.toLocaleString()}
-              </PlanButton>
-            ))}
+            plans.map(
+              (plan, index) =>
+                index !== 2 && (
+                  <PlanButton
+                    type='button'
+                    key={plan.id}
+                    onClick={() => handlePlanButtonClick(plan.id)}
+                    $isSelected={selectedPlan?.id === plan.id}
+                    $isSubscribed={isSubscribedPlan(plan.id)}
+                    disabled={isSubscribedPlan(plan.id)}
+                  >
+                    {isSubscribedPlan(plan.id) && <SubscribedToast>Subscribed</SubscribedToast>}
+                    <PlanName>{plan.type.toUpperCase()}</PlanName>
+                    <br />
+                    <br />₩{plan.price.toLocaleString()}
+                  </PlanButton>
+                ),
+            )}
         </PlanButtonContainer>
+        {plans?.[2] && isEventActive && (
+          <EventButton
+            type='button'
+            key={plans[2].id}
+            onClick={() => handlePlanButtonClick(plans[2].id)}
+            $isSelected={selectedPlan?.id === plans[2].id}
+            $isSubscribed={isSubscribedPlan(plans[2].id)}
+            disabled={isSubscribedPlan(plans[2].id)}
+          >
+            {isSubscribedPlan(plans[2].id) && <SubscribedToast>참여해주셔서 감사합니다!</SubscribedToast>}
+            <PlanName>{plans[2].type.toUpperCase()}</PlanName>
+            <br />
+            <br />₩{plans[2].price.toLocaleString()}
+          </EventButton>
+        )}
         <SubscriptionCancelButton onClick={() => setIsCancelSelected(true)}>구독 취소 & 환불</SubscriptionCancelButton>
       </SubscriptionBox>
 
@@ -95,10 +125,12 @@ const SubscriptionBox = styled.div`
 const PlanButtonContainer = styled.div`
   height: 150px;
   display: flex;
+  justify-content: space-between;
   gap: 20px;
+  margin-bottom: 20px;
 `;
 
-const PlanButton = memo(styled.button<{ $isSelected: boolean; $isSubscribed: boolean }>`
+const PlanButton = styled.button<{ $isSelected: boolean; $isSubscribed: boolean }>`
   width: 100%;
   height: 100%;
   padding: 13px;
@@ -107,6 +139,7 @@ const PlanButton = memo(styled.button<{ $isSelected: boolean; $isSubscribed: boo
   align-items: center;
   gap: 10px;
   position: relative;
+  font-weight: bold;
   border-radius: 10px;
   color: #000;
   background-color: ${(props) => (props.$isSelected ? '#e8f4ff' : '#fff')};
@@ -121,11 +154,19 @@ const PlanButton = memo(styled.button<{ $isSelected: boolean; $isSubscribed: boo
   &:hover {
     cursor: ${(props) => (props.$isSubscribed ? 'default' : 'pointer')};
   }
-`);
+`;
+
+const EventButton = styled(PlanButton)`
+  color: #fff;
+  font-weight: bold;
+  background: ${(props) =>
+    props.$isSelected ? 'linear-gradient(135deg, #7e93fa, #fa8199)' : 'linear-gradient(135deg, #6a82fb, #fc5c7d)'};
+  border: 1px solid ${(props) => (props.$isSelected ? '#007BFF' : 'var(--text_gray)')};
+`;
 
 const SubscribedToast = styled.div`
   padding: 5px 10px;
-  width: 200px;
+  width: 100%;
   position: absolute;
   font-size: 25px;
   font-weight: bold;

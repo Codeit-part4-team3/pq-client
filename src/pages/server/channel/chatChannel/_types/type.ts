@@ -25,7 +25,7 @@ export interface User {
   id: number;
   email: string;
   nickname: string;
-  profileImage?: string;
+  imageUrl?: string;
 }
 
 export interface handleMessageTextEditingKeyDown {

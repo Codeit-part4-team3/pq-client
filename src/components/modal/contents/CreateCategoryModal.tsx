@@ -25,35 +25,41 @@ export default function CreateCategoryModal({ closeModal, isOpen }: ModalProps) 
   const [errorMessage, setErrorMessage] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
   const [isNextModal, setIsNextModal] = useState(false);
-
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
-  const handleInvite = (email: string) => {
-    setInvitedUsers([...invitedUsers, email]);
-  };
+
   const serverId = useContext<number>(ServerIdContext);
 
   const createMutation = useMutationPost<ChannelResponse, ChannelRequest>(`/chat/v1/server/${serverId}/channel`);
 
+  const handleInvite = (email: string) => {
+    setInvitedUsers([...invitedUsers, email]);
+  };
+
   const handleToggle = () => {
     setIsPrivate(!isPrivate);
   };
+
   const handleNextModalClick = () => {
     setErrorMessage('');
+
     if (categoryName === '') {
       setErrorMessage('이름은 필수입니다.');
       return;
     }
+
     setIsNextModal(!isNextModal);
   };
+
   const createCategory: FormEventHandler = (e) => {
     e.preventDefault();
     setErrorMessage('');
+
     if (categoryName === '') {
       setErrorMessage('이름은 필수입니다.');
       return;
     }
-    setCategoryName('');
 
+    setCategoryName('');
     // 생성로직
     createMutation.mutate({ name: categoryName, isPrivate: isPrivate, isVoice: false });
     closeModal();
