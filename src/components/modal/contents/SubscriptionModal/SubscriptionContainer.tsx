@@ -9,7 +9,7 @@ import { SubscriptionResponse } from 'src/components/modal/contents/Subscription
 import { Socket, io } from 'socket.io-client';
 import useEventStore from 'src/store/eventStore';
 
-const SOCKET_SERVER_URL = 'http://localhost:3000';
+const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 interface SubscriptionContainerProps {
   subscription: SubscriptionResponse | undefined;
