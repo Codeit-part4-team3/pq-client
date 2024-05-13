@@ -47,5 +47,6 @@ export interface ConfirmRequest {
 
 export type PaymentResponse = Payment | null;
 export type AllPaymentsResponse = Payment[] | null;
+export type EventPaymentsResponse = Payment[] | null;
 
 export type ConfirmResponse = ConfirmResponseBody | null;

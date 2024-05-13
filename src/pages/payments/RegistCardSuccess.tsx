@@ -5,7 +5,10 @@ import { useMutationPost } from 'src/apis/service/service';
 import { USER_URL } from 'src/constants/apiUrl';
 import styled from 'styled-components';
 import { CtaButton } from 'src/GlobalStyles';
-import { RegistCardRequest, RegistCardResponse } from 'src/types/subscriptionType';
+import {
+  RegistCardRequest,
+  RegistCardResponse,
+} from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
 import { ERROR_MESSAGES } from 'src/constants/error';
 
 export function RegistCardSuccess() {

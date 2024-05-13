@@ -12,7 +12,7 @@ import {
   SubscriptionResponse,
   TempOrderRequest,
   TempOrderResponse,
-} from 'src/types/subscriptionType';
+} from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
 import { useTempOrderStore, usePlanStore } from 'src/store/paymentStore';
 import SubscriptionContainer from './SubscriptionModal/SubscriptionContainer';
 import CancelContainer from './SubscriptionModal/CancelContainer';
@@ -111,9 +111,7 @@ export default function SubscriptionModal({ closeModal, isOpen }: ModalProps) {
     cancelOrder(cancelData);
   };
 
-  const onSubmit: FormEventHandler = (e) => {
-    e.preventDefault();
-
+  const onSubmit: FormEventHandler = () => {
     if (isCancelSelected) {
       handleCancel();
       return;
