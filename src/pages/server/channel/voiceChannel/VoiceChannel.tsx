@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-
 import MediaControlPanel from './_components/MediaControlPanel';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import LocalMedia from './_components/LocalMedia';
@@ -9,7 +8,8 @@ import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
 import useSocket from 'src/hooks/useSocket';
 import { SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
-import { set } from 'react-hook-form';
+import { useQueryGet } from 'src/apis/service/service';
+import { User } from '../chatChannel/_types/type';
 
 const pc_config = {
   iceServers: [
@@ -29,6 +29,14 @@ export default function VoiceChannel() {
   const { userInfo } = useUserStore();
   const { id: userId, nickname: userNickname } = userInfo;
   console.log('UserInfo', userInfo);
+
+  // serverUserData
+  // 서버내의 모든 유저 데이터
+  const { data: serverUserData } = useQueryGet<User[]>('getServerAllUser', `/chat/v1/server/${serverId}/users`, {
+    staleTime: 5000,
+    refetchInterval: 5000,
+    enabled: !!userId,
+  });
 
   // socket
   const socketRef = useSocket();
@@ -63,7 +71,8 @@ export default function VoiceChannel() {
 
   // 회의록
   const [showMeetingNote, setShowMeetingNote] = useState(false);
-  const [meetingNoteName, setMeetingNoteName] = useState<string>('');
+  const [meetingNoteName, setMeetingNoteName] = useState<string | null>(null);
+  const [meetingNoteId, setMeetingNoteId] = useState<string | null>(null);
 
   const handleMeetingNoteStartClick = () => {
     if (!meetingNoteName) return;
@@ -318,9 +327,10 @@ export default function VoiceChannel() {
     });
 
     // 회의록 시작
-    socketRef.current.on(SOCKET_EMIT.START_MEETING_NOTE, () => {
+    socketRef.current.on(SOCKET_EMIT.START_MEETING_NOTE, ({ meetingNoteId }) => {
       console.log('start_meeting_note');
       setShowMeetingNote(true);
+      setMeetingNoteId(meetingNoteId);
     });
 
     // 회의록 종료
@@ -379,7 +389,14 @@ export default function VoiceChannel() {
             isMutedAllRemoteStreams={isMutedAllRemoteStreams}
           />
         </MediaBox>
-        {showMeetingNote ? <MeetingNote roomName={roomName} userId={userId} /> : null}
+        {showMeetingNote ? (
+          <MeetingNote
+            roomName={roomName}
+            userId={userId}
+            serverUserData={serverUserData}
+            meetingNoteId={meetingNoteId}
+          />
+        ) : null}
       </ContentBox>
     </Wrapper>
   );

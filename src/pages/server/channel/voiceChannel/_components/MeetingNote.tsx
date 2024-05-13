@@ -1,20 +1,28 @@
 import styled from 'styled-components';
-
-import profileImage from '../../../../../../public/images/minji-profile-image.png';
 import { useEffect, useState } from 'react';
 import useSocket from 'src/hooks/useSocket';
+import { User } from '../../chatChannel/_types/type';
 
 interface MeetingNoteProps {
   roomName: string;
-  userId: string;
+  userId: number;
+  serverUserData: User[] | undefined;
+  meetingNoteId: string | null;
 }
 
-export default function MeetingNote({ roomName, userId }: MeetingNoteProps) {
+interface RecognizedText {
+  userId: number;
+  text: string;
+}
+
+type RecognizedTexts = RecognizedText[];
+
+export default function MeetingNote({ roomName, userId, serverUserData, meetingNoteId }: MeetingNoteProps) {
   // 소켓
   const socketRef = useSocket();
   // 음성 인식
-  // 인식된 텍스트
-  const [recognizedText, setRecognizedText] = useState<string>('');
+  // 렌더링할 텍스트
+  const [recognizedTexts, setRecognizedTexts] = useState<RecognizedTexts>([]);
   // 음성 인식 중인지 여부
   const [isListening, setIsListening] = useState<boolean>(false);
 
@@ -38,11 +46,11 @@ export default function MeetingNote({ roomName, userId }: MeetingNoteProps) {
     // 음성 인식이 끝나면 텍스트를 출력
     SpeechRecognition.onresult = (event) => {
       const transcript = event.results[event.results.length - 1][0].transcript;
-      setRecognizedText(transcript);
-      console.log('대화 : ', transcript);
       if (socketRef.current) {
-        socketRef.current.emit('update_meeting_note', { roomName, transcript, userId });
+        socketRef.current.emit('update_meeting_note', { roomName, meetingNoteId, transcript, userId });
       }
+      // 낙관적 업데이트
+      setRecognizedTexts((prev) => [...prev, { userId, text: transcript }]);
     };
 
     // 에러가 발생했을 때
@@ -57,6 +65,11 @@ export default function MeetingNote({ roomName, userId }: MeetingNoteProps) {
       console.log('음성 인식이 종료되었습니다.');
     };
 
+    socketRef.current?.on('update_meeting_note', ({ transcript, userId }: { transcript: string; userId: number }) => {
+      console.log('update_meeting_note 이벤트 발생 : ', transcript, userId);
+      setRecognizedTexts((prev) => [...prev, { userId, text: transcript }]);
+    });
+
     // 컴포넌트가 언마운트 되면 음성 인식 종료
     return () => {
       setIsListening(false);
@@ -68,6 +81,10 @@ export default function MeetingNote({ roomName, userId }: MeetingNoteProps) {
     };
   }, []);
 
+  useEffect(() => {
+    console.log(recognizedTexts);
+  }, [recognizedTexts]);
+
   return (
     <Wrapper>
       <Header>
@@ -75,10 +92,15 @@ export default function MeetingNote({ roomName, userId }: MeetingNoteProps) {
         <Date>2024년 4월 26일의 회의</Date>
       </Header>
       <Note>
-        <Speech>
-          <ProfileImage src={profileImage} alt='profile' />
-          <Content>{recognizedText ? recognizedText : '음성 인식 중입니다.'}</Content>
-        </Speech>
+        {recognizedTexts.map((recognizedText, index) => {
+          const nickname = serverUserData?.find((user) => user.id === recognizedText.userId)?.nickname;
+          return (
+            <Speech key={index}>
+              <div>{nickname}</div>
+              <Content>{recognizedText.text}</Content>
+            </Speech>
+          );
+        })}
       </Note>
     </Wrapper>
   );
@@ -132,14 +154,6 @@ const Speech = styled.div`
   width: 100%;
   display: flex;
   gap: 16px;
-`;
-
-const ProfileImage = styled.img`
-  width: 36px;
-  height: 36px;
-  object-fit: cover;
-  flex-shrink: 0;
-  border-radius: 50%;
 `;
 
 const Content = styled.div`
