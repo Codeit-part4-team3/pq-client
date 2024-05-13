@@ -39,8 +39,16 @@ React, Express, NestJS, AWS
 - Prisma 사용
 - 서버 초대 기능(이메일 초대, 초대링크(암호화))
 - 개별 스트림 통신 제어기능 구현
-- 채팅메시지 알림UI  
-  <br />  
+- 채팅메시지 알림UI
+- 서버별 일정
+- 스웨거 생성
+- 
+  <br />
+
+## 기타 개발 이미지
+![tmdnprj](https://github.com/Codeit-part4-team3/pq-client/assets/59861974/2dae6a46-a03b-4b99-8d3a-afe325a69be8)
+![ffsa](https://github.com/Codeit-part4-team3/pq-client/assets/59861974/938188b5-de7d-4216-bd96-306d691770db)
+
 
 ## ❗ 이슈 및 해결
 ### ❓ [MSA 서버구조의 로컬환경] 로컬환경에서 개발 및 테스트 시 유저서버와 채팅서버가 동일한 포트번호를 사용하고 있는 문제 발생. Port번호를 다르게 한다면 서버별로 API URL을 구분해야함
@@ -63,4 +71,10 @@ API 요청 시 axios instance를 사용하고 있음 -> BaseURL을 구분해주�
 > <strong>😎</strong>
 > <strong> 컴퓨터의 시스템환경변수에 가보니 .env파일과 동일한 이름의 키값이 존재했음<br /></strong>
 > <strong> 이전에 테라폼 설정을 하면서 시스템 환경변수에 AWS관련 키를 추가했는데 공교롭게도 이름이 똑같아서 발생한 문제였다.<br /></strong>  
+<br />
+
+> ### ❓[EC2 + Nest] AWS EC2 Heap메모리 부족현상 발생
+> <strong>😎</strong>
+> <strong> aws-sdk 전체를 임포트  하니 메모리 부족 <br /></strong>
+> <strong> aws-sdk 내부에서 필요한 부분만 임포트 하여 해결 <br /></strong>
 <br />  
