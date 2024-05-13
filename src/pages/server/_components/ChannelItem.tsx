@@ -2,19 +2,22 @@ import styled from 'styled-components';
 import { ChannelItemProps } from '../_types/props';
 import { Link, useLocation } from 'react-router-dom';
 import tagSvg from '/images/tag_small_white.svg';
+import voiceSvg from '/images/volume_on_white.svg';
 import { ButtonIcon } from 'src/GlobalStyles';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DefaultModal from 'src/components/modal/DefaultModal';
 import { useMutationDelete, useMutationPatch } from 'src/apis/service/service';
 import { ChannelRequest, ChannelResponse } from '../_types/type';
+import { LOCAL_STORAGE_ALRAM_KEY } from 'src/constants/common';
 
 export default function ChannelItem({ data }: ChannelItemProps) {
   const path = useLocation();
   const [isToggle, setIsToggle] = useState<boolean>(false);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
+  const [isAlram, setIsAlram] = useState<boolean>(false);
   const [updateName, setUpdateName] = useState<string>('');
   const serverId = path.pathname.split('/')[2];
-  const channelId = Number(path.pathname.split('/')[4]);
+  const currentChannelId = Number(path.pathname.split('/')[4]);
 
   const deleteMutation = useMutationDelete(`/chat/v1/server/${serverId}/channel/${data.id}`);
   const patchMutation = useMutationPatch<ChannelResponse, ChannelRequest>(
@@ -48,10 +51,21 @@ export default function ChannelItem({ data }: ChannelItemProps) {
     }
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsAlram(localStorage.getItem(`${LOCAL_STORAGE_ALRAM_KEY}:${data.id}`) ? true : false);
+    }, 30);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   return (
-    <ChannelItemWrapper to={`/server/${serverId}/channel/${data.id}`} isSelect={channelId === data.id}>
+    <ChannelItemWrapper to={`/server/${serverId}/channel/${data.id}`} isSelect={currentChannelId === data.id}>
+      <Alram isAlram={isAlram} />
       <Title>
-        <img src={tagSvg} alt='채널 태그 이미지' />
+        {data.isVoice ? <img src={voiceSvg} alt='음성 태그 이미지' /> : <img src={tagSvg} alt='채널 태그 이미지' />}
         {data.name}
         <InputChannel
           value={updateName}
@@ -62,8 +76,8 @@ export default function ChannelItem({ data }: ChannelItemProps) {
         />
       </Title>
       <ButtonGroup>
-        <UpdateButton onClick={handleUpdate} />
         <CloseButton onClick={handleDeleteModal} />
+        <UpdateButton onClick={handleUpdate} />
       </ButtonGroup>
       {
         <DefaultModal
@@ -109,6 +123,17 @@ const ChannelItemWrapper = styled(Link)<{ isSelect: boolean }>`
   }
 `;
 
+const Alram = styled.div<{ isAlram: boolean }>`
+  width: 10px;
+  height: 10px;
+
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-color: ${(props) => (props.isAlram ? `var(--specific_color)` : 'transparent')};
+
+  margin-left: 4px;
+`;
+
 const Title = styled.div`
   width: 100%;
 
@@ -146,6 +171,8 @@ const CloseButton = styled(Button)`
 `;
 
 const UpdateButton = styled(Button)`
+  width: 16px;
+  height: 16px;
   background-image: url('/images/pencil-white.png');
 `;
 
@@ -155,6 +182,8 @@ const ButtonGroup = styled.div`
   justify-content: center;
   align-items: center;
   gap: 4px;
+
+  margin-right: 4px;
 `;
 
 const InputChannel = styled.input<{ isUpdate: boolean }>`

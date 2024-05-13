@@ -16,7 +16,6 @@ export default function CalendarContainer() {
 
 const Area = styled.section`
   width: 100%;
-  position: relative;
   padding-left: 10px;
   padding-right: 10px;
   color: var(--text_gray);

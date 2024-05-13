@@ -16,7 +16,7 @@ export default function ModalButtons({ ctaText, okClick, closeClick, closeText =
       <CloseButton type='button' onClick={closeClick}>
         {closeText}
       </CloseButton>
-      <CtaButton $bgColor='#258dff' $hoverColor='#0056b3' {...rest} onClick={okClick}>
+      <CtaButton $bgColor='#258dff' $hoverColor='#0056b3' onClick={okClick} {...rest}>
         {ctaText}
       </CtaButton>
     </Area>

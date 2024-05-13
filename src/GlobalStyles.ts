@@ -36,6 +36,12 @@ export const GlobalStyles = createGlobalStyle`
 
     --primary_basic_color: #013050; // 가장 진한 색
     --primary_light_color: #03395d; // 중간 색
+    --light_blue_0: #e1ebf7; // 채팅 호버, 수정 색
+    --light_blue_1: #98b9d9; // 좀 진한 색
+    --light_blue_2: #738bb6; // 좀 더 진한 색
+    --light_blue_3: #47639f; // 좀 더더 진한색
+    --light_blue_4: #2c3e6d; // 좀 더더더 진한 색
+    --light_blue_5: #1b2b4a; // 가장 진한 색
     --primary_text_color: #021A2D; // 텍스트 색 PQ색과 동일
 
     --background_basic_gray: #404040;
@@ -44,6 +50,7 @@ export const GlobalStyles = createGlobalStyle`
 
     --text_gray: #d9d9d9; // 텍스트 and border
     --landing_background_color: #ecf3fc; // 랜딩페이지 배경색( 하늘색 ) // hover시 fafafa
+    --specific_color: #d8980e;
   }
 
   * {
