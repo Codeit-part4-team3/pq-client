@@ -57,7 +57,7 @@ export default function MyPageModal({ closeModal, isOpen }: ModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
       <ModalContainer>
-        <Title>마이페이지</Title>
+        <ModalTitle>마이페이지</ModalTitle>
         <ModalForm onSubmit={onSubmit}>
           <InputBox>
             <ModalInputLabel>프로필 이미지</ModalInputLabel>
@@ -83,22 +83,6 @@ const InputBox = styled(ModalInputBox)`
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-
-const Title = styled(ModalTitle)`
-  animation: myAnimation 1s ease-in-out infinite;
-
-  @keyframes myAnimation {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.2);
-    }
-    100% {
-      transform: scale(1);
-    }
-  }
 `;
 
 const NickNameInput = styled(NameInput)`
