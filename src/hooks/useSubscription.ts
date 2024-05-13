@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useQueryGet } from 'src/apis/service/service';
 import { USER_URL } from 'src/constants/apiUrl';
-import { MessageMaxLength, PlanType, SubscriptionResponse } from 'src/types/subscriptionType';
+import {
+  MessageMaxLength,
+  PlanType,
+  SubscriptionResponse,
+} from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
 
 export const useSubscription = () => {
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
