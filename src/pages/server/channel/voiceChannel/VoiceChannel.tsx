@@ -12,9 +12,9 @@ import { SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
 
 const pc_config = {
   iceServers: [
-    // {
-    //   urls: ['stun:stun.l.google.com:19302'],
-    // },
+    {
+      urls: ['stun:stun.l.google.com:19302'],
+    },
     { urls: 'turn:43.200.40.206', username: 'codeit', credential: 'sprint101!' }, // TURN 서버 설정
   ],
 };

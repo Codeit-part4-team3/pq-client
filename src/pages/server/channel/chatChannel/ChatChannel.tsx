@@ -286,7 +286,7 @@ export default function ChatChannel() {
           onUpdateMessageCancelClick={handleUpdateMessageCancelClick}
           onEditingMessageChange={hanedleEditingMessageChange}
         />
-        {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯, 서버 데이터 필요 */}
+        {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게할 컴포넌트 */}
         {isNoMoreMessages ? <ChatChannelIntro channelData={channelData} /> : null}
         {/* 무한 스크롤 로딩스피너 */}
         {lastKey ? (
