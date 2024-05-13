@@ -84,7 +84,7 @@ API 요청 시 axios instance를 사용하고 있음 -> BaseURL을 구분해주�
 <br />
 
 ### ❓[EC2 + Nest] AWS EC2 Heap메모리 부족현상 발생
-<strong>😎</strong>
-<strong> aws-sdk 전체를 임포트  하니 메모리 부족 <br /></strong>
-<strong> aws-sdk 내부에서 필요한 부분만 임포트 하여 해결 <br /></strong>
+> <strong>😎</strong>
+> <strong> aws-sdk 전체를 임포트  하니 메모리 부족 <br /></strong>
+> <strong> aws-sdk 내부에서 필요한 부분만 임포트 하여 해결 <br /></strong>
 <br />  
