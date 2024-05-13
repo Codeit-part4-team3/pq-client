@@ -35,10 +35,12 @@ export default function CalenderModal({ isOpen, closeModal }: ModalProps) {
 
   const onMonthChange = async (month: number) => {
     SetCurrentMonth((pre) => pre + month);
+
     if (currentMonth + month < 0) {
       SetCurrentYear(currentYear - 1);
       SetCurrentMonth(11);
     }
+
     if (currentMonth + month > 11) {
       SetCurrentYear(currentYear + 1);
       SetCurrentMonth(0);
