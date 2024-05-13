@@ -1,53 +1,66 @@
-// import { useState } from 'react';
-
 import styled from 'styled-components';
 
-// import ChatChannel from './chatChannel/ChatChannel';
-
 import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useQueryGet } from 'src/apis/service/service';
+
+import { ChannelResponse, IUser } from '../_types/type';
+import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
 import VoiceChannel from './voiceChannel/VoiceChannel';
 import ChatChannel from './chatChannel/ChatChannel';
-import { useState } from 'react';
 import ChannelHeader from 'src/pages/server/channel/_conponents/ChannelHeader';
+import { Status } from 'src/components/MyState';
 
 export default function Channel() {
   const [isShowMembers, setIsShowMembers] = useState(true);
   const { serverId, channelId } = useParams();
-  console.log('serverId:', serverId, 'channelId:', channelId);
+
+  const { data, refetch } = useQueryGet<ChannelResponse>(
+    'getChannel',
+    `/chat/v1/server/${serverId}/channel/${channelId}`,
+  );
+
+  const { data: userData, refetch: userRefetch } = useQueryGet<IUser[]>(
+    'getUsers',
+    `/chat/v1/server/${serverId}/users`,
+  );
+  console.log('userData', userData);
 
   const handleMembers = () => {
     setIsShowMembers(!isShowMembers);
   };
 
-  /**@ToDo channel 데이터의 onVoice의 boolean에 따라 ChatChannel을 보여줄지 VoiceChannel을 보여줄지 생각 */
-  // const [onVoice] = useState('false');
+  useEffect(() => {
+    refetch();
+  }, [channelId]);
+
+  useEffect(() => {
+    userRefetch();
+  }, [serverId]);
+
   return (
     <Area>
-      <ChannelHeader onClickMembers={handleMembers} />
+      <ChannelHeader title={data?.name ?? '없음'} userCount={userData?.length ?? 0} onClickMembers={handleMembers} />
       <Container>
-        {Number(channelId) % 2 === 0 ? <ChatChannel /> : <VoiceChannel />}
-        {isShowMembers && (
-          <MembersContainer>
-            <Member>
-              <ImageWrapper>
-                <Image />
-              </ImageWrapper>
-              <span>구성원</span>
-            </Member>
-            <Member>
-              <ImageWrapper>
-                <Image />
-              </ImageWrapper>
-              <span>구성원</span>
-            </Member>
-            <Member>
-              <ImageWrapper>
-                <Image />
-              </ImageWrapper>
-              <span>구성원</span>
-            </Member>
+        {data?.isVoice ? <VoiceChannel /> : <ChatChannel />}
+        <MembersWrapper isShow={isShowMembers}>
+          <MembersContainer isShow={isShowMembers}>
+            {userData?.map((user) => {
+              if (!user) return null;
+              return (
+                <Member key={user.id}>
+                  <ProfileImageWrapper>
+                    <StatusBox>
+                      <Status $state={user.state} />
+                    </StatusBox>
+                    <ProfileImage imageUrl={user.imageUrl} />
+                  </ProfileImageWrapper>
+                  <span>{user.nickname}</span>
+                </Member>
+              );
+            })}
           </MembersContainer>
-        )}
+        </MembersWrapper>
       </Container>
     </Area>
   );
@@ -63,6 +76,19 @@ const Area = styled.section`
   position: relative;
 `;
 
+const StatusBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 44px;
+  bottom: 9px;
+`;
+
 const Container = styled.div`
   width: 100%;
   height: calc(100% - 48px);
@@ -74,7 +100,16 @@ const Container = styled.div`
   position: relative;
 `;
 
-const MembersContainer = styled.div`
+const MembersWrapper = styled.div<{ isShow: boolean }>`
+  width: ${(props) => (props.isShow ? '180px' : '0px')};
+  height: 100%;
+
+  overflow: hidden;
+  transition: 0.3s ease-in-out;
+  transform: ${(props) => (props.isShow ? 'scaleX(1)' : 'scaleX(0)')};
+`;
+
+const MembersContainer = styled.div<{ isShow: boolean }>`
   width: 180px;
   height: 100%;
 
@@ -84,6 +119,11 @@ const MembersContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  transition: 0.3s ease-in-out;
+  transform: ${(props) => (props.isShow ? 'translateX(0)' : 'translateX(180px)')};
+
+  top: 0;
+  right: -180px;
 
   & > * {
     padding: 10px;
@@ -98,30 +138,7 @@ const Member = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  gap: 5px;
-`;
-
-const ImageWrapper = styled.div`
-  width: 40px;
-  height: 40px;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  overflow: hidden;
-`;
-
-const Image = styled.img`
-  width: 100%;
-  height: 100%;
-
-  border-radius: 50%;
-  background-size: cover;
-  background-image: url('/images/minji-profile-image.png');
-
-  &:hover {
-    cursor: pointer;
-  }
+  font-size: 14px;
+  gap: 10px;
+  position: relative;
 `;

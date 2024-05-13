@@ -17,9 +17,9 @@ export const useQueryGet = <Res>(queryKey: string, url: string, options: object 
   return query;
 };
 
-export const useMutationPost = <Res, Req>(url: string, options: object = {}) => {
+export const useMutationPost = <Res, Req>(url: string, options: object = {}, axiosOptions: object = {}) => {
   const mutationFn: MutationFunction<Res, Req> = async (body) => {
-    const res: AxiosResponse<Res> = await axiosInstance.post(url, body);
+    const res: AxiosResponse<Res> = await axiosInstance.post(url, body, axiosOptions);
     return res.data;
   };
 
@@ -27,9 +27,9 @@ export const useMutationPost = <Res, Req>(url: string, options: object = {}) => 
   return mutation;
 };
 
-export const useMutationPatch = <Res, Req>(url: string, options: object = {}) => {
+export const useMutationPatch = <Res, Req>(url: string, options: object = {}, axiosOptions: object = {}) => {
   const mutationFn: MutationFunction<Res, Req> = async (body) => {
-    const res: AxiosResponse<Res> = await axiosInstance.patch(url, body);
+    const res: AxiosResponse<Res> = await axiosInstance.patch(url, body, axiosOptions);
     return res.data;
   };
 
@@ -44,5 +44,15 @@ export const useMutationDelete = (url: string, options: object = {}) => {
   };
 
   const mutation = useMutation({ mutationFn, ...options });
+  return mutation;
+};
+
+export const useMutationPut = <Res, Req>(url: string, options: object = {}, axiosOptions: object = {}) => {
+  const mutationFn: MutationFunction<Res, Req> = async (body) => {
+    const res: AxiosResponse<Res> = await axiosInstance.put(url, body, axiosOptions);
+    return res.data;
+  };
+
+  const mutation = useMutation<Res, unknown, Req>({ mutationFn, ...options });
   return mutation;
 };

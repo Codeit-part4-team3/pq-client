@@ -3,17 +3,22 @@ import styled from 'styled-components';
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   ctaText: string;
+  okClick?: () => void;
   closeClick?: () => void;
   closeText?: string;
+  $bgColor?: string;
+  $hoverColor?: string;
 }
 
-export default function ModalButtons({ ctaText, closeClick, closeText = '취소', ...rest }: Props) {
+export default function ModalButtons({ ctaText, okClick, closeClick, closeText = '취소', ...rest }: Props) {
   return (
     <Area>
       <CloseButton type='button' onClick={closeClick}>
         {closeText}
       </CloseButton>
-      <CtaButton {...rest}>{ctaText}</CtaButton>
+      <CtaButton $bgColor='#258dff' $hoverColor='#0056b3' onClick={okClick} {...rest}>
+        {ctaText}
+      </CtaButton>
     </Area>
   );
 }
@@ -40,7 +45,7 @@ const CloseButton = styled.button`
   }
 `;
 
-const CtaButton = styled.button`
+const CtaButton = styled.button<{ $bgColor: string; $hoverColor: string }>`
   color: #fff;
   display: flex;
   width: 100%;
@@ -49,12 +54,12 @@ const CtaButton = styled.button`
   align-items: center;
   gap: 10px;
   border-radius: 10px;
-  background: #258dff;
-  border: 1px solid #258dff;
+  background: ${(props) => props.$bgColor};
+  border: 1px solid ${(props) => props.$bgColor};
   outline: none;
 
   &:hover {
     cursor: pointer;
-    background: #0056b3;
+    background: ${(props) => props.$hoverColor};
   }
 `;

@@ -29,7 +29,6 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
   const [isPrivate, setIsPrivate] = useState(false);
   const [isVoice, setIsVoice] = useState(false);
   const [isNextModal, setIsNextModal] = useState(false);
-
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
   const handleInvite = (email: string) => {
     setInvitedUsers([...invitedUsers, email]);
@@ -55,7 +54,13 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
       return;
     }
     // 생성로직
+
+    // createMutation.mutate({ name: channelName, isPrivate: isPrivate, isVoice: channelMode, groupId });
+
     createMutation.mutate({ name: channelName, isPrivate: isPrivate, isVoice: isVoice, groupId });
+
+    setChannelName('');
+
     closeModal();
   };
 
@@ -88,16 +93,16 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
               />
               <ToggleButton
                 isEnabled={false}
-                title='비공개 채널'
-                desc='초대를 받은 일부 사람만 참여할 수 있음'
+                title={isPrivate ? '비공개 채널' : '공개 채널'}
+                desc={isPrivate ? '초대받은 사람만 참여 가능함' : '모든 사람이 참여 가능함'}
                 state={isPrivate}
                 toggleClick={() => setIsPrivate(!isPrivate)}
               />
               <ToggleButton
                 isEnabled={true}
-                title='Voice 체널'
-                desc='음성 채팅을 할 수 있음'
-                state={isPrivate}
+                title={isVoice ? '음성 채널' : '일반 채널'}
+                desc={isVoice ? '음성 채팅이 가능함' : '일반 채팅만 가능함'}
+                state={isVoice}
                 toggleClick={() => setIsVoice(!isVoice)}
               />
               <ModalButtons

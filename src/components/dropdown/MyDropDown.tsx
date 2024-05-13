@@ -6,7 +6,12 @@ interface Prorps {
   selectItem: (item: MyDropdownType) => void;
 }
 
-const DropdownList = [{ name: '초대받은 서버목록', type: MyDropdownType.INVITED_SERVER_LIST }];
+const DropdownList = [
+  { name: '초대받은 서버목록', type: MyDropdownType.INVITED_SERVER_LIST },
+  { name: '로그아웃', type: MyDropdownType.LOGOUT },
+  { name: '마이페이지', type: MyDropdownType.MYPAGE },
+  { name: '구독', type: MyDropdownType.SUBSCRIPTION },
+];
 
 export default function MyDropDown({ isDropDown, selectItem }: Prorps) {
   const handleClick = (type: MyDropdownType) => {

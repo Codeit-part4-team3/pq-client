@@ -1,62 +1,104 @@
 import styled from 'styled-components';
-import { useId } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { ServerItemProps } from '../_types/props';
+import { LOCAL_STORAGE_ALRAM_KEY } from 'src/constants/common';
 
-/**
- *
- * @param param0
- * interface ComponentProps { // 컴포넌트명Props의 interface 정의
- *  data: ServerItem;         // data속성은 서버에서 받아온 데이터
- *  etc: any;                 // etc속성은 기타 속성
- *  etc2: any;
- *  etc3: any;
- * }
- *
- */
-
-export default function ServerItem({ data, ...rest }: ServerItemProps) {
+export default function ServerItem({ data, channelDataList, ...rest }: ServerItemProps) {
   const lid = useId();
+  const [isAlram, setIsAlram] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!channelDataList) return;
+
+    const interval = setInterval(() => {
+      let flag = false;
+      for (const channelData of channelDataList) {
+        if (localStorage.getItem(`${LOCAL_STORAGE_ALRAM_KEY}:${channelData?.id}`)) {
+          flag = true;
+          break;
+        }
+      }
+      setIsAlram(flag);
+    }, 30);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [channelDataList]);
 
   return (
-    <Button key={`${lid}-${data.id}`} {...rest}>
-      {data.imageUrl ? (
-        <img src={data.imageUrl} alt='img' data-serverid={data.id} />
-      ) : (
-        <strong data-serverid={data.id}>{data.name}</strong>
+    <Wrapper>
+      <Button key={`${lid}-${data.id}`} {...rest}>
+        {data.imageUrl ? (
+          <Image imageUrl={data.imageUrl} data-serverid={data.id} />
+        ) : (
+          <strong data-serverid={data.id}>{data.name}</strong>
+        )}
+      </Button>
+      {isAlram && (
+        <Alram>
+          <div />
+        </Alram>
       )}
-    </Button>
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+  position: relative;
+`;
 
 const Button = styled.button`
   width: 48px;
   height: 48px;
 
   border: none;
-  border-radius: 10px;
-  background-color: #d8980e;
-
+  border-radius: 50%;
+  background-color: var(--landing_background_color);
+  padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 16px;
-
   overflow: hidden;
-  white-space: nowrap;
 
   &:hover {
-    outline: 3px solid #d9d9d9;
+    border: 3px solid #d9d9d9;
     cursor: pointer;
   }
+`;
 
-  > * {
-    width: 100%;
-    height: 100%;
+const Alram = styled.div`
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--primary_basic_color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: absolute;
+  top: -2px;
+  right: -2px;
 
-    background-size: cover;
+  & > div {
+    width: 60%;
+    height: 60%;
+
+    border-radius: 50%;
+    background-color: var(--specific_color);
+  }
+`;
+
+export const Image = styled.div<{ imageUrl?: string }>`
+  width: 100%;
+  height: 100%;
+
+  background-image: ${(props) => (props.imageUrl ? `url(${props.imageUrl})` : ``)};
+  background-size: cover;
+  background-position: center;
+
+  &:hover {
+    cursor: pointer;
   }
 `;
