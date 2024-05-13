@@ -1,13 +1,5 @@
 import styled from 'styled-components';
-
-interface ContextMenuProps {
-  positionX: number;
-  positionY: number;
-  messageId: string;
-  createdAt: number;
-  onDeleteMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
-  onUpdateMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
-}
+import { ContextMenuProps } from '../_types/props';
 
 export default function ContextMenu({
   positionX,
@@ -50,7 +42,7 @@ const Wrapper = styled.div<{
   align-items: flex-start;
   overflow: hidden;
 
-  position: absolute;
+  position: fixed;
   top: ${({ positionY }) => positionY}px;
   left: ${({ positionX }) => positionX}px;
   cursor: pointer;
@@ -66,6 +58,7 @@ const Item = styled.div`
   padding: 6px 12px;
 
   &:hover {
-    background-color: var(----gray_EEEEEE, #eee);
+    color: var(--white_FFFFFF, #fff);
+    background-color: var(--primary_text_color, #021a2d);
   }
 `;

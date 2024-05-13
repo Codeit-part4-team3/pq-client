@@ -1,17 +1,20 @@
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { lastKey, MessageItem, User } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
-import UtilityButton from './_components/UtilityButton';
 import { useSubscription } from 'src/hooks/useSubscription';
 import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
 import { useQueryGet } from 'src/apis/service/service';
 import { LOCAL_STORAGE_ALRAM_KEY, SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
 import useSocket from 'src/hooks/useSocket';
+import MessageLoadingSpinner from './_components/MessageLoadingSpinner';
+import ChatInputBox from './_components/ChatInputBox';
+import { ChannelData } from '../../_types/type';
+import ChatChannelIntro from './_components/ChatChannelIntro';
 
-/**@Todo Channel 컴포넌트로 부터 channel date를 prop로 받고 데이터 바인딩 예정
- * 유저 데이터들 처리하는 로직 짜야함
+/**@ToDo
+ * 소켓 연결 / 소켓 이벤트 리스너 분리하는 로직 짜면 좋을듯
  */
 export default function ChatChannel() {
   // 유저, 서버, 채널 데이터
@@ -27,11 +30,22 @@ export default function ChatChannel() {
     enabled: !!userId,
   });
 
+  // 채널 데이터
+  const { data: channelData } = useQueryGet<ChannelData>(
+    'getCurrentChannel',
+    `/chat/v1/server/${serverId}/channel/${channelId}`,
+    {
+      staleTime: 5000,
+      refetchInterval: 5000,
+      enabled: !!userId,
+    },
+  );
+
   // 소켓
   const socketRef = useSocket();
   // 메시지 관련
   const [messages, setMessages] = useState<MessageItem[]>([]);
-  const [inputValue, setInputValue] = useState<string>('');
+  const messageInputRef = useRef<HTMLInputElement | null>(null);
   // 무한 스크롤
   const [isNoMoreMessages, setIsNoMoreMessages] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
@@ -50,15 +64,13 @@ export default function ChatChannel() {
     setIsClickedUtilityButton(!isClickedUtilityButton);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
   const handleSendMessageKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (inputValue === '') return;
-    if (e.key === 'Enter') {
-      socketRef.current?.emit(SOCKET_EMIT.SEND_MESSAGE, { message: e.currentTarget.value, roomName, userId });
-      setInputValue('');
+    if (messageInputRef.current) {
+      if (messageInputRef.current?.value === '') return;
+      if (e.key === 'Enter') {
+        socketRef.current?.emit(SOCKET_EMIT.SEND_MESSAGE, { message: e.currentTarget.value, roomName, userId });
+        messageInputRef.current.value = '';
+      }
     }
   };
 
@@ -109,6 +121,7 @@ export default function ChatChannel() {
       roomName,
     });
     setEditingMessage('');
+    console.log('메시지 업데이트 완료');
   };
 
   // 메시지 수정 취소
@@ -246,10 +259,10 @@ export default function ChatChannel() {
 
   useEffect(() => {
     // 페이지 진입시, 채팅이 추가될 때마다 스크롤을 맨 아래로 내려준다
-    if (inputValue === '' && chatContainerRef.current) {
+    if (messageInputRef.current?.value === '' && chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [inputValue]);
+  }, []);
 
   useEffect(() => {
     infiniteScroll();
@@ -274,39 +287,23 @@ export default function ChatChannel() {
           onEditingMessageChange={hanedleEditingMessageChange}
         />
         {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯, 서버 데이터 필요 */}
-        {isNoMoreMessages ? (
-          <ChatChannelIntro>
-            <ChannelName>{'# 채팅 채널1'}의 첫 시작 부분이에요</ChannelName>
-            <CreationDate>생성일 : {'2024년 04월 11일'}</CreationDate>
-          </ChatChannelIntro>
-        ) : null}
+        {isNoMoreMessages ? <ChatChannelIntro channelData={channelData} /> : null}
+        {/* 무한 스크롤 로딩스피너 */}
         {lastKey ? (
           <>
-            {/* LoadingSpinner */}
-            <ChatLoadingSpinner ref={infiniteScrollTriggerRef}>
-              <Spinner delay='0s' />
-              <Spinner delay='0.2s' />
-              <Spinner delay='0.4s' />
-            </ChatLoadingSpinner>
+            <MessageLoadingSpinner infiniteScrollTriggerRef={infiniteScrollTriggerRef} />
           </>
         ) : null}
         {/* 가장 위쪽 */}
       </ChatContainer>
       {/* 채팅 input */}
-      <ChatInputBox>
-        <ChatInput
-          type='text'
-          placeholder={`${'#채팅방 이름'}에 메시지 보내기`}
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={handleSendMessageKeyDown}
-          maxLength={messageMaxLength}
-        />
-        <UtilityButton
-          isClickedUtilityButton={isClickedUtilityButton}
-          handleUiilityButtonClick={handleUiilityButtonClick}
-        />
-      </ChatInputBox>
+      <ChatInputBox
+        messageInputRef={messageInputRef}
+        handleSendMessageKeyDown={handleSendMessageKeyDown}
+        messageMaxLength={messageMaxLength}
+        isClickedUtilityButton={isClickedUtilityButton}
+        handleUiilityButtonClick={handleUiilityButtonClick}
+      />
     </Wrapper>
   );
 }
@@ -339,77 +336,4 @@ const ChatContainer = styled.div`
     border-radius: 2px;
     background: #ccc;
   }
-`;
-
-const ChatChannelIntro = styled.div`
-  margin-top: 495px;
-  padding-left: 20px;
-`;
-
-const ChannelName = styled.h1`
-  color: var(--black_000000);
-  font-family: Pretendard;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 160%; /* 32px */
-  margin: 0;
-`;
-
-const CreationDate = styled.p`
-  color: var(--gray_666666);
-  font-family: Pretendard;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 160%; /* 22.4px */
-  margin: 0;
-`;
-
-const ChatInputBox = styled.div`
-  display: flex;
-  justify-content: center;
-  padding-bottom: 20px;
-
-  position: relative;
-  margin-left: 20px;
-  margin-right: 20px;
-`;
-
-const ChatInput = styled.input`
-  border-radius: 10px;
-  border: 1px solid var(--gray_CCCCCC);
-  width: 100%;
-  height: 48px;
-
-  flex-shrink: 0;
-  background: var(--white_FFFFFF);
-  padding-left: 16px;
-  padding-right: 12px;
-
-  &:focus {
-    outline: none;
-    border: 1px solid #00bb83;
-  }
-`;
-
-const ChatLoadingSpinner = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 300px;
-`;
-
-const bounce = keyframes`
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
-`;
-
-const Spinner = styled.div<{ delay: string }>`
-  margin: 8px;
-  width: 12px;
-  height: 12px;
-  background-color: var(--black_000000);
-  border-radius: 50%;
-  animation: ${bounce} 1s infinite;
-  animation-delay: ${(props) => props.delay};
 `;
