@@ -30,32 +30,34 @@ export default function CreateChannelModal({ closeModal, isOpen, groupId }: Prop
   const [isVoice, setIsVoice] = useState(false);
   const [isNextModal, setIsNextModal] = useState(false);
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
-  const handleInvite = (email: string) => {
-    setInvitedUsers([...invitedUsers, email]);
-  };
 
   const serverId = useContext<number>(ServerIdContext);
 
   const createMutation = useMutationPost<ChannelResponse, ChannelRequest>(`/chat/v1/server/${serverId}/channel`);
 
+  const handleInvite = (email: string) => {
+    setInvitedUsers([...invitedUsers, email]);
+  };
+
   const handleNextModalClick = () => {
     setErrorMessage('');
+
     if (channelName === '') {
       setErrorMessage('이름은 필수입니다.');
       return;
     }
+
     setIsNextModal(!isNextModal);
   };
+
   const createChannel: FormEventHandler = (e) => {
     e.preventDefault();
     setErrorMessage('');
+
     if (channelName === '') {
       setErrorMessage('이름은 필수입니다.');
       return;
     }
-    // 생성로직
-
-    // createMutation.mutate({ name: channelName, isPrivate: isPrivate, isVoice: channelMode, groupId });
 
     createMutation.mutate({ name: channelName, isPrivate: isPrivate, isVoice: isVoice, groupId });
 
