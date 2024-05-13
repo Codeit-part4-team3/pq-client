@@ -10,7 +10,7 @@ export default function SignHeader({ children }: SignHeaderProps) {
   return (
     <Header>
       <Link to='/'>
-        <Logo src='/images/logo.svg' alt='pq 메인 로고' />
+        <Logo src='/images/landing.webp' alt='pq 메인 로고' />
       </Link>
       {children}
     </Header>
@@ -28,6 +28,8 @@ const Header = styled.h1`
 `;
 
 const Logo = styled.img`
+  width: 150px;
+  height: 150px;
   padding: 8px 12px;
 
   border-radius: 10px;
