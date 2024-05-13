@@ -28,22 +28,26 @@ export default function DayContainer({ currentDay, currentMonth, currentYear, se
   const newEndDate = new Date(currentYear, currentMonth, currentDay + 1, 0, 0, 0, 0).toISOString();
 
   const serverId = useContext<number>(ServerIdContext);
+
   const { data, refetch: eventRefetch } = useQueryGet<Event[]>(
     'oneDayEvents',
     `/chat/v1/server/events?serverId=${serverId}&startDate=${newStartDate}&endDate=${newEndDate}`,
   );
+
   const createMutation = useMutationPost<Event, EventReqeust>(`/chat/v1/server/event`, {
     onSuccess: () => {
       eventRefetch();
       refetch();
     },
   });
+
   const updateMutation = useMutationPut<Event, EventReqeust>(`/chat/v1/server/event/update?eId=${eId}`, {
     onSuccess: () => {
       eventRefetch();
       refetch();
     },
   });
+
   const deleteMutation = useMutationDelete(`/chat/v1/server/event/delete?eId=${eId}`, {
     onSuccess: () => {
       eventRefetch();
@@ -86,6 +90,7 @@ export default function DayContainer({ currentDay, currentMonth, currentYear, se
       Number(time.split(':')[0]),
       Number(time.split(':')[1]),
     );
+
     if (!isUpdate) {
       await createMutation.mutate({ title, start: startDate, serverId });
     }

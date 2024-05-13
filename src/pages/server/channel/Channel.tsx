@@ -23,8 +23,10 @@ export default function Channel() {
   const { data: userData, refetch: userRefetch } = useQueryGet<IUser[]>(
     'getUsers',
     `/chat/v1/server/${serverId}/users`,
+    {
+      refetchInterval: 10000,
+    },
   );
-  console.log('userData', userData);
 
   const handleMembers = () => {
     setIsShowMembers(!isShowMembers);

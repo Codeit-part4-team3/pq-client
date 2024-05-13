@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { MouseEventHandler, useState } from 'react';
 import styled from 'styled-components';
 import ServerDropDown from './ServerDropDown';
 
@@ -13,8 +13,13 @@ export default function ServerMenu({ serverName }: Props) {
     setIsDropDown((isDropDown) => !isDropDown);
   };
 
+  const closeDropDown: MouseEventHandler = (e) => {
+    e.preventDefault();
+    setIsDropDown(false);
+  };
+
   return (
-    <Area>
+    <Area onMouseLeave={closeDropDown}>
       <H2>{serverName}</H2>
       <DropDownButton type='button' onClick={toggleDropDown}>
         <img src='/images/arrow-down.svg' alt='arrow-down' />
