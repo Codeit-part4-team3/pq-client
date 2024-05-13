@@ -1,4 +1,4 @@
-import { useState, Dispatch, SetStateAction, useCallback, memo, useEffect } from 'react';
+import { useState, Dispatch, SetStateAction, useCallback, useEffect, useRef } from 'react';
 import { ModalTitle } from '../../CommonStyles';
 import { USER_URL } from 'src/constants/apiUrl';
 import RegistCardButton from 'src/components/modal/contents/SubscriptionModal/RegistCardButton';
@@ -6,6 +6,10 @@ import { Plan, PlansResponse } from 'src/components/modal/contents/SubscriptionM
 import styled from 'styled-components';
 import { useQueryGet } from 'src/apis/service/service';
 import { SubscriptionResponse } from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
+import { Socket, io } from 'socket.io-client';
+import useEventStore from 'src/store/eventStore';
+
+const SOCKET_SERVER_URL = 'http://localhost:3000';
 
 interface SubscriptionContainerProps {
   subscription: SubscriptionResponse | undefined;
@@ -21,16 +25,19 @@ export default function SubscriptionContainer({
   setIsCancelSelected,
 }: SubscriptionContainerProps) {
   const [isRecurring, setIsRecurring] = useState(false);
-  const [isEventActive, setIsEventActive] = useState(false);
+  const { isEventActive, setIsEventActive } = useEventStore();
+  // 소켓
+  const socketRef = useRef<Socket | null>(null);
 
   const { data: plans } = useQueryGet<PlansResponse>('getPlan', `${USER_URL.PLANS}/all`);
-  const { data: event } = useQueryGet<{ amount: number }>('getEventAmount', `${USER_URL.PAYMENTS}/event`);
 
   useEffect(() => {
-    if (event) {
-      setIsEventActive(true);
-    }
-  }, [event]);
+    socketRef.current = io(SOCKET_SERVER_URL);
+    socketRef.current.on('event_status', (status) => {
+      console.log('Event status changed:', status);
+      setIsEventActive(status);
+    });
+  }, []);
 
   const handlePlanButtonClick = useCallback(
     (id: number) => {
@@ -42,13 +49,10 @@ export default function SubscriptionContainer({
     [plans],
   );
 
-  const isSubscribedPlan = useCallback(
-    (planId: number) => {
-      if (!subscription || !subscription.isActive) return false;
-      return subscription.planId >= planId;
-    },
-    [subscription],
-  );
+  const isSubscribedPlan = (planId: number) => {
+    if (!subscription || !subscription.isActive) return false;
+    return subscription.planId >= planId;
+  };
 
   return (
     <>
@@ -76,7 +80,7 @@ export default function SubscriptionContainer({
             )}
         </PlanButtonContainer>
         {plans?.[2] && isEventActive && (
-          <PlanButton
+          <EventButton
             type='button'
             key={plans[2].id}
             onClick={() => handlePlanButtonClick(plans[2].id)}
@@ -88,7 +92,7 @@ export default function SubscriptionContainer({
             <PlanName>{plans[2].type.toUpperCase()}</PlanName>
             <br />
             <br />₩{plans[2].price.toLocaleString()}
-          </PlanButton>
+          </EventButton>
         )}
         <SubscriptionCancelButton onClick={() => setIsCancelSelected(true)}>구독 취소 & 환불</SubscriptionCancelButton>
       </SubscriptionBox>
@@ -126,7 +130,7 @@ const PlanButtonContainer = styled.div`
   margin-bottom: 20px;
 `;
 
-const PlanButton = memo(styled.button<{ $isSelected: boolean; $isSubscribed: boolean }>`
+const PlanButton = styled.button<{ $isSelected: boolean; $isSubscribed: boolean }>`
   width: 100%;
   height: 100%;
   padding: 13px;
@@ -135,6 +139,7 @@ const PlanButton = memo(styled.button<{ $isSelected: boolean; $isSubscribed: boo
   align-items: center;
   gap: 10px;
   position: relative;
+  font-weight: bold;
   border-radius: 10px;
   color: #000;
   background-color: ${(props) => (props.$isSelected ? '#e8f4ff' : '#fff')};
@@ -149,7 +154,15 @@ const PlanButton = memo(styled.button<{ $isSelected: boolean; $isSubscribed: boo
   &:hover {
     cursor: ${(props) => (props.$isSubscribed ? 'default' : 'pointer')};
   }
-`);
+`;
+
+const EventButton = styled(PlanButton)`
+  color: #fff;
+  font-weight: bold;
+  background: ${(props) =>
+    props.$isSelected ? 'linear-gradient(135deg, #7e93fa, #fa8199)' : 'linear-gradient(135deg, #6a82fb, #fc5c7d)'};
+  border: 1px solid ${(props) => (props.$isSelected ? '#007BFF' : 'var(--text_gray)')};
+`;
 
 const SubscribedToast = styled.div`
   padding: 5px 10px;
