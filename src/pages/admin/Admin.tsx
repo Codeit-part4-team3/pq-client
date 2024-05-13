@@ -28,14 +28,14 @@ export default function Admin() {
     <>
       <Area>
         <Event />
-        {/* <AdminServerModal />
+        <AdminServerModal />
         <AdminJoinServerModal />
         <AdminChatSocketServer />
-        <AdminChatServer /> */}
+        <AdminChatServer />
       </Area>
-      {/* <VoiceChannelArea>
+      <VoiceChannelArea>
         <AdminVoiceSocketServer />
-      </VoiceChannelArea> */}
+      </VoiceChannelArea>
     </>
   );
 }
