@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
 import useSocket from 'src/hooks/useSocket';
 import { SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
+import { set } from 'react-hook-form';
 
 const pc_config = {
   iceServers: [
@@ -61,7 +62,23 @@ export default function VoiceChannel() {
   };
 
   // 회의록
-  const [showMeetingNote] = useState(true);
+  const [showMeetingNote, setShowMeetingNote] = useState(false);
+  const [meetingNoteName, setMeetingNoteName] = useState<string>('');
+
+  const handleMeetingNoteStartClick = () => {
+    if (!meetingNoteName) return;
+    socketRef.current?.emit(SOCKET_EMIT.START_MEETING_NOTE, { roomName, meetingNoteName });
+    setMeetingNoteName('');
+  };
+
+  const handleMeetingNoteEndClick = () => {
+    console.log('handleMeetingNoteEndClick');
+    socketRef.current?.emit(SOCKET_EMIT.END_MEETING_NOTE, { roomName });
+  };
+
+  const handleChangeMeetingNoteName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMeetingNoteName(e.target.value);
+  };
 
   /**
    * audioTrack.enabled의 경우 소리 생산 자체를 관여해서 들리지 않게 한다.
@@ -300,6 +317,18 @@ export default function VoiceChannel() {
       setUsers((prevUsers) => prevUsers.filter((user) => user.socketId !== exitSocketId));
     });
 
+    // 회의록 시작
+    socketRef.current.on(SOCKET_EMIT.START_MEETING_NOTE, () => {
+      console.log('start_meeting_note');
+      setShowMeetingNote(true);
+    });
+
+    // 회의록 종료
+    socketRef.current.on(SOCKET_EMIT.END_MEETING_NOTE, () => {
+      console.log('end_meeting_note');
+      setShowMeetingNote(false);
+    });
+
     getLocalStream();
 
     return () => {
@@ -317,6 +346,23 @@ export default function VoiceChannel() {
   return (
     <Wrapper>
       <ContentBox>
+        <div>
+          <input type='text' placeholder='회의록 제목' value={meetingNoteName} onChange={handleChangeMeetingNoteName} />
+          <button
+            onClick={() => {
+              handleMeetingNoteStartClick();
+            }}
+          >
+            회의록 시작
+          </button>
+          <button
+            onClick={() => {
+              handleMeetingNoteEndClick();
+            }}
+          >
+            회의록 종료
+          </button>
+        </div>
         <MediaBox>
           <VideoContainer>
             <LocalMedia {...localMediaData} />
@@ -333,7 +379,7 @@ export default function VoiceChannel() {
             isMutedAllRemoteStreams={isMutedAllRemoteStreams}
           />
         </MediaBox>
-        {showMeetingNote ? <MeetingNote /> : null}
+        {showMeetingNote ? <MeetingNote roomName={roomName} userId={userId} /> : null}
       </ContentBox>
     </Wrapper>
   );

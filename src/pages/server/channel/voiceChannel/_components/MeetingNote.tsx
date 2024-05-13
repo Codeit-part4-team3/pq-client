@@ -1,20 +1,29 @@
 import styled from 'styled-components';
 
 import profileImage from '../../../../../../public/images/minji-profile-image.png';
-import useSocket from 'src/hooks/useSocket';
 import { useEffect, useState } from 'react';
+import useSocket from 'src/hooks/useSocket';
 
-export default function MeetingNote() {
+interface MeetingNoteProps {
+  roomName: string;
+  userId: string;
+}
+
+export default function MeetingNote({ roomName, userId }: MeetingNoteProps) {
+  // 소켓
   const socketRef = useSocket();
-
   // 음성 인식
   // 인식된 텍스트
   const [recognizedText, setRecognizedText] = useState<string>('');
   // 음성 인식 중인지 여부
   const [isListening, setIsListening] = useState<boolean>(false);
 
+  // 음성 인식 객체 생성
   const SpeechRecognition = new window.webkitSpeechRecognition();
+  // 한국어로 설정
   SpeechRecognition.lang = 'ko-KR';
+  // 음성 인식을 계속해서 유지
+  SpeechRecognition.continuous = true;
 
   useEffect(() => {
     // 음성 인식 시작
@@ -28,9 +37,12 @@ export default function MeetingNote() {
 
     // 음성 인식이 끝나면 텍스트를 출력
     SpeechRecognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
+      const transcript = event.results[event.results.length - 1][0].transcript;
       setRecognizedText(transcript);
       console.log('대화 : ', transcript);
+      if (socketRef.current) {
+        socketRef.current.emit('update_meeting_note', { roomName, transcript, userId });
+      }
     };
 
     // 에러가 발생했을 때
@@ -39,10 +51,10 @@ export default function MeetingNote() {
       console.log('에러 메시지 : ', event.message);
     };
 
-    // 음성 인식이 끝나면 다시 시작
+    // 음성 인식이 끝났을 때
     SpeechRecognition.onend = () => {
-      // 음성 인식이 끝나면 다시 시작
-      SpeechRecognition.start();
+      setIsListening(false);
+      console.log('음성 인식이 종료되었습니다.');
     };
 
     // 컴포넌트가 언마운트 되면 음성 인식 종료
