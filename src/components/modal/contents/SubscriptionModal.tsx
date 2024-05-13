@@ -111,9 +111,7 @@ export default function SubscriptionModal({ closeModal, isOpen }: ModalProps) {
     cancelOrder(cancelData);
   };
 
-  const onSubmit: FormEventHandler = (e) => {
-    e.preventDefault();
-
+  const onSubmit: FormEventHandler = () => {
     if (isCancelSelected) {
       handleCancel();
       return;
