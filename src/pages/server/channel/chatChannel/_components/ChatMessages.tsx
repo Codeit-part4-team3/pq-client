@@ -57,7 +57,7 @@ export default function ChatMessages({
                   isOnEdit={currentEditingMessageId === messageItem.messageId}
                 >
                   <UserProfileImage>
-                    <Image profileImage={user?.profileImage ? user.profileImage : '/images/minji-profile-image.png'} />
+                    <Image profileImage={user?.imageUrl ? user.imageUrl : '/images/minji-profile-image.png'} />
                   </UserProfileImage>
                   <ChatMessageContent>
                     <ChatMessageContentHeader>
