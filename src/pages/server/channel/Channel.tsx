@@ -62,7 +62,7 @@ export default function Channel() {
                 <Member key={user.id}>
                   <ProfileWrapper>
                     <ProfileImageWrapper>
-                      <ProfileImage imageUrl={user.imageUrl} />
+                      <ProfileImage $imageUrl={user.imageUrl} />
                     </ProfileImageWrapper>
                     <StatusBox>
                       <Status $state={user.state} />
@@ -79,7 +79,7 @@ export default function Channel() {
                 <Member key={user.id}>
                   <ProfileWrapper>
                     <ProfileImageWrapper>
-                      <ProfileImage imageUrl={user.imageUrl} />
+                      <ProfileImage $imageUrl={user.imageUrl} />
                     </ProfileImageWrapper>
                     <StatusBox>
                       <Status $state={user.state} />

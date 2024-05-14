@@ -55,7 +55,7 @@ export default function MyProfile() {
       <Area onMouseLeave={handleDropdownLeave}>
         <Wrapper>
           <ProfileImageWapperAinmation>
-            <ProfileImageAinmation imageUrl={userInfo.imageUrl as string} onClick={toggleDropdown} />
+            <ProfileImageAinmation $imageUrl={userInfo.imageUrl as string} onClick={toggleDropdown} />
           </ProfileImageWapperAinmation>
           <InfoWrapper>
             <strong>{userInfo.nickname}</strong>

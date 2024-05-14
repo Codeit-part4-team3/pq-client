@@ -30,7 +30,7 @@ export default function ServerItem({ data, channelDataList, ...rest }: ServerIte
     <Wrapper>
       <Button key={`${lid}-${data.id}`} {...rest}>
         {data.imageUrl ? (
-          <Image imageUrl={data.imageUrl} data-serverid={data.id} />
+          <Image $imageUrl={data.imageUrl} data-serverid={data.id} />
         ) : (
           <strong data-serverid={data.id}>{data.name}</strong>
         )}
@@ -90,11 +90,11 @@ const Alram = styled.div`
   }
 `;
 
-export const Image = styled.div<{ imageUrl?: string }>`
+export const Image = styled.div<{ $imageUrl?: string }>`
   width: 100%;
   height: 100%;
 
-  background-image: ${(props) => (props.imageUrl ? `url(${props.imageUrl})` : ``)};
+  background-image: ${(props) => (props.$imageUrl ? `url(${props.$imageUrl})` : ``)};
   background-size: cover;
   background-position: center;
 

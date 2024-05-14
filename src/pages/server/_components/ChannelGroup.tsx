@@ -69,7 +69,7 @@ export default function ChannelGroup({ data, children }: ChannelGroupProps) {
           <span>{data?.name}</span>
           <InputChannel
             value={updateName}
-            isUpdate={isUpdate}
+            $isUpdate={isUpdate}
             onKeyDown={handleKeydown}
             onChange={(e) => setUpdateName(e.target.value)}
             placeholder='취소는 ESC / 저장은 Enter'
@@ -189,14 +189,14 @@ const ButtonGroup = styled.div`
   }
 `;
 
-const InputChannel = styled.input<{ isUpdate: boolean }>`
+const InputChannel = styled.input<{ $isUpdate: boolean }>`
   width: 160px;
   height: 100%;
 
   background-color: var(--primary_light_color);
   color: #d9d9d9;
   font-size: 12px;
-  display: ${(props) => (props.isUpdate ? 'block' : 'none')};
+  display: ${(props) => (props.$isUpdate ? 'block' : 'none')};
 
   position: absolute;
   top: 0;

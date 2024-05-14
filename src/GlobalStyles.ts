@@ -171,11 +171,11 @@ export const ProfileImageWrapper = styled.div`
   margin-left: 10px;
 `;
 
-export const ProfileImage = styled.div<{ imageUrl?: string }>`
+export const ProfileImage = styled.div<{ $imageUrl?: string }>`
   width: 100%;
   height: 100%;
 
-  background-image: ${(props) => (props.imageUrl ? `url(${props.imageUrl})` : `url('/images/landing.webp')`)};
+  background-image: ${(props) => (props.$imageUrl ? `url(${props.$imageUrl})` : `url('/images/landing.webp')`)};
   background-size: cover;
   background-position: center;
 

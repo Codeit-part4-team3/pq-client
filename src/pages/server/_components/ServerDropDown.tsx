@@ -54,7 +54,7 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
       <ButtonContainer $isDown={isDropDown}>
         {DropdownList.map((item) => {
           return item.type === ServerDropdownType.LABEL ? (
-            <Label>{item.name}</Label>
+            <Label key={item.name}>{item.name}</Label>
           ) : (
             <Button key={item.type} type='button' onClick={() => handleClick(item.type)}>
               {item.name}
