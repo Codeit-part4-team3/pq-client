@@ -7,7 +7,7 @@ import { useOpenModal } from 'src/hooks/useOpenModal';
 import { useLocation } from 'react-router-dom';
 import { useMutationDelete, useMutationPatch } from 'src/apis/service/service';
 import { ChannelRequest, ChannelResponse } from '../_types/type';
-import DefaultModal from 'src/components/modal/DefaultModal';
+import DeleteCategoryModal from 'src/components/modal/contents/DeleteCategoryModal';
 
 export default function ChannelGroup({ data, children }: ChannelGroupProps) {
   const path = useLocation();
@@ -81,15 +81,12 @@ export default function ChannelGroup({ data, children }: ChannelGroupProps) {
           <PlusButton type='button' onClick={openModal} />
         </ButtonGroup>
         <CreateChannelModal isOpen={isOpen} closeModal={closeModal} groupId={data.id} />
-        {
-          <DefaultModal
-            title='카테고리 삭제'
-            desc='카테고리를 삭제하시겠습니까?'
-            okClick={handleDelete}
-            closeModal={() => setIsToggle(false)}
-            isOpen={isToggle}
-          />
-        }
+        <DeleteCategoryModal
+          closeModal={() => setIsToggle(false)}
+          isOpen={isToggle}
+          categoryName={`${data.name} 카테고리` || '카테고리'}
+          onDelete={handleDelete}
+        />
       </Wrapper>
       <Body ref={bodyRef}>{children}</Body>
     </Area>

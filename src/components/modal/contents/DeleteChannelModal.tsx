@@ -5,15 +5,10 @@ import { ModalProps } from 'src/types/modalType';
 
 interface Props extends ModalProps {
   channelName: string;
-  channelId: number;
+  onDelete: () => void;
 }
 
-export default function DeleteChannelModal({ channelName, closeModal, isOpen, channelId }: Props) {
-  const onDelete = () => {
-    // 로직 추가 예정
-    console.log(channelId);
-    closeModal();
-  };
+export default function DeleteChannelModal({ channelName, closeModal, isOpen, onDelete }: Props) {
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
       <ModalContainer>
@@ -21,7 +16,7 @@ export default function DeleteChannelModal({ channelName, closeModal, isOpen, ch
         <DeleteParagraph>
           {channelName}의 모든 내용이 삭제되며, 복원할 수 없습니다. 정말로 삭제하시겠습니까?
         </DeleteParagraph>
-        <ModalButtons closeClick={closeModal} onClick={onDelete} ctaText='삭제' $bgColor='#BA1A1A' />
+        <ModalButtons closeClick={closeModal} onClick={onDelete} ctaText='삭제' $hoverColor='#BA1A1A' $bgColor='red' />
       </ModalContainer>
     </Modal>
   );

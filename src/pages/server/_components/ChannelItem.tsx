@@ -5,10 +5,12 @@ import tagSvg from '/images/tag_small_white.svg';
 import voiceSvg from '/images/volume_on_white.svg';
 import { ButtonIcon } from 'src/GlobalStyles';
 import { useEffect, useState } from 'react';
-import DefaultModal from 'src/components/modal/DefaultModal';
+// import DefaultModal from 'src/components/modal/DefaultModal';
 import { useMutationDelete, useMutationPatch } from 'src/apis/service/service';
 import { ChannelRequest, ChannelResponse } from '../_types/type';
 import { LOCAL_STORAGE_ALRAM_KEY } from 'src/constants/common';
+
+import DeleteChannelModal from 'src/components/modal/contents/DeleteChannelModal';
 
 export default function ChannelItem({ data }: ChannelItemProps) {
   const path = useLocation();
@@ -79,15 +81,12 @@ export default function ChannelItem({ data }: ChannelItemProps) {
         <CloseButton onClick={handleDeleteModal} />
         <UpdateButton onClick={handleUpdate} />
       </ButtonGroup>
-      {
-        <DefaultModal
-          title='채널 삭제'
-          desc='채널을 삭제하시겠습니까?'
-          okClick={handleDelete}
-          closeModal={() => setIsToggle(false)}
-          isOpen={isToggle}
-        />
-      }
+      <DeleteChannelModal
+        channelName={`${data.name} 채널` || '채널'}
+        closeModal={() => setIsToggle(false)}
+        isOpen={isToggle}
+        onDelete={handleDelete}
+      />
     </ChannelItemWrapper>
   );
 }
