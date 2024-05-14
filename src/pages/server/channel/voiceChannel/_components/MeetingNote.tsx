@@ -1,16 +1,6 @@
 import styled from 'styled-components';
-import { useEffect, useRef } from 'react';
-import useSocket from 'src/hooks/useSocket';
-import { User } from '../../chatChannel/_types/type';
-
-interface MeetingNoteProps {
-  roomName: string;
-  userId: number;
-  serverUserData: User[] | undefined;
-  meetingNoteId: string | null;
-  recognizedTexts: { userId: number; text: string }[];
-  setRecognizedTexts: React.Dispatch<React.SetStateAction<{ userId: number; text: string }[]>>;
-}
+import { MeetingNoteProps } from '../_types/props';
+import useMeetingNote from '../_hooks/useMeetingNote';
 
 declare global {
   interface Window {
@@ -26,70 +16,18 @@ export default function MeetingNote({
   meetingNoteId,
   recognizedTexts,
 }: MeetingNoteProps) {
-  // 소켓
-  const socketRef = useSocket();
-  const SpeechContainerRef = useRef<HTMLDivElement>(null);
-
-  // 음성 인식 객체 생성
-  const SpeechRecognition = new window.webkitSpeechRecognition();
-  // 한국어로 설정
-  SpeechRecognition.lang = 'ko-KR';
-  // 음성 인식을 계속해서 유지
-  SpeechRecognition.continuous = true;
-
-  useEffect(() => {
-    // 음성 인식 시작
-    SpeechRecognition.start();
-
-    // 음성 인식이 시작되면 발생하는 이벤트
-    SpeechRecognition.onstart = () => {
-      console.log('음성 인식이 시작되었습니다.');
-    };
-
-    // 음성 인식이 끝나면 텍스트를 출력
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    SpeechRecognition.onresult = (event: any) => {
-      const transcript = event.results[event.results.length - 1][0].transcript;
-      if (socketRef.current) {
-        socketRef.current.emit('update_meeting_note', { roomName, meetingNoteId, transcript, userId });
-      }
-    };
-
-    // 에러가 발생했을 때
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    SpeechRecognition.onerror = (event: any) => {
-      console.log('에러가 발생했습니다. : ', event.error);
-      console.log('에러 메시지 : ', event.message);
-    };
-
-    // 음성 인식이 끝났을 때
-    SpeechRecognition.onend = () => {
-      console.log('음성 인식이 종료되었습니다.');
-    };
-
-    // 컴포넌트가 언마운트 되면 음성 인식 종료
-    return () => {
-      // 이벤트 제거
-      SpeechRecognition.onstart = null;
-      SpeechRecognition.onresult = null;
-      SpeechRecognition.onerror = null;
-      SpeechRecognition.onend = null;
-    };
-  }, []);
-
-  useEffect(() => {
-    console.log(recognizedTexts);
-    // 스코롤을 맨 아래로 내림
-    SpeechContainerRef.current?.scrollTo(0, SpeechContainerRef.current.scrollHeight);
-  }, [recognizedTexts]);
-
-  //
+  const { formattedDate, SpeechContainerRef } = useMeetingNote({
+    roomName,
+    userId,
+    meetingNoteId,
+    recognizedTexts,
+  });
 
   return (
     <Wrapper>
       <Header>
         <Title>회의록</Title>
-        <CreatedAt>2024년 4월 26일의 회의</CreatedAt>
+        <CreatedAt>{`${formattedDate}의 회의`}</CreatedAt>
       </Header>
       <RecognizedTextContainer ref={SpeechContainerRef}>
         {recognizedTexts.map((recognizedText, index) => {
