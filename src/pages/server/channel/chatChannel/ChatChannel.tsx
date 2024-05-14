@@ -193,11 +193,14 @@ export default function ChatChannel() {
         });
 
         // 초기 메시지 수신 후 마지막 메시지 읽음 처리
-        socketRef.current?.emit(SOCKET_COMMON.READ_MESSAGE, {
-          messageId: initialMessages[0].messageId,
-          roomName: roomName,
-          userId,
-        });
+        if (socketRef.current) {
+          console.log('[read-init] read on emit :', userId, roomName, initialMessages[0].messageId);
+          socketRef.current.emit(SOCKET_COMMON.READ_MESSAGE, {
+            messageId: initialMessages[0].messageId,
+            roomName: roomName,
+            userId,
+          });
+        }
       },
     );
 
@@ -208,12 +211,12 @@ export default function ChatChannel() {
         setMessages((prevMessages) => [newMessage, ...prevMessages]);
 
         if (socketRef.current) {
-          socketRef.current?.emit(SOCKET_COMMON.READ_MESSAGE, {
+          console.log('[read-receive] read on emit :', userId, roomName, newMessage.messageId);
+          socketRef.current.emit(SOCKET_COMMON.READ_MESSAGE, {
             messageId: newMessage.messageId,
             roomName: roomName,
             userId,
           });
-          console.log('[read] read on emit :', userId, roomName, newMessage.messageId);
         }
       }
     });
@@ -223,6 +226,28 @@ export default function ChatChannel() {
       ({ prevMessageId, messageId, channelId, userId }: ReadMessageItem) => {
         // 읽음 ui update
         console.log('read message : ', prevMessageId, messageId, channelId, userId);
+
+        let disCountStart = false;
+        let disCountEnd = false;
+        setMessages((prevMessages) =>
+          prevMessages.map((prevMessage) => {
+            if (prevMessage.messageId === messageId) disCountStart = true;
+            if (prevMessage.messageId === prevMessageId) disCountEnd = true;
+
+            if (disCountEnd) {
+              return prevMessage;
+            }
+
+            if (disCountStart) {
+              return {
+                ...prevMessage,
+                notReadCount: prevMessage.notReadCount - 1,
+              };
+            }
+
+            return prevMessage;
+          }),
+        );
       },
     );
 
