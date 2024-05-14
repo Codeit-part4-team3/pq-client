@@ -22,6 +22,17 @@ const pc_config = {
   ],
 };
 
+export interface MeetingNote {
+  id: string;
+  channelId: string;
+  createdAt: number;
+  name: string;
+  content: {
+    userId: number;
+    text: string;
+  }[];
+}
+
 export default function VoiceChannel() {
   const { serverId, channelId } = useParams();
   console.log('serverId', serverId, 'channelId', channelId);
@@ -108,6 +119,8 @@ export default function VoiceChannel() {
   };
 
   // 회의록 리스트
+  // 회의록 목록
+  const [meetingNoteList, setMeetingNoteList] = useState<MeetingNote[]>([]);
   const [isOpenMeetingNoteList, setIsOpenMeetingNoteList] = useState<boolean>(false);
 
   const handleMeetingNoteListModalOpen = () => {
@@ -116,6 +129,10 @@ export default function VoiceChannel() {
 
   const handleMeetingNoteListModalClose = () => {
     setIsOpenMeetingNoteList(false);
+  };
+
+  const getMeetingNoteList = () => {
+    socketRef.current?.emit(SOCKET_EMIT.GET_MEETING_NOTE_LIST, { roomName });
   };
 
   /**
@@ -374,7 +391,14 @@ export default function VoiceChannel() {
       setShowMeetingNote(false);
     });
 
+    // 회의록 목록 가져오기
+    socketRef.current.on(SOCKET_EMIT.GET_MEETING_NOTE_LIST, ({ meetingNoteList }) => {
+      console.log('get_meeting_note_list : ', meetingNoteList);
+      setMeetingNoteList(meetingNoteList);
+    });
+
     getLocalStream();
+    getMeetingNoteList();
 
     return () => {
       if (socketRef.current) {
@@ -398,7 +422,8 @@ export default function VoiceChannel() {
       <MeetingNoteListModal
         isOpenMeetingNoteList={isOpenMeetingNoteList}
         onClose={handleMeetingNoteListModalClose}
-        channelId={channelId}
+        getMeetingNoteList={getMeetingNoteList}
+        meetingNoteList={meetingNoteList}
       />
       <ContentBox>
         <MediaBox>

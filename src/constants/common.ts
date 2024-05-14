@@ -41,6 +41,7 @@ export const SOCKET_EMIT = {
   JOIN_CHAT_CHANNEL: 'join_chat_channel',
   START_MEETING_NOTE: 'start_meeting_note',
   END_MEETING_NOTE: 'end_meeting_note',
+  GET_MEETING_NOTE_LIST: 'get_meeting_note_list',
 
   /**
    * vocie
