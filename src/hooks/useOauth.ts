@@ -43,7 +43,12 @@ export function useOauth({ googleUrl, kakaoUrl, redirectUri }: OauthProps) {
           const data: ResponseUserData = res.data;
           setAccessToken(data.token.accessToken);
           setUserInfo(data.userInfo);
-          Cookies.set('refreshToken', data.token.refreshToken, { expires: 7, secure: true, sameSite: 'strict' });
+          Cookies.set('refreshToken', data.token.refreshToken, {
+            expires: 7,
+            secure: true,
+            sameSite: 'strict',
+            domain: 'pqsoft.net',
+          });
           axiosInstance.put(`${USER_URL.USER}/me/state/update`, { state: '온라인' });
           navigate('/server');
           return;

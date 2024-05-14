@@ -70,8 +70,8 @@ export default function LoginForm() {
       Cookies.set('refreshToken', refreshToken, {
         expires: 7,
         secure: true,
-        sameSite: 'None',
-        // domain: import.meta.env.VITE_APP_ORIGIN_API,
+        sameSite: 'strict',
+        domain: 'pqsoft.net',
       });
       axiosInstance.put(`${USER_URL.USER}/me/state/update`, { state: '온라인' });
       navigate('/server');

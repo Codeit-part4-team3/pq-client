@@ -10,7 +10,7 @@ import { EventPaymentsResponse } from 'src/pages/payments/_type/type';
 import useEventStore from 'src/store/eventStore';
 import { UserInfo } from 'src/types/userType';
 
-const SOCKET_SERVER_URL = 'http://localhost:3000';
+const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 export default function Event() {
   const [winnerId, setWinnerId] = useState<number | null>(null);
