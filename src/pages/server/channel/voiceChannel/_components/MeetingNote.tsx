@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import useSocket from 'src/hooks/useSocket';
 import { User } from '../../chatChannel/_types/type';
 
@@ -12,20 +12,23 @@ interface MeetingNoteProps {
   setRecognizedTexts: React.Dispatch<React.SetStateAction<{ userId: number; text: string }[]>>;
 }
 
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    webkitSpeechRecognition: any;
+  }
+}
+
 export default function MeetingNote({
   roomName,
   userId,
   serverUserData,
   meetingNoteId,
   recognizedTexts,
-  setRecognizedTexts,
 }: MeetingNoteProps) {
   // 소켓
   const socketRef = useSocket();
-  // 음성 인식
-
-  // 음성 인식 중인지 여부
-  const [isListening, setIsListening] = useState<boolean>(false);
+  const SpeechContainerRef = useRef<HTMLDivElement>(null);
 
   // 음성 인식 객체 생성
   const SpeechRecognition = new window.webkitSpeechRecognition();
@@ -40,12 +43,12 @@ export default function MeetingNote({
 
     // 음성 인식이 시작되면 발생하는 이벤트
     SpeechRecognition.onstart = () => {
-      setIsListening(true);
       console.log('음성 인식이 시작되었습니다.');
     };
 
     // 음성 인식이 끝나면 텍스트를 출력
-    SpeechRecognition.onresult = (event) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    SpeechRecognition.onresult = (event: any) => {
       const transcript = event.results[event.results.length - 1][0].transcript;
       if (socketRef.current) {
         socketRef.current.emit('update_meeting_note', { roomName, meetingNoteId, transcript, userId });
@@ -53,20 +56,19 @@ export default function MeetingNote({
     };
 
     // 에러가 발생했을 때
-    SpeechRecognition.onerror = (event) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    SpeechRecognition.onerror = (event: any) => {
       console.log('에러가 발생했습니다. : ', event.error);
       console.log('에러 메시지 : ', event.message);
     };
 
     // 음성 인식이 끝났을 때
     SpeechRecognition.onend = () => {
-      setIsListening(false);
       console.log('음성 인식이 종료되었습니다.');
     };
 
     // 컴포넌트가 언마운트 되면 음성 인식 종료
     return () => {
-      setIsListening(false);
       // 이벤트 제거
       SpeechRecognition.onstart = null;
       SpeechRecognition.onresult = null;
@@ -77,25 +79,29 @@ export default function MeetingNote({
 
   useEffect(() => {
     console.log(recognizedTexts);
+    // 스코롤을 맨 아래로 내림
+    SpeechContainerRef.current?.scrollTo(0, SpeechContainerRef.current.scrollHeight);
   }, [recognizedTexts]);
+
+  //
 
   return (
     <Wrapper>
       <Header>
         <Title>회의록</Title>
-        <Name>2024년 4월 26일의 회의</Name>
+        <CreatedAt>2024년 4월 26일의 회의</CreatedAt>
       </Header>
-      <Note>
+      <RecognizedTextContainer ref={SpeechContainerRef}>
         {recognizedTexts.map((recognizedText, index) => {
           const nickname = serverUserData?.find((user) => user.id === recognizedText.userId)?.nickname;
           return (
-            <Speech key={index}>
-              <div>{nickname}</div>
-              <Content>{recognizedText.text}</Content>
-            </Speech>
+            <RecognizedText key={index}>
+              <Nickname>{nickname}</Nickname>
+              <Text>{recognizedText.text}</Text>
+            </RecognizedText>
           );
         })}
-      </Note>
+      </RecognizedTextContainer>
     </Wrapper>
   );
 }
@@ -104,11 +110,16 @@ const Wrapper = styled.div`
   border-left: 0.5px solid var(--gray-666666, #666);
   flex-grow: 1;
   width: min(100%, 350px);
-  height: 100%;
+  height: calc(100vh - 48px);
 
-  background: var(--landing_background_color);
-
-  padding: 8px 8px 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background-color: var(--landing_background_color);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 16px 16px 0 16px;
+  color: black;
 `;
 
 const Header = styled.div`
@@ -120,7 +131,8 @@ const Header = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #ffffff;
+  flex-shrink: 0;
+  background: var(--white_FFFFFF);
   padding-left: 16px;
 `;
 
@@ -132,28 +144,42 @@ const Title = styled.div`
   padding-right: 10px;
 `;
 
-const Name = styled.div`
+const CreatedAt = styled.div`
   color: var(--gray-999999, #999);
   font-family: Pretendard;
   font-size: 14px;
 `;
 
-const Note = styled.div`
+const RecognizedTextContainer = styled.div`
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  padding-top: 69px;
+  gap: 8px;
+  overflow-y: scroll;
 `;
 
-const Speech = styled.div`
+const RecognizedText = styled.div`
   width: 100%;
   display: flex;
   gap: 16px;
 `;
 
-const Content = styled.div`
+const Nickname = styled.div`
+  border-radius: 10px;
+  font-weight: 600;
+  color: var(--black_000000);
+  display: flex;
+  flex-shrink: 0;
+`;
+
+const Text = styled.div`
+  border: 1px solid var(--text_gray);
+  border-radius: 10px;
   width: 100%;
   border-radius: 10px;
-  background: var(--gray-FAFAFA, #fafafa);
+  background: var(--white_FFFFFF);
+  color: var(--background_light_gray);
+  padding: 12px;
 
   margin-top: 18px;
 `;

@@ -1,23 +1,35 @@
 import { ModalContainer, ModalTitle } from 'src/components/modal/CommonStyles';
-import ModalButtons from 'src/components/modal/button/ModalButtons';
 import Modal from 'src/components/modal/modal';
 import styled from 'styled-components';
 import MeetingNoteImage from '../../../../../../public/images/meeting_note.png';
 import { MeetingNote } from '../VoiceChannel';
 import extractDate from 'src/utils/extractDate';
+import { useState } from 'react';
+import MeetingNoteDocument from './MeetingNoteDocument';
+import { User } from '../../chatChannel/_types/type';
 
 interface MeetingNoteListModalProps {
   isOpenMeetingNoteList: boolean;
   onClose: () => void;
   getMeetingNoteList: () => void;
   meetingNoteList: MeetingNote[];
+  serverUserData: User[] | undefined;
 }
 
 export default function MeetingNoteListModal({
   isOpenMeetingNoteList,
   onClose,
   meetingNoteList,
+  serverUserData,
 }: MeetingNoteListModalProps) {
+  const [isOpenMeetingNote, setIsOpenMeetingNote] = useState<boolean>(false);
+  const [selectedMeetingNote, setSelectedMeetingNote] = useState<MeetingNote | null>(null);
+
+  const handleMeetingNoteOpen = (meetingNote: MeetingNote) => {
+    setIsOpenMeetingNote(true);
+    setSelectedMeetingNote(meetingNote);
+  };
+
   return (
     <Modal isOpen={isOpenMeetingNoteList} onClose={onClose}>
       <ModalContainer>
@@ -37,7 +49,14 @@ export default function MeetingNoteListModal({
                 </Title>
                 <RightBox>
                   <Date>{formattedDate}</Date>
-                  <ItemButton type='button' $bgColor='#258dff' $hoverColor='#0056b3'>
+                  <ItemButton
+                    type='button'
+                    $bgColor='#258dff'
+                    $hoverColor='#0056b3'
+                    onClick={() => {
+                      handleMeetingNoteOpen(meetingNote);
+                    }}
+                  >
                     열기
                   </ItemButton>
                 </RightBox>
@@ -45,8 +64,18 @@ export default function MeetingNoteListModal({
             );
           })}
         </List>
-        <ModalButtons closeClick={onClose} ctaText={'생성'} type='submit' />
+        <CloseButton type='button' onClick={onClose}>
+          닫기
+        </CloseButton>
       </ModalContainer>
+      {isOpenMeetingNote ? (
+        <MeetingNoteDocument
+          data={selectedMeetingNote}
+          isOpen={isOpenMeetingNote}
+          setIsOpenMeetingNote={setIsOpenMeetingNote}
+          serverUserData={serverUserData}
+        />
+      ) : null}
     </Modal>
   );
 }
@@ -124,5 +153,22 @@ const ItemButton = styled.button<{ $bgColor: string; $hoverColor: string }>`
   &:hover {
     cursor: pointer;
     background: ${(props) => props.$hoverColor};
+  }
+`;
+
+const CloseButton = styled.button`
+  display: flex;
+  width: 100%;
+  padding: 13px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--text_gray);
+  background: #fff;
+
+  &:hover {
+    cursor: pointer;
+    background: var(--text_gray);
   }
 `;

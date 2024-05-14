@@ -107,6 +107,7 @@ export default function VoiceChannel() {
   const handleMeetingNoteEndClick = () => {
     console.log('회의록 종료');
     socketRef.current?.emit(SOCKET_EMIT.END_MEETING_NOTE, { roomName });
+    setRecognizedTexts([]);
   };
 
   // 회의록 모달
@@ -424,6 +425,7 @@ export default function VoiceChannel() {
         onClose={handleMeetingNoteListModalClose}
         getMeetingNoteList={getMeetingNoteList}
         meetingNoteList={meetingNoteList}
+        serverUserData={serverUserData}
       />
       <ContentBox>
         <MediaBox>
