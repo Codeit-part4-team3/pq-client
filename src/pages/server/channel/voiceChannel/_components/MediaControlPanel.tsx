@@ -5,6 +5,7 @@ import cameraOnSvg from '../../../../../../public/images/videocam_on_FILL0_wght2
 import cameraOffSvg from '../../../../../../public/images/videocam_off_FILL0_wght200_GRAD0_opsz24.svg';
 import micOnSvg from '../../../../../../public/images/mic_on_FILL0_wght200_GRAD0_opsz24.svg';
 import micOffSvg from '../../../../../../public/images/mic_off_FILL0_wght200_GRAD0_opsz24.svg';
+import meetingNote from '../../../../../../public/images/meeting_note.png';
 
 interface MyMediaControlPanelProps {
   onMuteLocalStreamButtonClick: () => void;
@@ -13,6 +14,9 @@ interface MyMediaControlPanelProps {
   showLocalVideo: boolean;
   onHandleMuteAllRemoteStreamsButtonClick: () => void;
   isMutedAllRemoteStreams: boolean;
+  showMeetingNote: boolean;
+  onMeetingNoteModalOpen: () => void;
+  onMeetingNoteEndClick: () => void;
 }
 
 export default function MediaControlPanel({
@@ -22,6 +26,9 @@ export default function MediaControlPanel({
   showLocalVideo,
   onHandleMuteAllRemoteStreamsButtonClick,
   isMutedAllRemoteStreams,
+  showMeetingNote,
+  onMeetingNoteModalOpen,
+  onMeetingNoteEndClick,
 }: MyMediaControlPanelProps) {
   return (
     <Wrapper>
@@ -45,6 +52,13 @@ export default function MediaControlPanel({
         ) : (
           <img src={micOnSvg} alt='마이크 볼륨 켜짐 켜기 이미지' width={36} height={36} />
         )}
+      </Button>
+      <Button
+        type='button'
+        onClick={showMeetingNote ? onMeetingNoteEndClick : onMeetingNoteModalOpen}
+        isOnMedia={showMeetingNote}
+      >
+        <img src={meetingNote} alt='미팅 노트 이미지' width={26} height={26} />
       </Button>
     </Wrapper>
   );

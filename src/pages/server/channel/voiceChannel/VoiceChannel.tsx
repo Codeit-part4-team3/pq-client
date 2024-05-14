@@ -384,16 +384,6 @@ export default function VoiceChannel() {
         onModalClose={handleMeetingNoteModalClose}
       />
       <ContentBox>
-        <div>
-          <button onClick={handleMeetingNoteModalOpen}>회의록 시작</button>
-          <button
-            onClick={() => {
-              handleMeetingNoteEndClick();
-            }}
-          >
-            회의록 종료
-          </button>
-        </div>
         <MediaBox>
           <VideoContainer>
             <LocalMedia {...localMediaData} />
@@ -408,6 +398,9 @@ export default function VoiceChannel() {
             showLocalVideo={showLocalVideo}
             onHandleMuteAllRemoteStreamsButtonClick={handleMuteAllRemoteStreams}
             isMutedAllRemoteStreams={isMutedAllRemoteStreams}
+            onMeetingNoteModalOpen={handleMeetingNoteModalOpen}
+            onMeetingNoteEndClick={handleMeetingNoteEndClick}
+            showMeetingNote={showMeetingNote}
           />
         </MediaBox>
         {showMeetingNote ? (
