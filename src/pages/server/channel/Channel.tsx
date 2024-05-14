@@ -13,6 +13,8 @@ import { Status } from 'src/components/MyState';
 
 export default function Channel() {
   const [isShowMembers, setIsShowMembers] = useState(true);
+  const [onlineUsers, setOnlineUsers] = useState<IUser[]>([]);
+  const [offlineUsers, setOfflineUsers] = useState<IUser[]>([]);
   const { serverId, channelId } = useParams();
 
   const { data, refetch } = useQueryGet<ChannelResponse>(
@@ -40,6 +42,12 @@ export default function Channel() {
     userRefetch();
   }, [serverId]);
 
+  useEffect(() => {
+    if (!userData) return;
+    setOnlineUsers(userData.filter((user) => user.state === '온라인' || user.state === '자리비움'));
+    setOfflineUsers(userData.filter((user) => user.state === '오프라인'));
+  }, [userData]);
+
   return (
     <Area>
       <ChannelHeader title={data?.name ?? '없음'} userCount={userData?.length ?? 0} onClickMembers={handleMembers} />
@@ -47,7 +55,23 @@ export default function Channel() {
         {data?.isVoice ? <VoiceChannel /> : <ChatChannel />}
         <MembersWrapper isShow={isShowMembers}>
           <MembersContainer isShow={isShowMembers}>
-            {userData?.map((user) => {
+            {onlineUsers.length > 0 ? <div>온라인 </div> : null}
+            {onlineUsers?.map((user) => {
+              if (!user) return null;
+              return (
+                <Member key={user.id}>
+                  <ProfileImageWrapper>
+                    <StatusBox>
+                      <Status $state={user.state} />
+                    </StatusBox>
+                    <ProfileImage imageUrl={user.imageUrl} />
+                  </ProfileImageWrapper>
+                  <span>{user.nickname}</span>
+                </Member>
+              );
+            })}
+            {offlineUsers.length > 0 ? <div>오프라인</div> : null}
+            {offlineUsers?.map((user) => {
               if (!user) return null;
               return (
                 <Member key={user.id}>
