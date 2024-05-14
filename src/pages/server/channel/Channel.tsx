@@ -53,8 +53,8 @@ export default function Channel() {
       <ChannelHeader title={data?.name ?? '없음'} userCount={userData?.length ?? 0} onClickMembers={handleMembers} />
       <Container>
         {data?.isVoice ? <VoiceChannel /> : <ChatChannel />}
-        <MembersWrapper isShow={isShowMembers}>
-          <MembersContainer isShow={isShowMembers}>
+        <MembersWrapper $isShow={isShowMembers}>
+          <MembersContainer $isShow={isShowMembers}>
             {onlineUsers.length > 0 ? <div>온라인 </div> : null}
             {onlineUsers?.map((user) => {
               if (!user) return null;
@@ -148,16 +148,16 @@ const Container = styled.div`
   position: relative;
 `;
 
-const MembersWrapper = styled.div<{ isShow: boolean }>`
-  width: ${(props) => (props.isShow ? '180px' : '0px')};
+const MembersWrapper = styled.div<{ $isShow: boolean }>`
+  width: ${(props) => (props.$isShow ? '180px' : '0px')};
   height: 100%;
 
   overflow: hidden;
   transition: 0.3s ease-in-out;
-  transform: ${(props) => (props.isShow ? 'scaleX(1)' : 'scaleX(0)')};
+  transform: ${(props) => (props.$isShow ? 'scaleX(1)' : 'scaleX(0)')};
 `;
 
-const MembersContainer = styled.div<{ isShow: boolean }>`
+const MembersContainer = styled.div<{ $isShow: boolean }>`
   width: 180px;
   height: 100%;
 
@@ -168,7 +168,7 @@ const MembersContainer = styled.div<{ isShow: boolean }>`
   justify-content: flex-start;
   align-items: center;
   transition: 0.3s ease-in-out;
-  transform: ${(props) => (props.isShow ? 'translateX(0)' : 'translateX(180px)')};
+  transform: ${(props) => (props.$isShow ? 'translateX(0)' : 'translateX(180px)')};
 
   top: 0;
   right: -180px;
