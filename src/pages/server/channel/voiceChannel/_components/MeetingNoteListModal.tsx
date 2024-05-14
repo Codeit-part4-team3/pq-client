@@ -2,19 +2,11 @@ import { ModalContainer, ModalTitle } from 'src/components/modal/CommonStyles';
 import Modal from 'src/components/modal/modal';
 import styled from 'styled-components';
 import MeetingNoteImage from '../../../../../../public/images/meeting_note.png';
-import { MeetingNote } from '../VoiceChannel';
 import extractDate from 'src/utils/extractDate';
 import { useState } from 'react';
 import MeetingNoteDocument from './MeetingNoteDocument';
-import { User } from '../../chatChannel/_types/type';
-
-interface MeetingNoteListModalProps {
-  isOpenMeetingNoteList: boolean;
-  onClose: () => void;
-  getMeetingNoteList: () => void;
-  meetingNoteList: MeetingNote[];
-  serverUserData: User[] | undefined;
-}
+import { MeetingNoteListModalProps } from '../_types/props';
+import { IMeetingNote } from '../_types/type';
 
 export default function MeetingNoteListModal({
   isOpenMeetingNoteList,
@@ -23,9 +15,9 @@ export default function MeetingNoteListModal({
   serverUserData,
 }: MeetingNoteListModalProps) {
   const [isOpenMeetingNote, setIsOpenMeetingNote] = useState<boolean>(false);
-  const [selectedMeetingNote, setSelectedMeetingNote] = useState<MeetingNote | null>(null);
+  const [selectedMeetingNote, setSelectedMeetingNote] = useState<IMeetingNote | null>(null);
 
-  const handleMeetingNoteOpen = (meetingNote: MeetingNote) => {
+  const handleMeetingNoteOpen = (meetingNote: IMeetingNote) => {
     setIsOpenMeetingNote(true);
     setSelectedMeetingNote(meetingNote);
   };

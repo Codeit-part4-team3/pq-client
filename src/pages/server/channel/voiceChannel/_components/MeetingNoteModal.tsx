@@ -3,12 +3,7 @@ import { ModalContainer, ModalForm, ModalTitle } from 'src/components/modal/Comm
 import ModalButtons from 'src/components/modal/button/ModalButtons';
 import EssentialInput from 'src/components/modal/input/EssentialInput';
 import Modal from 'src/components/modal/modal';
-
-interface MeetingNoteModalProps {
-  startMeetingNote: (meetingNoteName: string) => void;
-  meetingNoteModalOpen: boolean;
-  onModalClose: () => void;
-}
+import { MeetingNoteModalProps } from '../_types/props';
 
 export default function MeetingNoteModal({
   startMeetingNote,

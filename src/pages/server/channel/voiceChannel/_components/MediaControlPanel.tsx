@@ -7,20 +7,7 @@ import micOnSvg from '../../../../../../public/images/mic_on_FILL0_wght200_GRAD0
 import micOffSvg from '../../../../../../public/images/mic_off_FILL0_wght200_GRAD0_opsz24.svg';
 import meetingNote from '../../../../../../public/images/meeting_note.png';
 import meetingNoteList from '../../../../../../public/images/meeting_note_list.png';
-
-interface MyMediaControlPanelProps {
-  onMuteLocalStreamButtonClick: () => void;
-  isMutedLocalStream: boolean;
-  onOffLocalCameraButtonClick: () => void;
-  showLocalVideo: boolean;
-  onHandleMuteAllRemoteStreamsButtonClick: () => void;
-  isMutedAllRemoteStreams: boolean;
-  showMeetingNote: boolean;
-  onMeetingNoteModalOpen: () => void;
-  onMeetingNoteEndClick: () => void;
-  onMeetingNoteListOpen: () => void;
-  isOpenMeetingNoteList: boolean;
-}
+import { MyMediaControlPanelProps } from '../_types/props';
 
 export default function MediaControlPanel({
   onMuteLocalStreamButtonClick,

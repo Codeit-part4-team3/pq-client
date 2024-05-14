@@ -3,7 +3,6 @@ import MediaControlPanel from './_components/MediaControlPanel';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import LocalMedia from './_components/LocalMedia';
 import RemoteMedia from './_components/RemoteMedia';
-import MeetingNote from './_components/MeetingNote';
 import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
 import useSocket from 'src/hooks/useSocket';
@@ -12,6 +11,8 @@ import { useQueryGet } from 'src/apis/service/service';
 import { User } from '../chatChannel/_types/type';
 import MeetingNoteModal from './_components/MeetingNoteModal';
 import MeetingNoteListModal from './_components/MeetingNoteListModal';
+import { IMeetingNote } from './_types/type';
+import MeetingNote from './_components/MeetingNote';
 
 const pc_config = {
   iceServers: [
@@ -21,17 +22,6 @@ const pc_config = {
     { urls: 'turn:43.200.40.206', username: 'codeit', credential: 'sprint101!' }, // TURN 서버 설정
   ],
 };
-
-export interface MeetingNote {
-  id: string;
-  channelId: string;
-  createdAt: number;
-  name: string;
-  content: {
-    userId: number;
-    text: string;
-  }[];
-}
 
 export default function VoiceChannel() {
   const { serverId, channelId } = useParams();
@@ -121,7 +111,7 @@ export default function VoiceChannel() {
 
   // 회의록 리스트
   // 회의록 목록
-  const [meetingNoteList, setMeetingNoteList] = useState<MeetingNote[]>([]);
+  const [meetingNoteList, setMeetingNoteList] = useState<IMeetingNote[]>([]);
   const [isOpenMeetingNoteList, setIsOpenMeetingNoteList] = useState<boolean>(false);
 
   const handleMeetingNoteListModalOpen = () => {
