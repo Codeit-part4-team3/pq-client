@@ -132,12 +132,13 @@ export const ButtonIcon = styled.button`
   background-color: transparent;
   background-size: cover;
   background-position: center;
+  opacity: 0.8;
 
   transition: 0.2s;
 
   &:hover {
     cursor: pointer;
-    scale: 1.1;
+    /* opacity: 1; */
   }
 `;
 
