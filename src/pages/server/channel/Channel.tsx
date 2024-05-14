@@ -4,11 +4,12 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useQueryGet } from 'src/apis/service/service';
 
-import { ChannelResponse, UserResponse } from '../_types/type';
+import { ChannelResponse, IUser } from '../_types/type';
 import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
 import VoiceChannel from './voiceChannel/VoiceChannel';
 import ChatChannel from './chatChannel/ChatChannel';
 import ChannelHeader from 'src/pages/server/channel/_conponents/ChannelHeader';
+import { Status } from 'src/components/MyState';
 
 export default function Channel() {
   const [isShowMembers, setIsShowMembers] = useState(true);
@@ -19,9 +20,12 @@ export default function Channel() {
     `/chat/v1/server/${serverId}/channel/${channelId}`,
   );
 
-  const { data: userData, refetch: userRefetch } = useQueryGet<UserResponse[]>(
+  const { data: userData, refetch: userRefetch } = useQueryGet<IUser[]>(
     'getUsers',
     `/chat/v1/server/${serverId}/users`,
+    {
+      refetchInterval: 10000,
+    },
   );
 
   const handleMembers = () => {
@@ -47,9 +51,14 @@ export default function Channel() {
               if (!user) return null;
               return (
                 <Member key={user.id}>
-                  <ProfileImageWrapper>
-                    <ProfileImage imageUrl={undefined} />
-                  </ProfileImageWrapper>
+                  <ProfileWrapper>
+                    <ProfileImageWrapper>
+                      <ProfileImage imageUrl={user.imageUrl} />
+                    </ProfileImageWrapper>
+                    <StatusBox>
+                      <Status $state={user.state} />
+                    </StatusBox>
+                  </ProfileWrapper>
                   <span>{user.nickname}</span>
                 </Member>
               );
@@ -69,6 +78,37 @@ const Area = styled.section`
   flex-direction: column;
 
   position: relative;
+`;
+
+const ProfileWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+
+  position: relative;
+`;
+
+const StatusBox = styled.div`
+  width: 16px;
+  height: 16px;
+
+  border-radius: 50%;
+  background-color: var(--landing_background_color);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  top: calc(100% - 14px);
+  right: 0px;
+
+  & > div {
+    width: 70%;
+    height: 70%;
+  }
 `;
 
 const Container = styled.div`
@@ -122,4 +162,5 @@ const Member = styled.div`
   align-items: center;
   font-size: 14px;
   gap: 10px;
+  position: relative;
 `;
