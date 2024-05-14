@@ -60,12 +60,14 @@ export default function Channel() {
               if (!user) return null;
               return (
                 <Member key={user.id}>
-                  <ProfileImageWrapper>
+                  <ProfileWrapper>
+                    <ProfileImageWrapper>
+                      <ProfileImage imageUrl={user.imageUrl} />
+                    </ProfileImageWrapper>
                     <StatusBox>
                       <Status $state={user.state} />
                     </StatusBox>
-                    <ProfileImage imageUrl={user.imageUrl} />
-                  </ProfileImageWrapper>
+                  </ProfileWrapper>
                   <span>{user.nickname}</span>
                 </Member>
               );
