@@ -11,6 +11,7 @@ import { SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
 import { useQueryGet } from 'src/apis/service/service';
 import { User } from '../chatChannel/_types/type';
 import MeetingNoteModal from './_components/MeetingNoteModal';
+import MeetingNoteListModal from './_components/MeetingNoteListModal';
 
 const pc_config = {
   iceServers: [
@@ -104,6 +105,17 @@ export default function VoiceChannel() {
 
   const handleMeetingNoteModalOpen = () => {
     setMeetingNoteModalOpen(true);
+  };
+
+  // 회의록 리스트
+  const [isOpenMeetingNoteList, setIsOpenMeetingNoteList] = useState<boolean>(false);
+
+  const handleMeetingNoteListModalOpen = () => {
+    setIsOpenMeetingNoteList(true);
+  };
+
+  const handleMeetingNoteListModalClose = () => {
+    setIsOpenMeetingNoteList(false);
   };
 
   /**
@@ -383,6 +395,11 @@ export default function VoiceChannel() {
         meetingNoteModalOpen={meetingNoteModalOpen}
         onModalClose={handleMeetingNoteModalClose}
       />
+      <MeetingNoteListModal
+        isOpenMeetingNoteList={isOpenMeetingNoteList}
+        onClose={handleMeetingNoteListModalClose}
+        channelId={channelId}
+      />
       <ContentBox>
         <MediaBox>
           <VideoContainer>
@@ -401,6 +418,8 @@ export default function VoiceChannel() {
             onMeetingNoteModalOpen={handleMeetingNoteModalOpen}
             onMeetingNoteEndClick={handleMeetingNoteEndClick}
             showMeetingNote={showMeetingNote}
+            onMeetingNoteListOpen={handleMeetingNoteListModalOpen}
+            isOpenMeetingNoteList={isOpenMeetingNoteList}
           />
         </MediaBox>
         {showMeetingNote ? (
