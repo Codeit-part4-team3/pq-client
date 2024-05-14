@@ -74,7 +74,10 @@ export default function ChatMessages({
                         onKeyDown={handleMessageTextEditingKeyDown}
                       />
                     ) : (
-                      <ChatMessageText>{messageItem.message}</ChatMessageText>
+                      <ChatMessageText>
+                        {messageItem.message}
+                        {messageItem.notReadCount > 0 && <div>{messageItem.notReadCount}</div>}
+                      </ChatMessageText>
                     )}
                   </ChatMessageContent>
                 </ChatMessageWrapper>
@@ -184,7 +187,26 @@ const ChatMessageText = styled.p`
   font-family: Pretendard;
   font-size: 16px;
   line-height: 160%; /* 25.6px */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+
   margin: 0;
+
+  & > div {
+    height: 12px;
+    min-width: 12px;
+
+    padding: 1px;
+    border-radius: 4px;
+    background-color: var(--primary_basic_color);
+    font-size: 10px;
+    color: var(--light_blue_0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 const SameUserMessage = styled.div<{ isOnEdit: boolean }>`
