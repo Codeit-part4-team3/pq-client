@@ -8,21 +8,22 @@ interface MeetingNoteProps {
   userId: number;
   serverUserData: User[] | undefined;
   meetingNoteId: string | null;
+  recognizedTexts: { userId: number; text: string }[];
+  setRecognizedTexts: React.Dispatch<React.SetStateAction<{ userId: number; text: string }[]>>;
 }
 
-interface RecognizedText {
-  userId: number;
-  text: string;
-}
-
-type RecognizedTexts = RecognizedText[];
-
-export default function MeetingNote({ roomName, userId, serverUserData, meetingNoteId }: MeetingNoteProps) {
+export default function MeetingNote({
+  roomName,
+  userId,
+  serverUserData,
+  meetingNoteId,
+  recognizedTexts,
+  setRecognizedTexts,
+}: MeetingNoteProps) {
   // 소켓
   const socketRef = useSocket();
   // 음성 인식
-  // 렌더링할 텍스트
-  const [recognizedTexts, setRecognizedTexts] = useState<RecognizedTexts>([]);
+
   // 음성 인식 중인지 여부
   const [isListening, setIsListening] = useState<boolean>(false);
 
@@ -49,8 +50,6 @@ export default function MeetingNote({ roomName, userId, serverUserData, meetingN
       if (socketRef.current) {
         socketRef.current.emit('update_meeting_note', { roomName, meetingNoteId, transcript, userId });
       }
-      // 낙관적 업데이트
-      setRecognizedTexts((prev) => [...prev, { userId, text: transcript }]);
     };
 
     // 에러가 발생했을 때
@@ -64,11 +63,6 @@ export default function MeetingNote({ roomName, userId, serverUserData, meetingN
       setIsListening(false);
       console.log('음성 인식이 종료되었습니다.');
     };
-
-    socketRef.current?.on('update_meeting_note', ({ transcript, userId }: { transcript: string; userId: number }) => {
-      console.log('update_meeting_note 이벤트 발생 : ', transcript, userId);
-      setRecognizedTexts((prev) => [...prev, { userId, text: transcript }]);
-    });
 
     // 컴포넌트가 언마운트 되면 음성 인식 종료
     return () => {
@@ -89,7 +83,7 @@ export default function MeetingNote({ roomName, userId, serverUserData, meetingN
     <Wrapper>
       <Header>
         <Title>회의록</Title>
-        <Date>2024년 4월 26일의 회의</Date>
+        <Name>2024년 4월 26일의 회의</Name>
       </Header>
       <Note>
         {recognizedTexts.map((recognizedText, index) => {
@@ -138,7 +132,7 @@ const Title = styled.div`
   padding-right: 10px;
 `;
 
-const Date = styled.div`
+const Name = styled.div`
   color: var(--gray-999999, #999);
   font-family: Pretendard;
   font-size: 14px;

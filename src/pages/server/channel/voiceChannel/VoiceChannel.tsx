@@ -10,12 +10,13 @@ import useSocket from 'src/hooks/useSocket';
 import { SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
 import { useQueryGet } from 'src/apis/service/service';
 import { User } from '../chatChannel/_types/type';
+import MeetingNoteModal from './_components/MeetingNoteModal';
 
 const pc_config = {
   iceServers: [
-    {
-      urls: ['stun:stun.l.google.com:19302'],
-    },
+    // {
+    //   urls: ['stun:stun.l.google.com:19302'],
+    // },
     { urls: 'turn:43.200.40.206', username: 'codeit', credential: 'sprint101!' }, // TURN 서버 설정
   ],
 };
@@ -70,23 +71,39 @@ export default function VoiceChannel() {
   };
 
   // 회의록
+  const [meetingNoteModalOpen, setMeetingNoteModalOpen] = useState<boolean>(false);
   const [showMeetingNote, setShowMeetingNote] = useState(false);
-  const [meetingNoteName, setMeetingNoteName] = useState<string | null>(null);
   const [meetingNoteId, setMeetingNoteId] = useState<string | null>(null);
 
-  const handleMeetingNoteStartClick = () => {
-    if (!meetingNoteName) return;
+  interface RecognizedText {
+    userId: number;
+    text: string;
+  }
+
+  type RecognizedTexts = RecognizedText[];
+
+  // 렌더링할 텍스트
+  const [recognizedTexts, setRecognizedTexts] = useState<RecognizedTexts>([]);
+
+  // 회의록 시작
+  const startMeetingNote = (meetingNoteName: string) => {
+    console.log('회의록 시작');
     socketRef.current?.emit(SOCKET_EMIT.START_MEETING_NOTE, { roomName, meetingNoteName });
-    setMeetingNoteName('');
   };
 
+  // 회의록 종료
   const handleMeetingNoteEndClick = () => {
-    console.log('handleMeetingNoteEndClick');
+    console.log('회의록 종료');
     socketRef.current?.emit(SOCKET_EMIT.END_MEETING_NOTE, { roomName });
   };
 
-  const handleChangeMeetingNoteName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMeetingNoteName(e.target.value);
+  // 회의록 모달
+  const handleMeetingNoteModalClose = () => {
+    setMeetingNoteModalOpen(false);
+  };
+
+  const handleMeetingNoteModalOpen = () => {
+    setMeetingNoteModalOpen(true);
   };
 
   /**
@@ -328,9 +345,15 @@ export default function VoiceChannel() {
 
     // 회의록 시작
     socketRef.current.on(SOCKET_EMIT.START_MEETING_NOTE, ({ meetingNoteId }) => {
-      console.log('start_meeting_note');
+      console.log('start_meeting_note : ', meetingNoteId);
       setShowMeetingNote(true);
       setMeetingNoteId(meetingNoteId);
+    });
+
+    // 회의록 업데이트
+    socketRef.current?.on('update_meeting_note', ({ transcript, userId }: { transcript: string; userId: number }) => {
+      console.log('update_meeting_note 이벤트 발생 : ', transcript, userId);
+      setRecognizedTexts((prev) => [...prev, { userId, text: transcript }]);
     });
 
     // 회의록 종료
@@ -355,16 +378,14 @@ export default function VoiceChannel() {
 
   return (
     <Wrapper>
+      <MeetingNoteModal
+        startMeetingNote={startMeetingNote}
+        meetingNoteModalOpen={meetingNoteModalOpen}
+        onModalClose={handleMeetingNoteModalClose}
+      />
       <ContentBox>
         <div>
-          <input type='text' placeholder='회의록 제목' value={meetingNoteName} onChange={handleChangeMeetingNoteName} />
-          <button
-            onClick={() => {
-              handleMeetingNoteStartClick();
-            }}
-          >
-            회의록 시작
-          </button>
+          <button onClick={handleMeetingNoteModalOpen}>회의록 시작</button>
           <button
             onClick={() => {
               handleMeetingNoteEndClick();
@@ -395,6 +416,8 @@ export default function VoiceChannel() {
             userId={userId}
             serverUserData={serverUserData}
             meetingNoteId={meetingNoteId}
+            recognizedTexts={recognizedTexts}
+            setRecognizedTexts={setRecognizedTexts}
           />
         ) : null}
       </ContentBox>
