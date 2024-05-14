@@ -3,9 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { useMutationDelete } from 'src/apis/service/service';
 import CreateCategoryModal from 'src/components/modal/contents/CreateCategoryModal';
 import CreateServerModal from 'src/components/modal/contents/CreateServerModal';
+import DeleteModal from 'src/components/modal/contents/DeleteModal';
 import InviteLinkModal from 'src/components/modal/contents/InviteLinkModal';
 import InviteMemberModal from 'src/components/modal/contents/InviteMemberModal';
-import DefaultModal from 'src/components/modal/DefaultModal';
 import { ServerDropdownType } from 'src/constants/enum';
 import styled from 'styled-components';
 
@@ -74,12 +74,12 @@ export default function ServerDropDown({ isDropDown, toggleDropDown }: Prorps) {
           ),
           [ServerDropdownType.INVITE_MEMBER]: <InviteMemberModal closeModal={handleCloseModal} isOpen={isShow} />,
           [ServerDropdownType.DELETE_SERVER]: (
-            <DefaultModal
-              title='서버삭제'
-              desc='정말 삭제하시겠습니까?'
-              okClick={handleDeleteServer}
-              closeModal={handleCloseModal}
+            <DeleteModal
+              DeleteName='서버'
+              title='서버'
               isOpen={isShow}
+              closeModal={handleCloseModal}
+              onDelete={handleDeleteServer}
             />
           ),
         }[dropdownType]
