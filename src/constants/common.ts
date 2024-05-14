@@ -53,3 +53,7 @@ export const SOCKET_EMIT = {
    */
   JOIN: 'join',
 };
+
+export const SOCKET_COMMON = {
+  READ_MESSAGE: 'read_message',
+};

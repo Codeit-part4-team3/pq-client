@@ -51,12 +51,14 @@ export default function Channel() {
               if (!user) return null;
               return (
                 <Member key={user.id}>
-                  <ProfileImageWrapper>
+                  <ProfileWrapper>
+                    <ProfileImageWrapper>
+                      <ProfileImage imageUrl={user.imageUrl} />
+                    </ProfileImageWrapper>
                     <StatusBox>
                       <Status $state={user.state} />
                     </StatusBox>
-                    <ProfileImage imageUrl={user.imageUrl} />
-                  </ProfileImageWrapper>
+                  </ProfileWrapper>
                   <span>{user.nickname}</span>
                 </Member>
               );
@@ -78,17 +80,35 @@ const Area = styled.section`
   position: relative;
 `;
 
-const StatusBox = styled.div`
+const ProfileWrapper = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
-  background-color: #000;
-  border-radius: 50%;
+  gap: 10px;
+
+  position: relative;
+`;
+
+const StatusBox = styled.div`
   width: 16px;
   height: 16px;
+
+  border-radius: 50%;
+  background-color: var(--landing_background_color);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
   position: absolute;
-  left: 44px;
-  bottom: 9px;
+  top: calc(100% - 14px);
+  right: 0px;
+
+  & > div {
+    width: 70%;
+    height: 70%;
+  }
 `;
 
 const Container = styled.div`

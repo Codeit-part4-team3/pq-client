@@ -162,7 +162,6 @@ const Button = styled(ButtonIcon)`
 
   &:hover {
     cursor: pointer;
-    scale: 1.1;
   }
 `;
 
@@ -171,9 +170,7 @@ const CloseButton = styled(Button)`
 `;
 
 const UpdateButton = styled(Button)`
-  width: 16px;
-  height: 16px;
-  background-image: url('/images/pencil-white.png');
+  background-image: url('/images/edit.png');
 `;
 
 const ButtonGroup = styled.div`
