@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Socket, io } from 'socket.io-client';
 
-const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
+const SOCKET_SERVER_URL = 'http://localhost:3000';
 
 export default function useSocket() {
   const socketRef = useRef<Socket | null>(null);

@@ -8,8 +8,8 @@ import RemoteMedia from 'src/pages/server/channel/voiceChannel/_components/Remot
 import MeetingNote from 'src/pages/server/channel/voiceChannel/_components/MeetingNote';
 import useUserStore from 'src/store/userStore';
 
-const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
-
+// const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
+const SOCKET_SERVER_URL = 'http://localhost:3000';
 const pc_config = {
   iceServers: [
     // {

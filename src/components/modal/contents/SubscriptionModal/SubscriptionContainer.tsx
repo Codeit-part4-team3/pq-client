@@ -1,15 +1,18 @@
-import { useState, Dispatch, SetStateAction, useCallback, useEffect, useRef } from 'react';
+import { useState, Dispatch, SetStateAction, useCallback, useEffect } from 'react';
 import { ModalTitle } from '../../CommonStyles';
 import { USER_URL } from 'src/constants/apiUrl';
 import RegistCardButton from 'src/components/modal/contents/SubscriptionModal/RegistCardButton';
-import { Plan, PlansResponse } from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
+import {
+  EventResponse,
+  Plan,
+  PlansResponse,
+} from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
 import styled from 'styled-components';
 import { useQueryGet } from 'src/apis/service/service';
 import { SubscriptionResponse } from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
-import { Socket, io } from 'socket.io-client';
+import { EventPaymentsResponse } from 'src/pages/payments/_type/type';
+import { PLAN } from 'src/constants/plan';
 import useEventStore from 'src/store/eventStore';
-
-const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 interface SubscriptionContainerProps {
   subscription: SubscriptionResponse | undefined;
@@ -25,19 +28,30 @@ export default function SubscriptionContainer({
   setIsCancelSelected,
 }: SubscriptionContainerProps) {
   const [isRecurring, setIsRecurring] = useState(false);
-  const { isEventActive, setIsEventActive } = useEventStore();
-  // 소켓
-  const socketRef = useRef<Socket | null>(null);
+  const [participants, setParticipants] = useState<EventPaymentsResponse>(null);
+  const { isEventActive } = useEventStore();
+  const { BASIC, PREMIUM, EVENT } = PLAN;
+  const maxLength = [BASIC.maxLength, PREMIUM.maxLength];
 
   const { data: plans } = useQueryGet<PlansResponse>('getPlan', `${USER_URL.PLANS}/all`);
+  const event = plans?.[2];
+
+  const { data: eventPayments } = useQueryGet<EventPaymentsResponse>(
+    'getEventPayments',
+    `${USER_URL.PAYMENTS}/plan/${EVENT.id}`,
+  );
+  const { data: eventAmount, refetch } = useQueryGet<EventResponse>('getEventAmount', `${USER_URL.PAYMENTS}/event`);
 
   useEffect(() => {
-    socketRef.current = io(SOCKET_SERVER_URL);
-    socketRef.current.on('event_status', (status) => {
-      console.log('Event status changed:', status);
-      setIsEventActive(status);
-    });
-  }, []);
+    if (eventPayments && eventAmount) {
+      setParticipants(eventPayments.filter((payment) => payment.createdAt > eventAmount.createdAt));
+    }
+  }, [eventAmount, eventPayments, setParticipants]);
+
+  useEffect(() => {
+    console.log('isEventActive', isEventActive);
+    refetch();
+  }, [isEventActive, refetch]);
 
   const handlePlanButtonClick = useCallback(
     (id: number) => {
@@ -46,7 +60,7 @@ export default function SubscriptionContainer({
         setSelectedPlan(plan);
       }
     },
-    [plans],
+    [plans, setSelectedPlan],
   );
 
   const isSubscribedPlan = (planId: number) => {
@@ -58,42 +72,57 @@ export default function SubscriptionContainer({
     <>
       <ModalTitle>구독</ModalTitle>
       <SubscriptionBox>
+        {/* 플랜 */}
         <PlanButtonContainer>
-          {plans &&
-            plans.map(
-              (plan, index) =>
-                index !== 2 && (
-                  <PlanButton
-                    type='button'
-                    key={plan.id}
-                    onClick={() => handlePlanButtonClick(plan.id)}
-                    $isSelected={selectedPlan?.id === plan.id}
-                    $isSubscribed={isSubscribedPlan(plan.id)}
-                    disabled={isSubscribedPlan(plan.id)}
-                  >
-                    {isSubscribedPlan(plan.id) && <SubscribedToast>Subscribed</SubscribedToast>}
-                    <PlanName>{plan.type.toUpperCase()}</PlanName>
-                    <br />
-                    <br />₩{plan.price.toLocaleString()}
-                  </PlanButton>
-                ),
-            )}
+          {plans?.map(
+            (plan, index) =>
+              index !== 2 && (
+                <PlanButton
+                  type='button'
+                  key={plan.id}
+                  onClick={() => handlePlanButtonClick(plan.id)}
+                  $isSelected={selectedPlan?.id === plan.id}
+                  $isSubscribed={isSubscribedPlan(plan.id)}
+                  disabled={isSubscribedPlan(plan.id)}
+                >
+                  {isSubscribedPlan(plan.id) && <SubscribedToast>Subscribed</SubscribedToast>}
+                  <PlanName>{plan.type.toUpperCase()}</PlanName>
+                  <span>
+                    최대 글자 수 <br />
+                    {maxLength[index]}자
+                  </span>
+                  <PlanPrice>₩{plan.price.toLocaleString()}</PlanPrice>
+                </PlanButton>
+              ),
+          )}
         </PlanButtonContainer>
-        {plans?.[2] && isEventActive && (
+        {/* 이벤트 */}
+        {event && eventAmount && (
           <EventButton
             type='button'
-            key={plans[2].id}
-            onClick={() => handlePlanButtonClick(plans[2].id)}
-            $isSelected={selectedPlan?.id === plans[2].id}
-            $isSubscribed={isSubscribedPlan(plans[2].id)}
-            disabled={isSubscribedPlan(plans[2].id)}
+            key={event.id}
+            onClick={() => handlePlanButtonClick(event?.id)}
+            $isSelected={selectedPlan?.id === event.id}
+            $isSubscribed={isSubscribedPlan(event.id)}
+            disabled={isSubscribedPlan(event.id)}
           >
-            {isSubscribedPlan(plans[2].id) && <SubscribedToast>참여해주셔서 감사합니다!</SubscribedToast>}
-            <PlanName>{plans[2].type.toUpperCase()}</PlanName>
-            <br />
-            <br />₩{plans[2].price.toLocaleString()}
+            {isSubscribedPlan(event.id) && <SubscribedToast>참여해주셔서 감사합니다!</SubscribedToast>}
+            <EventDescription>
+              <PlanName>{event.type.toUpperCase()}</PlanName>
+              <p>지금 바로 당첨금의 주인공이 되어보세요!</p>
+              <PlanPrice>₩{event.price.toLocaleString()}</PlanPrice>
+            </EventDescription>
+
+            <EventProgress>
+              <EventAccumulated>
+                ₩{eventAmount.amount}
+                <CoinImg src='/images/coin.gif' alt='coin' />
+              </EventAccumulated>
+              <span>{participants?.length}명 참여 중</span>
+            </EventProgress>
           </EventButton>
         )}
+        {/* 환불 */}
         <SubscriptionCancelButton onClick={() => setIsCancelSelected(true)}>구독 취소 & 환불</SubscriptionCancelButton>
       </SubscriptionBox>
 
@@ -135,11 +164,12 @@ const PlanButton = styled.button<{ $isSelected: boolean; $isSubscribed: boolean 
   height: 100%;
   padding: 13px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
   position: relative;
-  font-weight: bold;
+  font-size: 16px;
   border-radius: 10px;
   color: #000;
   background-color: ${(props) => (props.$isSelected ? '#e8f4ff' : '#fff')};
@@ -157,11 +187,42 @@ const PlanButton = styled.button<{ $isSelected: boolean; $isSubscribed: boolean 
 `;
 
 const EventButton = styled(PlanButton)`
+  flex-direction: row;
+  justify-content: center;
+  position: relative;
   color: #fff;
-  font-weight: bold;
   background: ${(props) =>
     props.$isSelected ? 'linear-gradient(135deg, #7e93fa, #fa8199)' : 'linear-gradient(135deg, #6a82fb, #fc5c7d)'};
   border: 1px solid ${(props) => (props.$isSelected ? '#007BFF' : 'var(--text_gray)')};
+`;
+
+const EventDescription = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+`;
+
+const EventProgress = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  font-size: 16px;
+  font-weight: bold;
+`;
+
+const EventAccumulated = styled.span`
+  display: flex;
+  gap: 4px;
+  font-size: 20px;
+`;
+
+const CoinImg = styled.img`
+  width: 20px;
+  height: 20px;
 `;
 
 const SubscribedToast = styled.div`
@@ -177,6 +238,12 @@ const SubscribedToast = styled.div`
 
 const PlanName = styled.span`
   font-size: 20px;
+  font-weight: bold;
+`;
+
+const PlanPrice = styled.span`
+  font-size: 18px;
+  font-weight: bold;
 `;
 
 const SettingsBox = styled.div`

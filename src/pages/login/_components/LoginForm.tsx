@@ -71,7 +71,7 @@ export default function LoginForm() {
         expires: 7,
         secure: true,
         sameSite: 'None',
-        // domain: '.pqsoft.net',
+        // domain: import.meta.env.VITE_APP_ORIGIN_API,
       });
       axiosInstance.put(`${USER_URL.USER}/me/state/update`, { state: '온라인' });
       navigate('/server');

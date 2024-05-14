@@ -7,7 +7,7 @@ import UtilityButton from 'src/pages/server/channel/chatChannel/_components/Util
 import { useQueryGet } from 'src/apis/service/service';
 import useUserStore from 'src/store/userStore';
 
-const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
+const SOCKET_SERVER_URL = 'http://localhost:3000';
 
 /**@Todo Channel 컴포넌트로 부터 channel date를 prop로 받고 데이터 바인딩 예정
  * 유저 데이터들 처리하는 로직 짜야함
