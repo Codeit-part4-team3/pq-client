@@ -1,12 +1,12 @@
 import { ModalTitle } from 'src/components/modal/CommonStyles';
 import styled from 'styled-components';
-import { MeetingNote } from '../VoiceChannel';
 import { User } from '../../chatChannel/_types/type';
 import extractDate from 'src/utils/extractDate';
+import { IMeetingNote } from '../_types/type';
 
 interface MeetingNoteDocumentProps {
   isOpen: boolean;
-  data: MeetingNote | null;
+  data: IMeetingNote | null;
   setIsOpenMeetingNote: (isOpen: boolean) => void;
   serverUserData: User[] | undefined;
 }

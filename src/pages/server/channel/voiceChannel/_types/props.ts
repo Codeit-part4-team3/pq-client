@@ -1,6 +1,5 @@
-import { User } from "../../chatChannel/_types/type";
-import { IMeetingNote } from "./type";
-
+import { User } from '../../chatChannel/_types/type';
+import { IMeetingNote } from './type';
 
 export interface VoiceChannelProps {
   channeId: string;
@@ -57,3 +56,8 @@ export interface MeetingNoteListModalProps {
   serverUserData: User[] | undefined;
 }
 
+export interface MeetingNoteModalProps {
+  startMeetingNote: (meetingNoteName: string) => void;
+  meetingNoteModalOpen: boolean;
+  onModalClose: () => void;
+}
