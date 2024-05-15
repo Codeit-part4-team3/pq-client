@@ -1,13 +1,21 @@
 import styled from 'styled-components';
-import profileImage from '../../../../../../public/images/minji-profile-image.png';
+import defaultProfileImage from '../../../../../../public/images/minji-profile-image.png';
 import micOffSvg from '../../../../../../public/images/mic_off_FILL0_wght200_GRAD0_opsz24.svg';
 import micOnSvg from '../../../../../../public/images/mic_on_FILL0_wght200_GRAD0_opsz24.svg';
 import { useEffect, useRef } from 'react';
 import { RemoteMediaProps } from '../_types/props';
 
-export default function RemoteMedia({ stream, userNickname, isMutedAllRemoteStreams, showVideo }: RemoteMediaProps) {
+export default function RemoteMedia({
+  stream,
+  userNickname,
+  userId,
+  isMutedAllRemoteStreams,
+  showVideo,
+  serverUserData,
+}: RemoteMediaProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const isMutedRemoteStream = false;
+  const profileImage = serverUserData?.find((user) => user.id === userId)?.imageUrl;
 
   useEffect(() => {
     if (videoRef.current) {
@@ -20,7 +28,7 @@ export default function RemoteMedia({ stream, userNickname, isMutedAllRemoteStre
       <MediaBox>
         {!showVideo ? (
           <NotShowVideoWrapper>
-            <ProfileImage src={profileImage} alt='프로필 이미지' />
+            <ProfileImage src={profileImage ? profileImage : defaultProfileImage} alt='프로필 이미지' />
           </NotShowVideoWrapper>
         ) : null}
         <Media ref={videoRef} autoPlay playsInline muted={isMutedAllRemoteStreams} />
