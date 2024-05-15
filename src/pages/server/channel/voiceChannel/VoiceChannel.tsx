@@ -49,7 +49,7 @@ export default function VoiceChannel() {
   const [users, setUsers] = useState<
     {
       socketId: string;
-      userId: string;
+      userId: number;
       userNickname: string;
       stream: MediaStream;
       showVideo: boolean;
@@ -429,7 +429,12 @@ export default function VoiceChannel() {
           <VideoContainer>
             <LocalMedia {...localMediaData} />
             {users.map((user) => (
-              <RemoteMedia key={user.socketId} {...user} isMutedAllRemoteStreams={isMutedAllRemoteStreams} />
+              <RemoteMedia
+                key={user.socketId}
+                {...user}
+                serverUserData={serverUserData}
+                isMutedAllRemoteStreams={isMutedAllRemoteStreams}
+              />
             ))}
           </VideoContainer>
           <MediaControlPanel

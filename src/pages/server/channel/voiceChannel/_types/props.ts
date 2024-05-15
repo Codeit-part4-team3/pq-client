@@ -43,10 +43,12 @@ export interface LocalMediaProps {
 }
 
 export interface RemoteMediaProps {
+  userId: number;
   stream: MediaStream | null;
   userNickname: string;
   isMutedAllRemoteStreams: boolean;
   showVideo: boolean;
+  serverUserData: User[] | undefined;
 }
 
 export interface MeetingNoteListModalProps {
