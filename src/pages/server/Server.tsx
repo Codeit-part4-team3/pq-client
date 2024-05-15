@@ -27,6 +27,7 @@ import MyProfile from '../../components/MyProfile';
 import useSocket from 'src/hooks/useSocket';
 import { MessageItem } from './channel/chatChannel/_types/type';
 import { LOCAL_STORAGE_ALRAM_KEY, SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
+import { useStateTimer } from 'src/hooks/useStateTimer';
 
 export const ServerIdContext = React.createContext<number>(0);
 export const UserIdContext = React.createContext<number>(0);
@@ -46,6 +47,7 @@ export default function Server() {
   const socketRef = useSocket();
 
   useGetUserInfo();
+  useStateTimer();
 
   const {
     refetch: serverRefetch,
