@@ -399,7 +399,6 @@ export default function VoiceChannel() {
         socketRef.current.off(SOCKET_ON.GET_CANDIDATE);
         socketRef.current.off(SOCKET_ON.VIDEO_TRACK_ENABLED_CHANGED);
         socketRef.current.off(SOCKET_ON.USER_EXIT);
-        socketRef.current.disconnect();
       }
     };
   }, [roomName, userId, userNickname, getLocalStream]);
