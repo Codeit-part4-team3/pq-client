@@ -4,16 +4,22 @@ import Router from './routes/routes';
 import Toasts from './components/toast/toast';
 import useToastStore from './store/toastStore';
 import { useEffect } from 'react';
+import useEventStore from './store/eventStore';
 
 function App() {
   const queryClient = new QueryClient();
-  const initializeSocket = useToastStore((state) => state.initializeSocket);
-  const disconnectSocket = useToastStore((state) => state.disconnectSocket);
+  const { initializeSocket: initializeToastSocket, disconnectSocket: disconnectToastSocket } = useToastStore();
+  const { initializeSocket: initializeEventSocket, disconnectSocket: disconnectEventSocket } = useEventStore();
 
   useEffect(() => {
-    initializeSocket();
-    return () => disconnectSocket();
-  }, [initializeSocket, disconnectSocket]);
+    initializeToastSocket();
+    initializeEventSocket();
+
+    return () => {
+      disconnectToastSocket();
+      disconnectEventSocket();
+    };
+  }, [initializeToastSocket, initializeEventSocket, disconnectToastSocket, disconnectEventSocket]);
 
   return (
     <>

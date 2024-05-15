@@ -6,22 +6,28 @@ import { ModalProps } from 'src/types/modalType';
 import useUserStore from 'src/store/userStore';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from 'src/apis/instance/axiosInstance';
 import { USER_URL } from 'src/constants/apiUrl';
+import { useMutationPut } from 'src/apis/service/service';
+import { RequestUserState, UserInfo } from 'src/types/userType';
 
 export default function LogoutModal({ closeModal, isOpen }: ModalProps) {
   const { setAccessToken, setUserInfo } = useUserStore();
   const navigete = useNavigate();
-  const onLogout = async () => {
-    const res = await axiosInstance.put(`${USER_URL.USER}/me/state/update`, { state: '오프라인' });
 
-    if (res.status !== 200) {
-      return;
-    }
-    await Cookies.remove('refreshToken');
-    await setAccessToken('');
-    await setUserInfo({ id: 0, email: '', nickname: '', state: '' });
-    navigete('/');
+  const LogoutMutation = useMutationPut<UserInfo, RequestUserState>(`${USER_URL.USER}/me/state/update`);
+
+  const onLogout = async () => {
+    LogoutMutation.mutate(
+      { state: '오프라인' },
+      {
+        onSuccess: async () => {
+          await Cookies.remove('refreshToken');
+          await setAccessToken('');
+          await setUserInfo({ id: 0, email: '', nickname: '', state: '' });
+          navigete('/');
+        },
+      },
+    );
     closeModal();
   };
   return (

@@ -31,6 +31,9 @@ export default function MyPageModal({ closeModal, isOpen }: ModalProps) {
 
   const onSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
+    if (nickname === '') {
+      return;
+    }
     updateMutation.mutate({ nickname, imageFile });
   };
 

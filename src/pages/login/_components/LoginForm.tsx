@@ -6,13 +6,12 @@ import { ERROR_MESSAGES } from 'src/constants/error';
 import { EmailInput, PasswordInput } from './LoginInputs';
 import useUserStore from 'src/store/userStore';
 import { AxiosError } from 'axios';
-import { useMutationPost } from 'src/apis/service/service';
+import { useMutationPost, useMutationPut } from 'src/apis/service/service';
 import { LoginRequest, LoginResponse } from '../_type/type';
 import { USER_URL } from 'src/constants/apiUrl';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-import { ResponseUserData } from 'src/types/userType';
-import axiosInstance from 'src/apis/instance/axiosInstance';
+import { RequestUserState, ResponseUserData, UserInfo } from 'src/types/userType';
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -30,6 +29,8 @@ export default function LoginForm() {
       password: '',
     },
   });
+
+  const updateMutaiton = useMutationPut<UserInfo, RequestUserState>(`${USER_URL.USER}/me/state/update`);
 
   const { mutate, isPending } = useMutationPost<LoginResponse, LoginRequest>(`${USER_URL.AUTH}/login`, {
     onError: (error: unknown) => {
@@ -70,10 +71,10 @@ export default function LoginForm() {
       Cookies.set('refreshToken', refreshToken, {
         expires: 7,
         secure: true,
-        sameSite: 'None',
-        // domain: '.pqsoft.net',
+        sameSite: 'strict',
+        domain: 'pqsoft.net',
       });
-      axiosInstance.put(`${USER_URL.USER}/me/state/update`, { state: '온라인' });
+      updateMutaiton.mutate({ state: '온라인' });
       navigate('/server');
     },
   });

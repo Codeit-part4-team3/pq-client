@@ -58,7 +58,7 @@ export default function InvitedServerListModal({ closeModal, isOpen }: ModalProp
             {data?.map((server) => {
               if (!server) return null;
               return (
-                <InviteItem>
+                <InviteItem key={server.inviteId}>
                   <TextContainer>
                     <div>{`▪️ ${server.serverName}`}</div>
                     <div>{`✉️ ${server.inviterName}`}</div>
