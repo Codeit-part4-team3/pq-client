@@ -23,7 +23,7 @@ export const SOCKET_ON = {
   GET_CANDIDATE: 'get_candidate',
   VIDEO_TRACK_ENABLED_CHANGED: 'video_track_enabled_changed',
   USER_EXIT: 'user_exit',
-
+  UPDATE_MEETING_NOTE: 'update_meeting_note',
 };
 
 /**
