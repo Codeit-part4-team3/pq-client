@@ -7,7 +7,7 @@ import { useOpenModal } from 'src/hooks/useOpenModal';
 import { useLocation } from 'react-router-dom';
 import { useMutationDelete, useMutationPatch } from 'src/apis/service/service';
 import { ChannelRequest, ChannelResponse } from '../_types/type';
-import DefaultModal from 'src/components/modal/DefaultModal';
+import DeleteModal from 'src/components/modal/contents/DeleteModal';
 
 export default function ChannelGroup({ data, children }: ChannelGroupProps) {
   const path = useLocation();
@@ -69,7 +69,7 @@ export default function ChannelGroup({ data, children }: ChannelGroupProps) {
           <span>{data?.name}</span>
           <InputChannel
             value={updateName}
-            isUpdate={isUpdate}
+            $isUpdate={isUpdate}
             onKeyDown={handleKeydown}
             onChange={(e) => setUpdateName(e.target.value)}
             placeholder='취소는 ESC / 저장은 Enter'
@@ -81,15 +81,13 @@ export default function ChannelGroup({ data, children }: ChannelGroupProps) {
           <PlusButton type='button' onClick={openModal} />
         </ButtonGroup>
         <CreateChannelModal isOpen={isOpen} closeModal={closeModal} groupId={data.id} />
-        {
-          <DefaultModal
-            title='카테고리 삭제'
-            desc='카테고리를 삭제하시겠습니까?'
-            okClick={handleDelete}
-            closeModal={() => setIsToggle(false)}
-            isOpen={isToggle}
-          />
-        }
+        <DeleteModal
+          title='카테고리'
+          closeModal={() => setIsToggle(false)}
+          isOpen={isToggle}
+          DeleteName={`${data.name} 카테고리` || '카테고리'}
+          onDelete={handleDelete}
+        />
       </Wrapper>
       <Body ref={bodyRef}>{children}</Body>
     </Area>
@@ -191,14 +189,14 @@ const ButtonGroup = styled.div`
   }
 `;
 
-const InputChannel = styled.input<{ isUpdate: boolean }>`
+const InputChannel = styled.input<{ $isUpdate: boolean }>`
   width: 160px;
   height: 100%;
 
   background-color: var(--primary_light_color);
   color: #d9d9d9;
   font-size: 12px;
-  display: ${(props) => (props.isUpdate ? 'block' : 'none')};
+  display: ${(props) => (props.$isUpdate ? 'block' : 'none')};
 
   position: absolute;
   top: 0;

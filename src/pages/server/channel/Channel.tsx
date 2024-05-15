@@ -13,6 +13,8 @@ import { Status } from 'src/components/MyState';
 
 export default function Channel() {
   const [isShowMembers, setIsShowMembers] = useState(true);
+  const [onlineUsers, setOnlineUsers] = useState<IUser[]>([]);
+  const [offlineUsers, setOfflineUsers] = useState<IUser[]>([]);
   const { serverId, channelId } = useParams();
 
   const { data, refetch } = useQueryGet<ChannelResponse>(
@@ -40,20 +42,44 @@ export default function Channel() {
     userRefetch();
   }, [serverId]);
 
+  useEffect(() => {
+    if (!userData) return;
+    setOnlineUsers(userData.filter((user) => user.state === '온라인' || user.state === '자리비움'));
+    setOfflineUsers(userData.filter((user) => user.state === '오프라인'));
+  }, [userData]);
+
   return (
     <Area>
       <ChannelHeader title={data?.name ?? '없음'} userCount={userData?.length ?? 0} onClickMembers={handleMembers} />
       <Container>
         {data?.isVoice ? <VoiceChannel /> : <ChatChannel />}
-        <MembersWrapper isShow={isShowMembers}>
-          <MembersContainer isShow={isShowMembers}>
-            {userData?.map((user) => {
+        <MembersWrapper $isShow={isShowMembers}>
+          <MembersContainer $isShow={isShowMembers}>
+            {onlineUsers.length > 0 ? <div>온라인 </div> : null}
+            {onlineUsers?.map((user) => {
               if (!user) return null;
               return (
                 <Member key={user.id}>
                   <ProfileWrapper>
                     <ProfileImageWrapper>
-                      <ProfileImage imageUrl={user.imageUrl} />
+                      <ProfileImage $imageUrl={user.imageUrl} />
+                    </ProfileImageWrapper>
+                    <StatusBox>
+                      <Status $state={user.state} />
+                    </StatusBox>
+                  </ProfileWrapper>
+                  <span>{user.nickname}</span>
+                </Member>
+              );
+            })}
+            {offlineUsers.length > 0 ? <div>오프라인</div> : null}
+            {offlineUsers?.map((user) => {
+              if (!user) return null;
+              return (
+                <Member key={user.id}>
+                  <ProfileWrapper>
+                    <ProfileImageWrapper>
+                      <ProfileImage $imageUrl={user.imageUrl} />
                     </ProfileImageWrapper>
                     <StatusBox>
                       <Status $state={user.state} />
@@ -122,16 +148,16 @@ const Container = styled.div`
   position: relative;
 `;
 
-const MembersWrapper = styled.div<{ isShow: boolean }>`
-  width: ${(props) => (props.isShow ? '180px' : '0px')};
+const MembersWrapper = styled.div<{ $isShow: boolean }>`
+  width: ${(props) => (props.$isShow ? '180px' : '0px')};
   height: 100%;
 
   overflow: hidden;
   transition: 0.3s ease-in-out;
-  transform: ${(props) => (props.isShow ? 'scaleX(1)' : 'scaleX(0)')};
+  transform: ${(props) => (props.$isShow ? 'scaleX(1)' : 'scaleX(0)')};
 `;
 
-const MembersContainer = styled.div<{ isShow: boolean }>`
+const MembersContainer = styled.div<{ $isShow: boolean }>`
   width: 180px;
   height: 100%;
 
@@ -142,7 +168,7 @@ const MembersContainer = styled.div<{ isShow: boolean }>`
   justify-content: flex-start;
   align-items: center;
   transition: 0.3s ease-in-out;
-  transform: ${(props) => (props.isShow ? 'translateX(0)' : 'translateX(180px)')};
+  transform: ${(props) => (props.$isShow ? 'translateX(0)' : 'translateX(180px)')};
 
   top: 0;
   right: -180px;

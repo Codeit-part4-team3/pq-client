@@ -36,7 +36,7 @@ export default function RegistCardButton({ isRecurring }: RegistCardButtonProps)
   };
 
   return (
-    <RegistCardButtonContainer isVisible={isRecurring}>
+    <RegistCardButtonContainer $isVisible={isRecurring}>
       <Button onClick={(e) => handleButtonClick(e)} disabled={!isRecurring}>
         결제 수단 등록
       </Button>
@@ -44,13 +44,13 @@ export default function RegistCardButton({ isRecurring }: RegistCardButtonProps)
   );
 }
 
-const RegistCardButtonContainer = styled.div<{ isVisible: boolean }>`
+const RegistCardButtonContainer = styled.div<{ $isVisible: boolean }>`
   overflow: hidden;
   transition:
     max-height 0.3s ease-in-out,
     opacity 0.3s ease-in-out;
-  max-height: ${(props) => (props.isVisible ? '100px' : '0px')};
-  opacity: ${(props) => (props.isVisible ? '1' : '0')};
+  max-height: ${(props) => (props.$isVisible ? '100px' : '0px')};
+  opacity: ${(props) => (props.$isVisible ? '1' : '0')};
 `;
 
 const Button = styled.button`
