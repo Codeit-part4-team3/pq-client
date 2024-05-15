@@ -226,14 +226,18 @@ const CoinImg = styled.img`
 `;
 
 const SubscribedToast = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 5px 10px;
   width: 100%;
+  height: 130px;
   position: absolute;
   font-size: 25px;
   font-weight: bold;
   color: #0d519b;
   border-radius: 5px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.9);
 `;
 
 const PlanName = styled.span`
