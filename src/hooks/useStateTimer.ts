@@ -23,8 +23,9 @@ export const useStateTimer = () => {
       clearTimeout(timeoutId); // 기존 타이머를 지우고
 
       if (userInfo.state !== '온라인') {
+        console.log('state:', userInfo.state);
         try {
-          mutate({ state: '온라인' });
+          await mutate({ state: '온라인' });
         } catch (error) {
           console.error('Failed to update user state:', error);
         }
