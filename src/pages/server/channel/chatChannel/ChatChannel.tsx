@@ -211,7 +211,6 @@ export default function ChatChannel() {
         setMessages((prevMessages) => [newMessage, ...prevMessages]);
 
         if (socketRef.current) {
-          console.log('[read-receive] read on emit :', userId, roomName, newMessage.messageId);
           socketRef.current.emit(SOCKET_COMMON.READ_MESSAGE, {
             messageId: newMessage.messageId,
             roomName: roomName,
@@ -223,8 +222,9 @@ export default function ChatChannel() {
 
     socketRef.current.on(
       SOCKET_COMMON.READ_MESSAGE,
-      ({ prevMessageId, messageId, channelId, userId }: ReadMessageItem) => {
+      ({ prevMessageId, messageId, channelId: readChannelId, userId }: ReadMessageItem) => {
         // 읽음 ui update
+        if (channelId !== readChannelId) return;
         console.log('read message : ', prevMessageId, messageId, channelId, userId);
 
         let disCountStart = false;
