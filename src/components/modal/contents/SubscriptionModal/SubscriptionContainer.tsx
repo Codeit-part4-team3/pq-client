@@ -1,13 +1,18 @@
-import { useState, Dispatch, SetStateAction, useCallback } from 'react';
+import { useState, Dispatch, SetStateAction, useCallback, useEffect } from 'react';
 import { ModalTitle } from '../../CommonStyles';
 import { USER_URL } from 'src/constants/apiUrl';
 import RegistCardButton from 'src/components/modal/contents/SubscriptionModal/RegistCardButton';
-import { Plan, PlansResponse } from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
+import {
+  EventResponse,
+  Plan,
+  PlansResponse,
+} from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
 import styled from 'styled-components';
 import { useQueryGet } from 'src/apis/service/service';
 import { SubscriptionResponse } from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
 import { PLAN } from 'src/constants/plan';
 import { useEventWinner } from 'src/hooks/useEventWinner';
+import useEventStore from 'src/store/eventStore';
 
 interface SubscriptionContainerProps {
   subscription: SubscriptionResponse | undefined;
@@ -23,10 +28,15 @@ export default function SubscriptionContainer({
   setIsCancelSelected,
 }: SubscriptionContainerProps) {
   const [isRecurring, setIsRecurring] = useState(false);
-  const { eventAmount, participants } = useEventWinner();
+  const { participants } = useEventWinner();
+  const { isEventActive } = useEventStore();
   const { BASIC, PREMIUM } = PLAN;
   const maxLength = [BASIC.maxLength, PREMIUM.maxLength];
 
+  const { data: eventAmount, refetch: refetchEventAmount } = useQueryGet<EventResponse>(
+    'getEventAmount',
+    `${USER_URL.PAYMENTS}/event`,
+  );
   const { data: plans } = useQueryGet<PlansResponse>('getPlan', `${USER_URL.PLANS}/all`);
   const event = plans?.[2];
 
@@ -44,6 +54,10 @@ export default function SubscriptionContainer({
     if (!subscription || !subscription.isActive) return false;
     return subscription.planId >= planId;
   };
+
+  useEffect(() => {
+    refetchEventAmount();
+  }, [isEventActive]);
 
   return (
     <>
