@@ -1,18 +1,13 @@
-import { useState, Dispatch, SetStateAction, useCallback, useEffect } from 'react';
+import { useState, Dispatch, SetStateAction, useCallback } from 'react';
 import { ModalTitle } from '../../CommonStyles';
 import { USER_URL } from 'src/constants/apiUrl';
 import RegistCardButton from 'src/components/modal/contents/SubscriptionModal/RegistCardButton';
-import {
-  EventResponse,
-  Plan,
-  PlansResponse,
-} from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
+import { Plan, PlansResponse } from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
 import styled from 'styled-components';
 import { useQueryGet } from 'src/apis/service/service';
 import { SubscriptionResponse } from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
-import { EventPaymentsResponse } from 'src/pages/payments/_type/type';
 import { PLAN } from 'src/constants/plan';
-import useEventStore from 'src/store/eventStore';
+import { useEventWinner } from 'src/hooks/useEventWinner';
 
 interface SubscriptionContainerProps {
   subscription: SubscriptionResponse | undefined;
@@ -28,30 +23,12 @@ export default function SubscriptionContainer({
   setIsCancelSelected,
 }: SubscriptionContainerProps) {
   const [isRecurring, setIsRecurring] = useState(false);
-  const [participants, setParticipants] = useState<EventPaymentsResponse>(null);
-  const { isEventActive } = useEventStore();
-  const { BASIC, PREMIUM, EVENT } = PLAN;
+  const { eventAmount, participants } = useEventWinner();
+  const { BASIC, PREMIUM } = PLAN;
   const maxLength = [BASIC.maxLength, PREMIUM.maxLength];
 
   const { data: plans } = useQueryGet<PlansResponse>('getPlan', `${USER_URL.PLANS}/all`);
   const event = plans?.[2];
-
-  const { data: eventPayments } = useQueryGet<EventPaymentsResponse>(
-    'getEventPayments',
-    `${USER_URL.PAYMENTS}/plan/${EVENT.id}`,
-  );
-  const { data: eventAmount, refetch } = useQueryGet<EventResponse>('getEventAmount', `${USER_URL.PAYMENTS}/event`);
-
-  useEffect(() => {
-    if (eventPayments && eventAmount) {
-      setParticipants(eventPayments.filter((payment) => payment.createdAt > eventAmount.createdAt));
-    }
-  }, [eventAmount, eventPayments, setParticipants]);
-
-  useEffect(() => {
-    console.log('isEventActive', isEventActive);
-    refetch();
-  }, [isEventActive, refetch]);
 
   const handlePlanButtonClick = useCallback(
     (id: number) => {
