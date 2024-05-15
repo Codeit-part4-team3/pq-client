@@ -22,14 +22,6 @@ export const useStateTimer = () => {
     const handleActivity = async () => {
       clearTimeout(timeoutId); // 기존 타이머를 지우고
 
-      if (userInfo.state === '자리비움' || userInfo.state === '오프라인') {
-        try {
-          mutate({ state: '온라인' });
-        } catch (error) {
-          console.error('Failed to update user state:', error);
-        }
-      }
-
       timeoutId = setTimeout(() => {
         try {
           mutate({ state: '자리비움' });
