@@ -5,6 +5,7 @@ import { ReponseUserState, RequestUserState } from 'src/types/userType';
 import useUserStore from 'src/store/userStore';
 
 export const useStateTimer = () => {
+  const { userInfo, setUserInfo } = useUserStore();
   const { mutate } = useMutationPut<ReponseUserState, RequestUserState>(`${USER_URL.USER}/me/state/update`, {
     onSuccess: async (data: ReponseUserState) => {
       if (data.name !== '오프라인') {
@@ -14,10 +15,10 @@ export const useStateTimer = () => {
   });
   const idleTime = 300000;
 
-  const { userInfo, setUserInfo } = useUserStore();
-
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
+
+    mutate({ state: '온라인' });
 
     const handleActivity = async () => {
       clearTimeout(timeoutId); // 기존 타이머를 지우고
