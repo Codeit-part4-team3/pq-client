@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { User } from '../../chatChannel/_types/type';
 import extractDate from 'src/utils/extractDate';
 import { IMeetingNote } from '../_types/type';
+import useUserStore from 'src/store/userStore';
 
 interface MeetingNoteDocumentProps {
   isOpen: boolean;
@@ -17,6 +18,9 @@ export default function MeetingNoteDocument({
   setIsOpenMeetingNote,
   serverUserData,
 }: MeetingNoteDocumentProps) {
+  const { userInfo } = useUserStore();
+  const { id: myId } = userInfo;
+
   if (!data) return null;
   const { year, month, day } = extractDate(data.createdAt);
   const formattedDate = `${year}년 ${month}월 ${day}일`;
@@ -36,12 +40,25 @@ export default function MeetingNoteDocument({
       <Note>
         {data?.content.map((content, idx) => {
           const nickname = serverUserData?.find((user) => user.id === content.userId)?.nickname || 'Unknown';
+          const isMine = content.userId === myId;
+
+          // 내가 보낸 메시지인 경우
+          if (isMine) {
+            return (
+              <>
+                <MySpeech key={idx}>
+                  <Nickname>{nickname}</Nickname>
+                  <Text>{content.text}</Text>
+                </MySpeech>
+              </>
+            );
+          }
           return (
             <>
-              <Speech key={idx}>
+              <OtherSpeech key={idx}>
                 <Nickname>{nickname}</Nickname>
                 <Text>{content.text}</Text>
-              </Speech>
+              </OtherSpeech>
             </>
           );
         })}
@@ -113,7 +130,16 @@ const Note = styled.div`
 const Speech = styled.div`
   width: 100%;
   display: flex;
-  gap: 16px;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const MySpeech = styled(Speech)`
+  align-items: flex-start;
+`;
+
+const OtherSpeech = styled(Speech)`
+  align-items: flex-end;
 `;
 
 const Nickname = styled.div`
@@ -127,13 +153,11 @@ const Nickname = styled.div`
 const Text = styled.div`
   border: 1px solid var(--text_gray);
   border-radius: 10px;
-  width: 100%;
+  width: 90%;
   border-radius: 10px;
   background: var(--white_FFFFFF);
   color: var(--background_light_gray);
   padding: 12px;
-
-  margin-top: 18px;
 `;
 
 const CloseButton = styled.button`
