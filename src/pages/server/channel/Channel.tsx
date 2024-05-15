@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { useQueryGet } from 'src/apis/service/service';
+import { useMutationPut, useQueryGet } from 'src/apis/service/service';
 
 import { ChannelResponse, IUser } from '../_types/type';
 import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
@@ -10,6 +10,9 @@ import VoiceChannel from './voiceChannel/VoiceChannel';
 import ChatChannel from './chatChannel/ChatChannel';
 import ChannelHeader from 'src/pages/server/channel/_conponents/ChannelHeader';
 import { Status } from 'src/components/MyState';
+import useUserStore from 'src/store/userStore';
+import { ReponseUserState, RequestUserState } from 'src/types/userType';
+import { USER_URL } from 'src/constants/apiUrl';
 
 export default function Channel() {
   const [isShowMembers, setIsShowMembers] = useState(true);
@@ -33,6 +36,19 @@ export default function Channel() {
   const handleMembers = () => {
     setIsShowMembers(!isShowMembers);
   };
+
+  const { userInfo, setUserInfo } = useUserStore();
+  const { mutate } = useMutationPut<ReponseUserState, RequestUserState>(`${USER_URL.USER}/me/state/update`, {
+    onSuccess: async (data: ReponseUserState) => {
+      if (data.name !== '오프라인') {
+        setUserInfo({ ...userInfo, state: data.name });
+      }
+    },
+  });
+
+  useEffect(() => {
+    mutate({ state: '온라인' });
+  }, []);
 
   useEffect(() => {
     refetch();
