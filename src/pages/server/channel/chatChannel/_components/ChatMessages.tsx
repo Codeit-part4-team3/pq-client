@@ -135,26 +135,6 @@ const ChatMessageWrapper = styled.div<{ isOnEdit: boolean }>`
   }
 `;
 
-const UserProfileImage = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
-  flex-shrink: 0;
-`;
-
-const Image = styled.img<{ profileImage: string }>`
-  width: 100%;
-  height: 100%;
-
-  background-size: cover;
-  background-image: url(${({ profileImage }) => (profileImage ? profileImage : '/images/minji-profile-image.png')});
-
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
 const ChatMessageContent = styled.div`
   width: 100%;
   display: flex;
