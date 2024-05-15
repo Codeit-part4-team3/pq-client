@@ -71,8 +71,8 @@ export default function MeetingNoteDocument({
 }
 
 const Wrapper = styled.div<{ isOpen: boolean }>`
-  width: 100%;
-  height: 100%;
+  width: 150%;
+  height: 150%;
 
   display: flex;
   flex-direction: column;
@@ -84,11 +84,9 @@ const Wrapper = styled.div<{ isOpen: boolean }>`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
   position: absolute;
-  top: 0;
-  left: 0;
-
-  transform: scale(${(props) => (props.isOpen ? 1 : 0)});
-  transition: transform 0.3s ease;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const Header = styled.div`
@@ -123,7 +121,7 @@ const Note = styled.div`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 24px;
   overflow-y: scroll;
 `;
 
@@ -153,7 +151,7 @@ const Nickname = styled.div`
 const Text = styled.div`
   border: 1px solid var(--text_gray);
   border-radius: 10px;
-  width: 90%;
+  width: 70%;
   border-radius: 10px;
   background: var(--white_FFFFFF);
   color: var(--background_light_gray);
