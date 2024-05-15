@@ -2,7 +2,7 @@ import { Socket, io } from 'socket.io-client';
 import { EventPaymentsResponse } from 'src/pages/payments/_type/type';
 import { create } from 'zustand';
 
-const SOCKET_SERVER_URL = 'http://localhost:3000';
+const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 
 interface EventState {
   socket: Socket | null;
