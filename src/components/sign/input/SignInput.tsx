@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { InputNormal } from 'src/GlobalStyles';
 import { FieldErrors } from 'react-hook-form';
 import { FormValues } from 'src/pages/signup/_types/type';
-import eyeOpenIcon from '/images/eye-open.png'; // 임시
+import eyeOpenIcon from '/images/eye-open.svg';
 import eyeCloseIcon from '/images/eye-close.svg';
 
 interface SignInputProps {
@@ -79,12 +79,12 @@ const Input = styled(InputNormal)<{ $error?: boolean }>`
 `;
 
 const EyeIcon = styled.img`
-  width: 18.333px;
-  height: 15px;
+  width: 20px;
+  height: 20px;
 
   position: absolute;
-  bottom: 10px;
-  right: 13px;
+  bottom: 8px;
+  right: 10px;
 `;
 
 const ErrorMessage = styled.p`
