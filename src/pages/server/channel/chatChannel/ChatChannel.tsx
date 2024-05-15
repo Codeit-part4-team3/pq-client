@@ -67,7 +67,9 @@ export default function ChatChannel() {
   const handleSendMessageKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (messageInputRef.current) {
       if (messageInputRef.current?.value === '') return;
+      if (e.nativeEvent.isComposing) return;
       if (e.key === 'Enter') {
+        e.preventDefault();
         socketRef.current?.emit(SOCKET_EMIT.SEND_MESSAGE, { message: e.currentTarget.value, roomName, userId });
         messageInputRef.current.value = '';
       }
