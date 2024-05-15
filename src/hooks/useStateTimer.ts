@@ -24,7 +24,7 @@ export const useStateTimer = () => {
 
       if (userInfo.state === '자리비움' || userInfo.state === '오프라인') {
         try {
-          await mutate({ state: '온라인' });
+          mutate({ state: '온라인' });
         } catch (error) {
           console.error('Failed to update user state:', error);
         }
