@@ -25,21 +25,21 @@ export default function MediaControlPanel({
 }: MyMediaControlPanelProps) {
   return (
     <Wrapper>
-      <Button type='button' onClick={onHandleMuteAllRemoteStreamsButtonClick} isOnMedia={isMutedAllRemoteStreams}>
+      <Button type='button' onClick={onHandleMuteAllRemoteStreamsButtonClick} $isOnMedia={isMutedAllRemoteStreams}>
         {isMutedAllRemoteStreams ? (
           <img src={volumeOffSvg} alt='스피커 볼륨 끄기 버튼 이미지' width={36} height={36} />
         ) : (
           <img src={volumeOnSvg} alt='스피커 볼륨 켜기 버튼 이미지' width={36} height={36} />
         )}
       </Button>
-      <Button type='button' onClick={onOffLocalCameraButtonClick} isOnMedia={!showLocalVideo}>
+      <Button type='button' onClick={onOffLocalCameraButtonClick} $isOnMedia={!showLocalVideo}>
         {showLocalVideo ? (
           <img src={cameraOnSvg} alt='카메라 켜짐 켜기 이미지' width={36} height={36} />
         ) : (
           <img src={cameraOffSvg} alt='카메라 꺼짐 끄기 이미지' width={36} height={36} />
         )}
       </Button>
-      <Button type='button' onClick={onMuteLocalStreamButtonClick} isOnMedia={isMutedLocalStream}>
+      <Button type='button' onClick={onMuteLocalStreamButtonClick} $isOnMedia={isMutedLocalStream}>
         {isMutedLocalStream ? (
           <img src={micOffSvg} alt='마이크 볼륨 꺼짐 끄기 이미지' width={36} height={36} />
         ) : (
@@ -59,13 +59,13 @@ const Wrapper = styled.div`
   gap: 20px;
 `;
 
-const Button = styled.button<{ isOnMedia: boolean }>`
+const Button = styled.button<{ $isOnMedia: boolean }>`
   border-radius: 10px;
   border: 1px solid var(--gray_CCCCCC);
   width: 60px;
   height: 60px;
 
-  background: ${({ isOnMedia }) => (isOnMedia ? 'var(--gray_999999)' : 'var(--white_FFFFFF)')};
+  background: ${({ $isOnMedia }) => ($isOnMedia ? 'var(--gray_999999)' : 'var(--white_FFFFFF)')};
   display: flex;
   justify-content: center;
   align-items: center;
