@@ -1,12 +1,15 @@
 import styled from 'styled-components';
-import profileImage from '../../../../../../public/images/minji-profile-image.png';
+import defaultProfileImage from '../../../../../../public/images/minji-profile-image.png';
 import micOffSvg from '../../../../../../public/images/mic_off_FILL0_wght200_GRAD0_opsz24.svg';
 import micOnSvg from '../../../../../../public/images/mic_on_FILL0_wght200_GRAD0_opsz24.svg';
 import { useEffect, useRef } from 'react';
 import { LocalMediaProps } from '../_types/props';
+import useUserStore from 'src/store/userStore';
 
 export default function LocalMedia({ userNickname, stream, isMutedLocalStream, showLocalVideo }: LocalMediaProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { userInfo } = useUserStore();
+  const profileImage = userInfo?.imageUrl;
 
   useEffect(() => {
     if (videoRef.current) {
@@ -19,7 +22,7 @@ export default function LocalMedia({ userNickname, stream, isMutedLocalStream, s
       <MediaBox>
         {!showLocalVideo ? (
           <NotShowVideoWrapper>
-            <ProfileImage src={profileImage} alt='프로필 이미지' />
+            <ProfileImage src={profileImage ? profileImage : defaultProfileImage} alt='프로필 이미지' />
           </NotShowVideoWrapper>
         ) : null}
         <Media ref={videoRef} autoPlay playsInline muted />

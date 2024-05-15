@@ -35,6 +35,7 @@ export interface MyMediaControlPanelProps {
 }
 
 export interface LocalMediaProps {
+  userId: number;
   userNickname: string;
   stream: MediaStream | null;
   isMutedLocalStream: boolean;
