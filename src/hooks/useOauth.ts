@@ -3,10 +3,11 @@ import Cookies from 'js-cookie';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'src/apis/instance/axiosInstance';
+import { useMutationPut } from 'src/apis/service/service';
 import { USER_URL } from 'src/constants/apiUrl';
 import { ERROR_MESSAGES } from 'src/constants/error';
 import useUserStore from 'src/store/userStore';
-import { ResponseUserData } from 'src/types/userType';
+import { RequestUserState, ResponseUserData, UserInfo } from 'src/types/userType';
 
 interface OauthProps {
   googleUrl: string;
@@ -17,6 +18,8 @@ interface OauthProps {
 export function useOauth({ googleUrl, kakaoUrl, redirectUri }: OauthProps) {
   const navigate = useNavigate();
   const { setEmail, setAccessToken, setUserInfo } = useUserStore();
+
+  const { mutate } = useMutationPut<UserInfo, RequestUserState>(`${USER_URL.USER}/me/state/update`);
 
   useEffect(() => {
     (async () => {
@@ -43,8 +46,13 @@ export function useOauth({ googleUrl, kakaoUrl, redirectUri }: OauthProps) {
           const data: ResponseUserData = res.data;
           setAccessToken(data.token.accessToken);
           setUserInfo(data.userInfo);
-          Cookies.set('refreshToken', data.token.refreshToken, { expires: 7, secure: true, sameSite: 'strict' });
-          axiosInstance.put(`${USER_URL.USER}/me/state/update`, { state: '온라인' });
+          Cookies.set('refreshToken', data.token.refreshToken, {
+            expires: 7,
+            secure: true,
+            sameSite: 'strict',
+            domain: 'pqsoft.net',
+          });
+          mutate({ state: '온라인' });
           navigate('/server');
           return;
         }

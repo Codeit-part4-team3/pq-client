@@ -13,6 +13,8 @@ import { Status } from 'src/components/MyState';
 
 export default function Channel() {
   const [isShowMembers, setIsShowMembers] = useState(true);
+  const [onlineUsers, setOnlineUsers] = useState<IUser[]>([]);
+  const [offlineUsers, setOfflineUsers] = useState<IUser[]>([]);
   const { serverId, channelId } = useParams();
 
   const { data, refetch } = useQueryGet<ChannelResponse>(
@@ -23,8 +25,10 @@ export default function Channel() {
   const { data: userData, refetch: userRefetch } = useQueryGet<IUser[]>(
     'getUsers',
     `/chat/v1/server/${serverId}/users`,
+    {
+      refetchInterval: 10000,
+    },
   );
-  console.log('userData', userData);
 
   const handleMembers = () => {
     setIsShowMembers(!isShowMembers);
@@ -38,23 +42,49 @@ export default function Channel() {
     userRefetch();
   }, [serverId]);
 
+  useEffect(() => {
+    if (!userData) return;
+    setOnlineUsers(userData.filter((user) => user.state === '온라인' || user.state === '자리비움'));
+    setOfflineUsers(userData.filter((user) => user.state === '오프라인'));
+  }, [userData]);
+
   return (
     <Area>
       <ChannelHeader title={data?.name ?? '없음'} userCount={userData?.length ?? 0} onClickMembers={handleMembers} />
       <Container>
         {data?.isVoice ? <VoiceChannel /> : <ChatChannel />}
-        <MembersWrapper isShow={isShowMembers}>
-          <MembersContainer isShow={isShowMembers}>
-            {userData?.map((user) => {
+        <MembersWrapper $isShow={isShowMembers}>
+          <MembersContainer $isShow={isShowMembers}>
+            {onlineUsers.length > 0 ? <div>온라인 </div> : null}
+            {onlineUsers?.map((user) => {
               if (!user) return null;
               return (
                 <Member key={user.id}>
-                  <ProfileImageWrapper>
+                  <ProfileWrapper>
+                    <ProfileImageWrapper>
+                      <ProfileImage $imageUrl={user.imageUrl} />
+                    </ProfileImageWrapper>
                     <StatusBox>
                       <Status $state={user.state} />
                     </StatusBox>
-                    <ProfileImage imageUrl={user.imageUrl} />
-                  </ProfileImageWrapper>
+                  </ProfileWrapper>
+                  <span>{user.nickname}</span>
+                </Member>
+              );
+            })}
+            {offlineUsers.length > 0 ? <div>오프라인</div> : null}
+            {offlineUsers?.map((user) => {
+              if (!user) return null;
+              return (
+                <Member key={user.id}>
+                  <ProfileWrapper>
+                    <ProfileImageWrapper>
+                      <ProfileImage $imageUrl={user.imageUrl} />
+                    </ProfileImageWrapper>
+                    <StatusBox>
+                      <Status $state={user.state} />
+                    </StatusBox>
+                  </ProfileWrapper>
                   <span>{user.nickname}</span>
                 </Member>
               );
@@ -76,17 +106,35 @@ const Area = styled.section`
   position: relative;
 `;
 
-const StatusBox = styled.div`
+const ProfileWrapper = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
-  background-color: #000;
-  border-radius: 50%;
+  gap: 10px;
+
+  position: relative;
+`;
+
+const StatusBox = styled.div`
   width: 16px;
   height: 16px;
+
+  border-radius: 50%;
+  background-color: var(--landing_background_color);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
   position: absolute;
-  left: 44px;
-  bottom: 9px;
+  top: calc(100% - 14px);
+  right: 0px;
+
+  & > div {
+    width: 70%;
+    height: 70%;
+  }
 `;
 
 const Container = styled.div`
@@ -100,16 +148,16 @@ const Container = styled.div`
   position: relative;
 `;
 
-const MembersWrapper = styled.div<{ isShow: boolean }>`
-  width: ${(props) => (props.isShow ? '180px' : '0px')};
+const MembersWrapper = styled.div<{ $isShow: boolean }>`
+  width: ${(props) => (props.$isShow ? '180px' : '0px')};
   height: 100%;
 
   overflow: hidden;
   transition: 0.3s ease-in-out;
-  transform: ${(props) => (props.isShow ? 'scaleX(1)' : 'scaleX(0)')};
+  transform: ${(props) => (props.$isShow ? 'scaleX(1)' : 'scaleX(0)')};
 `;
 
-const MembersContainer = styled.div<{ isShow: boolean }>`
+const MembersContainer = styled.div<{ $isShow: boolean }>`
   width: 180px;
   height: 100%;
 
@@ -120,7 +168,7 @@ const MembersContainer = styled.div<{ isShow: boolean }>`
   justify-content: flex-start;
   align-items: center;
   transition: 0.3s ease-in-out;
-  transform: ${(props) => (props.isShow ? 'translateX(0)' : 'translateX(180px)')};
+  transform: ${(props) => (props.$isShow ? 'translateX(0)' : 'translateX(180px)')};
 
   top: 0;
   right: -180px;

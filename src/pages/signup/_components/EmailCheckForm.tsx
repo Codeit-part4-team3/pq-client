@@ -10,10 +10,17 @@ import { AxiosError } from 'axios';
 import { ERROR_MESSAGES } from 'src/constants/error';
 import useUserStore from 'src/store/userStore';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export default function EmailCheckForm() {
   const navigate = useNavigate();
   const { email } = useUserStore();
+
+  useEffect(() => {
+    if (email === '') {
+      navigate('/login');
+    }
+  }, []);
 
   const {
     control,
@@ -23,6 +30,8 @@ export default function EmailCheckForm() {
     setError,
     formState: { errors },
   } = useForm<FormValues>();
+
+  const resentCodeMutation = useMutationPost(`${USER_URL.AUTH}/signup/resend`, {});
 
   const { mutate, isPending } = useMutationPost(`${USER_URL.AUTH}/signup/confirm`, {
     onError: (error: unknown) => {
@@ -65,13 +74,19 @@ export default function EmailCheckForm() {
     mutate(EmailVerifyData);
   };
 
+  const onResend = () => {
+    resentCodeMutation.mutate({ email });
+  };
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <InputContainer>
         <AuthInput control={control} getValues={getValues} setValue={setValue} errors={errors} />
       </InputContainer>
       <SubmitButton type='submit'>인증하기</SubmitButton>
-      <PromptButton type='button'>메일 재전송</PromptButton>
+      <PromptButton onClick={onResend} type='button'>
+        메일 재전송
+      </PromptButton>
     </Form>
   );
 }

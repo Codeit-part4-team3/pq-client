@@ -40,10 +40,12 @@ export default function CreateServerModal({ isUpdate = false, closeModal, isOpen
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
     setErrorMessage('');
+
     if (serverName === '') {
       setErrorMessage('이름은 필수입니다.');
       return;
     }
+
     isUpdate
       ? await updateMutation.mutate({ name: serverName, imageFile })
       : await createMutation.mutate({ name: serverName, imageFile });

@@ -64,6 +64,12 @@ interface RegistCardResponseBody {
   response: object;
 }
 
+interface EventResponseBody {
+  id: number;
+  amount: number;
+  createdAt: Date;
+}
+
 export type TempOrderRequest = TempOrderData;
 export type TempOrderResponse = TempOrderResponsebody | null;
 
@@ -81,3 +87,5 @@ export type RegistCardRequest = RegistCard;
 export type RegistCardResponse = RegistCardResponseBody | null;
 
 export type MessageMaxLength = 150 | 500 | 1000;
+
+export type EventResponse = EventResponseBody | null;

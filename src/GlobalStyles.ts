@@ -132,12 +132,13 @@ export const ButtonIcon = styled.button`
   background-color: transparent;
   background-size: cover;
   background-position: center;
+  opacity: 0.5;
 
   transition: 0.2s;
 
   &:hover {
     cursor: pointer;
-    scale: 1.1;
+    opacity: 1;
   }
 `;
 
@@ -170,11 +171,11 @@ export const ProfileImageWrapper = styled.div`
   margin-left: 10px;
 `;
 
-export const ProfileImage = styled.div<{ imageUrl?: string }>`
+export const ProfileImage = styled.div<{ $imageUrl?: string }>`
   width: 100%;
   height: 100%;
 
-  background-image: ${(props) => (props.imageUrl ? `url(${props.imageUrl})` : `url('/images/landing.webp')`)};
+  background-image: ${(props) => (props.$imageUrl ? `url(${props.$imageUrl})` : `url('/images/landing.webp')`)};
   background-size: cover;
   background-position: center;
 

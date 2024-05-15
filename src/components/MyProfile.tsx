@@ -35,10 +35,16 @@ export default function MyProfile() {
     setDropdownType(item);
   };
 
+  const handleDropdownLeave: MouseEventHandler = (e) => {
+    e.preventDefault();
+    setIsDropdown(false);
+  };
+
   const onMouseEnter: MouseEventHandler = (e) => {
     e.preventDefault();
     setIsState(true);
   };
+
   const onMouseLeave: MouseEventHandler = (e) => {
     e.preventDefault();
     setIsState(false);
@@ -46,10 +52,10 @@ export default function MyProfile() {
 
   return (
     <>
-      <Area>
+      <Area onMouseLeave={handleDropdownLeave}>
         <Wrapper>
           <ProfileImageWapperAinmation>
-            <ProfileImageAinmation imageUrl={userInfo.imageUrl as string} onClick={toggleDropdown} />
+            <ProfileImageAinmation $imageUrl={userInfo.imageUrl as string} onClick={toggleDropdown} />
           </ProfileImageWapperAinmation>
           <InfoWrapper>
             <strong>{userInfo.nickname}</strong>

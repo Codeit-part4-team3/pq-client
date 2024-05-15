@@ -5,8 +5,7 @@ import { useMutationPost, useQueryGet } from 'src/apis/service/service';
 import { USER_URL } from 'src/constants/apiUrl';
 import useUserStore from 'src/store/userStore';
 import { UserInfo } from 'src/types/userType';
-import { CtaButton } from 'src/GlobalStyles';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import axios from 'axios';
 
 /**
@@ -27,7 +26,7 @@ export function OrderApproval() {
 
   const { setUserInfo } = useUserStore();
   const { data: userData, isLoading } = useQueryGet<UserInfo | null>('getUserData', `${USER_URL.USER}/me`);
-  const { mutate, isPending } = useMutationPost<ConfirmResponse, ConfirmRequest>(`${USER_URL.PAYMENTS}/confirm`, {
+  const { mutate } = useMutationPost<ConfirmResponse, ConfirmRequest>(`${USER_URL.PAYMENTS}/confirm`, {
     onSuccess: () => {
       navigate(
         `/order-success?orderId=${paymentData.orderId}&amount=${paymentData.amount}&paymentKey=${paymentData.paymentKey}`,
@@ -44,26 +43,22 @@ export function OrderApproval() {
     },
   });
 
-  // 유저 정보 업데이트
+  // 유저 정보 및 토큰 업데이트 후 결제 진행
   useEffect(() => {
     if (isLoading) return;
 
     if (userData) {
       setUserInfo(userData);
     }
-  }, [userData, setUserInfo]);
 
-  // 결제 진행
-  const handlePaymentClick = () => {
-    if (isPending) return;
     mutate(paymentData);
-  };
+  }, [userData, setUserInfo]);
 
   return (
     <Area className='result wrapper'>
       <Container className='box_section'>
-        <h2>결제 정보가 확인되었습니다.</h2>
-        <Button onClick={handlePaymentClick}>이어서 결제하기</Button>
+        <h2>결제 중 입니다.</h2>
+        <Spinner delay='0s' />
       </Container>
     </Area>
   );
@@ -82,7 +77,17 @@ const Container = styled.div`
   gap: 20px;
 `;
 
-const Button = styled(CtaButton)`
-  width: 30%;
-  margin-top: 20px;
+const bounce = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+`;
+
+const Spinner = styled.div<{ delay: string }>`
+  margin: 8px;
+  width: 12px;
+  height: 12px;
+  background-color: var(--black_000000);
+  border-radius: 50%;
+  animation: ${bounce} 1s infinite;
+  animation-delay: ${(props) => props.delay};
 `;

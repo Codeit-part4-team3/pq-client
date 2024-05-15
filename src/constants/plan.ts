@@ -2,12 +2,14 @@ export const PLAN = {
   BASIC: {
     id: 1,
     type: 'BASIC',
-    price: 20000,
+    price: 2500,
+    maxLength: 500,
   },
   PREMIUM: {
     id: 2,
     type: 'PREMIUM',
-    price: 40000,
+    price: 5000,
+    maxLength: 1000,
   },
   EVENT: {
     id: 3,
