@@ -71,8 +71,8 @@ export default function LoginForm() {
       Cookies.set('refreshToken', refreshToken, {
         expires: 7,
         secure: true,
-        sameSite: 'None',
-        // domain: '.pqsoft.net',
+        sameSite: 'strict',
+        domain: 'pqsoft.net',
       });
       updateMutaiton.mutate({ state: '온라인' });
       navigate('/server');
