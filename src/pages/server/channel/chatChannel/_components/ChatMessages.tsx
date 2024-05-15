@@ -5,6 +5,7 @@ import { ChatMessagesProps } from '../_types/props';
 import { formatMessageData } from '../_utils/formatMessageData';
 import ChatMessageTextEditingBox from './ChatMessageTextEditingBox';
 import useChatMessages from '../_hooks/useChatMessages';
+import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
 
 export default function ChatMessages({
   serverUserData,
@@ -56,9 +57,9 @@ export default function ChatMessages({
                   )}
                   isOnEdit={currentEditingMessageId === messageItem.messageId}
                 >
-                  <UserProfileImage>
-                    <Image profileImage={user?.imageUrl ? user.imageUrl : '/images/minji-profile-image.png'} />
-                  </UserProfileImage>
+                  <ProfileImageWrapper>
+                    <ProfileImage $imageUrl={user?.imageUrl ? user.imageUrl : '/images/landing.webp'} />
+                  </ProfileImageWrapper>
                   <ChatMessageContent>
                     <ChatMessageContentHeader>
                       <ChatMessageSender>{user?.nickname}</ChatMessageSender>
@@ -131,25 +132,6 @@ const ChatMessageWrapper = styled.div<{ isOnEdit: boolean }>`
 
   &:hover {
     background-color: var(--light_blue_0);
-  }
-`;
-
-const UserProfileImage = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
-`;
-
-const Image = styled.img<{ profileImage: string }>`
-  width: 100%;
-  height: 100%;
-
-  background-size: cover;
-  background-image: url(${({ profileImage }) => (profileImage ? profileImage : '/images/minji-profile-image.png')});
-
-  &:hover {
-    cursor: pointer;
   }
 `;
 

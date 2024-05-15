@@ -213,6 +213,7 @@ export default function ChatChannel() {
         setMessages((prevMessages) => [newMessage, ...prevMessages]);
 
         if (socketRef.current) {
+          console.log('좋버그 EMIT_READ_MESSAGE');
           socketRef.current.emit(SOCKET_COMMON.READ_MESSAGE, {
             messageId: newMessage.messageId,
             roomName: roomName,
@@ -224,11 +225,11 @@ export default function ChatChannel() {
 
     socketRef.current.on(
       SOCKET_COMMON.READ_MESSAGE,
-      ({ prevMessageId, messageId, channelId: readChannelId, userId }: ReadMessageItem) => {
+      ({ prevMessageId, messageId, channelId: readChannelId }: ReadMessageItem) => {
         // 읽음 ui update
         if (channelId !== readChannelId) return;
-        console.log('read message : ', prevMessageId, messageId, channelId, userId);
 
+        console.log('좋버그 EMIT_READ_MESSAGE');
         let disCountStart = false;
         let disCountEnd = false;
         setMessages((prevMessages) =>
@@ -310,6 +311,7 @@ export default function ChatChannel() {
         socketRef.current.off(SOCKET_ON.UPDATE_MESSAGE_COMPLETE);
         socketRef.current.off(SOCKET_ON.DELETE_MESSAGE);
         socketRef.current.off(SOCKET_ON.MORE_MESSAGES);
+        socketRef.current.off(SOCKET_COMMON.READ_MESSAGE);
       }
     };
   }, [roomName]);

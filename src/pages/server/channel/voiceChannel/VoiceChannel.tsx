@@ -371,10 +371,13 @@ export default function VoiceChannel() {
     });
 
     // 회의록 업데이트
-    socketRef.current?.on('update_meeting_note', ({ transcript, userId }: { transcript: string; userId: number }) => {
-      console.log('update_meeting_note 이벤트 발생 : ', transcript, userId);
-      setRecognizedTexts((prev) => [...prev, { userId, text: transcript }]);
-    });
+    socketRef.current?.on(
+      SOCKET_EMIT.UPDATE_MEETING_NOTE,
+      ({ transcript, userId }: { transcript: string; userId: number }) => {
+        console.log('update_meeting_note 이벤트 발생 : ', transcript, userId);
+        setRecognizedTexts((prev) => [...prev, { userId, text: transcript }]);
+      },
+    );
 
     // 회의록 종료
     socketRef.current.on(SOCKET_EMIT.END_MEETING_NOTE, () => {
@@ -399,6 +402,10 @@ export default function VoiceChannel() {
         socketRef.current.off(SOCKET_ON.GET_CANDIDATE);
         socketRef.current.off(SOCKET_ON.VIDEO_TRACK_ENABLED_CHANGED);
         socketRef.current.off(SOCKET_ON.USER_EXIT);
+        socketRef.current.off(SOCKET_EMIT.START_MEETING_NOTE);
+        socketRef.current.off(SOCKET_EMIT.UPDATE_MEETING_NOTE);
+        socketRef.current.off(SOCKET_EMIT.END_MEETING_NOTE);
+        socketRef.current.off(SOCKET_EMIT.GET_MEETING_NOTE_LIST);
       }
     };
   }, [roomName, userId, userNickname, getLocalStream]);
