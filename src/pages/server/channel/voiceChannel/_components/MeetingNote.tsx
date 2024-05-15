@@ -1,20 +1,45 @@
 import styled from 'styled-components';
+import { MeetingNoteProps } from '../_types/props';
+import useMeetingNote from '../_hooks/useMeetingNote';
 
-import profileImage from '../../../../../../public/images/minji-profile-image.png';
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    webkitSpeechRecognition: any;
+  }
+}
 
-export default function MeetingNote() {
+export default function MeetingNote({
+  roomName,
+  userId,
+  serverUserData,
+  meetingNoteId,
+  recognizedTexts,
+}: MeetingNoteProps) {
+  const { formattedDate, SpeechContainerRef } = useMeetingNote({
+    roomName,
+    userId,
+    meetingNoteId,
+    recognizedTexts,
+  });
+
   return (
     <Wrapper>
       <Header>
         <Title>회의록</Title>
-        <Date>2024년 4월 26일의 회의</Date>
+        <CreatedAt>{`${formattedDate}의 회의`}</CreatedAt>
       </Header>
-      <Note>
-        <Speech>
-          <ProfileImage src={profileImage} alt='profile' />
-          <Content></Content>
-        </Speech>
-      </Note>
+      <RecognizedTextContainer ref={SpeechContainerRef}>
+        {recognizedTexts.map((recognizedText, index) => {
+          const nickname = serverUserData?.find((user) => user.id === recognizedText.userId)?.nickname;
+          return (
+            <RecognizedText key={index}>
+              <Nickname>{nickname}</Nickname>
+              <Text>{recognizedText.text}</Text>
+            </RecognizedText>
+          );
+        })}
+      </RecognizedTextContainer>
     </Wrapper>
   );
 }
@@ -23,11 +48,16 @@ const Wrapper = styled.div`
   border-left: 0.5px solid var(--gray-666666, #666);
   flex-grow: 1;
   width: min(100%, 350px);
-  height: 100%;
+  height: calc(100vh - 48px);
 
-  background: var(--landing_background_color);
-
-  padding: 8px 8px 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background-color: var(--landing_background_color);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 16px 16px 0 16px;
+  color: black;
 `;
 
 const Header = styled.div`
@@ -39,7 +69,8 @@ const Header = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #ffffff;
+  flex-shrink: 0;
+  background: var(--white_FFFFFF);
   padding-left: 16px;
 `;
 
@@ -51,36 +82,42 @@ const Title = styled.div`
   padding-right: 10px;
 `;
 
-const Date = styled.div`
+const CreatedAt = styled.div`
   color: var(--gray-999999, #999);
   font-family: Pretendard;
   font-size: 14px;
 `;
 
-const Note = styled.div`
+const RecognizedTextContainer = styled.div`
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  padding-top: 69px;
+  gap: 8px;
+  overflow-y: scroll;
 `;
 
-const Speech = styled.div`
+const RecognizedText = styled.div`
   width: 100%;
   display: flex;
   gap: 16px;
 `;
 
-const ProfileImage = styled.img`
-  width: 36px;
-  height: 36px;
-  object-fit: cover;
+const Nickname = styled.div`
+  border-radius: 10px;
+  font-weight: 600;
+  color: var(--black_000000);
+  display: flex;
   flex-shrink: 0;
-  border-radius: 50%;
 `;
 
-const Content = styled.div`
+const Text = styled.div`
+  border: 1px solid var(--text_gray);
+  border-radius: 10px;
   width: 100%;
   border-radius: 10px;
-  background: var(--gray-FAFAFA, #fafafa);
+  background: var(--white_FFFFFF);
+  color: var(--background_light_gray);
+  padding: 12px;
 
   margin-top: 18px;
 `;

@@ -23,6 +23,7 @@ export const SOCKET_ON = {
   GET_CANDIDATE: 'get_candidate',
   VIDEO_TRACK_ENABLED_CHANGED: 'video_track_enabled_changed',
   USER_EXIT: 'user_exit',
+
 };
 
 /**
@@ -47,6 +48,10 @@ export const SOCKET_EMIT = {
   JOIN_VOICE_CHANNEL: 'join_voice_channel',
   CANDIDATE: 'candidate',
   ANSWER: 'answer',
+  START_MEETING_NOTE: 'start_meeting_note',
+  END_MEETING_NOTE: 'end_meeting_note',
+  GET_MEETING_NOTE_LIST: 'get_meeting_note_list',
+  UPDATE_MEETING_NOTE: 'update_meeting_note',
 
   /**
    * common

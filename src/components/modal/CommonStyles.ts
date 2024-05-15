@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const ModalContainer = styled.div`
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   width: 100%;
   gap: 32px;
   background-color: var(--landing_background_color);
