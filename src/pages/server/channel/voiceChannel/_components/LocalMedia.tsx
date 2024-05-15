@@ -3,15 +3,9 @@ import profileImage from '../../../../../../public/images/minji-profile-image.pn
 import micOffSvg from '../../../../../../public/images/mic_off_FILL0_wght200_GRAD0_opsz24.svg';
 import micOnSvg from '../../../../../../public/images/mic_on_FILL0_wght200_GRAD0_opsz24.svg';
 import { useEffect, useRef } from 'react';
+import { LocalMediaProps } from '../_types/props';
 
-interface VideoProps {
-  userNickname: string;
-  stream: MediaStream | null;
-  isMutedLocalStream: boolean;
-  showLocalVideo: boolean;
-}
-
-export default function LocalMedia({ userNickname, stream, isMutedLocalStream, showLocalVideo }: VideoProps) {
+export default function LocalMedia({ userNickname, stream, isMutedLocalStream, showLocalVideo }: LocalMediaProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {

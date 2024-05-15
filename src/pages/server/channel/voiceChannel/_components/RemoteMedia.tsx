@@ -3,13 +3,7 @@ import profileImage from '../../../../../../public/images/minji-profile-image.pn
 import micOffSvg from '../../../../../../public/images/mic_off_FILL0_wght200_GRAD0_opsz24.svg';
 import micOnSvg from '../../../../../../public/images/mic_on_FILL0_wght200_GRAD0_opsz24.svg';
 import { useEffect, useRef } from 'react';
-
-interface RemoteMediaProps {
-  stream: MediaStream | null;
-  userNickname: string;
-  isMutedAllRemoteStreams: boolean;
-  showVideo: boolean;
-}
+import { RemoteMediaProps } from '../_types/props';
 
 export default function RemoteMedia({ stream, userNickname, isMutedAllRemoteStreams, showVideo }: RemoteMediaProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
