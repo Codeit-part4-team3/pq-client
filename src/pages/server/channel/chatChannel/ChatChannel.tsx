@@ -319,7 +319,7 @@ export default function ChatChannel() {
     if (messageInputRef.current?.value === '' && chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, []);
+  }, [messages]);
 
   useEffect(() => {
     infiniteScroll();
