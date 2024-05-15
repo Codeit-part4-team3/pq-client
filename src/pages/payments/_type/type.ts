@@ -1,33 +1,3 @@
-export interface TempOrderData {
-  orderName: string;
-  totalAmount: number;
-}
-
-export interface TempOrderResponsebody extends TempOrderData {
-  tempOrderId: string;
-}
-
-export type TempOrderRequest = TempOrderData;
-export type TempOrderResponse = TempOrderResponsebody | null;
-
-interface CancelOrderRequestBody {
-  orderId: string;
-  cancelReason: string;
-}
-interface CancelOrderResponseBody {
-  message: string;
-  refund: {
-    id: number;
-    orderId: string;
-    amount: number;
-    status: string;
-    createdAt: Date;
-  };
-}
-
-export type CancelOrderRequest = CancelOrderRequestBody;
-export type CancelOrderResponse = CancelOrderResponseBody | null;
-
 export interface PaymentMethodsWidget {
   updateAmount: (amount: number, reason?: string | string[]) => void;
   UPDATE_REASON: {
@@ -45,31 +15,20 @@ export interface PaymentMethodsWidget {
   };
 }
 
-export interface PlanData {
-  id: number;
-  type: string;
-  price: number;
-  duration: number;
-}
-
-export type PlansResponse = PlanData[] | null;
-
-interface PaymentData {
+interface Payment {
   orderId: string;
   userId: number;
   planId: number;
   subscriptionId: number;
   amount: number;
   status: string;
-  createdAt: string;
+  createdAt: Date;
 }
-
-export type PaymentResponse = PaymentData | null;
 
 export interface ConfirmResponseBody {
   title: string;
   paymentMethod: string;
-  payment: PaymentData;
+  payment: Payment;
   data: object;
 }
 
@@ -78,7 +37,6 @@ export interface ErrorResponse {
   code: string;
   message: string;
 }
-
 export interface ConfirmRequest {
   userId: number;
   planId: number;
@@ -87,17 +45,8 @@ export interface ConfirmRequest {
   paymentKey: string;
 }
 
+export type PaymentResponse = Payment | null;
+export type AllPaymentsResponse = Payment[] | null;
+export type EventPaymentsResponse = Payment[] | null;
+
 export type ConfirmResponse = ConfirmResponseBody | null;
-
-interface RegistCardData {
-  userId: number;
-  customerKey: string;
-  authKey: string;
-}
-
-interface RegistCardResponseBody {
-  response: object;
-}
-
-export type RegistCardRequest = RegistCardData;
-export type RegistCardResponse = RegistCardResponseBody | null;

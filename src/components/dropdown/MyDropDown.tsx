@@ -10,6 +10,7 @@ const DropdownList = [
   { name: '초대받은 서버목록', type: MyDropdownType.INVITED_SERVER_LIST },
   { name: '로그아웃', type: MyDropdownType.LOGOUT },
   { name: '마이페이지', type: MyDropdownType.MYPAGE },
+  { name: '구독', type: MyDropdownType.SUBSCRIPTION },
 ];
 
 export default function MyDropDown({ isDropDown, selectItem }: Prorps) {
@@ -19,7 +20,7 @@ export default function MyDropDown({ isDropDown, selectItem }: Prorps) {
 
   return (
     <Area>
-      <ButtonContainer isDown={isDropDown} childCount={DropdownList.length}>
+      <ButtonContainer $isDown={isDropDown} $childCount={DropdownList.length}>
         {DropdownList.map((item) => {
           return (
             <Button key={item.type} type='button' onClick={() => handleClick(item.type)}>
@@ -33,8 +34,8 @@ export default function MyDropDown({ isDropDown, selectItem }: Prorps) {
 }
 
 type ButtonContainerProps = {
-  isDown: boolean;
-  childCount: number;
+  $isDown: boolean;
+  $childCount: number;
 };
 
 const Area = styled.section`
@@ -56,10 +57,10 @@ const ButtonContainer = styled.div<ButtonContainerProps>`
   overflow: hidden;
   transform-origin: 15% 100%;
   transition: 0.2s all ease-in-out;
-  transform: ${(props) => (props.isDown ? 'scale(1.0)' : 'scale(0)')};
+  transform: ${(props) => (props.$isDown ? 'scale(1.0)' : 'scale(0)')};
 
   position: absolute;
-  top: ${(props) => `calc(90% + ${props.childCount * -32}px)`};
+  top: ${(props) => `calc(90% + ${props.$childCount * -32}px)`};
 `;
 
 const Button = styled.button`

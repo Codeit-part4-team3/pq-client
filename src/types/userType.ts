@@ -13,3 +13,18 @@ export interface ResponseUserData {
   };
   userInfo: UserInfo;
 }
+
+export interface RequestUpdateUserData {
+  nickname: string;
+  imageFile: File | null;
+}
+
+export interface RequestUserState {
+  state: string;
+}
+
+export interface ReponseUserState {
+  id: number;
+  name: string;
+  UserId: number;
+}

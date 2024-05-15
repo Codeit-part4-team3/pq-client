@@ -1,18 +1,20 @@
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { lastKey, MessageItem, User } from 'src/pages/server/channel/chatChannel/_types/type';
+import { lastKey, MessageItem, ReadMessageItem, User } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
-import UtilityButton from './_components/UtilityButton';
 import { useSubscription } from 'src/hooks/useSubscription';
 import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
 import { useQueryGet } from 'src/apis/service/service';
+import { LOCAL_STORAGE_ALRAM_KEY, SOCKET_COMMON, SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
+import useSocket from 'src/hooks/useSocket';
+import MessageLoadingSpinner from './_components/MessageLoadingSpinner';
+import ChatInputBox from './_components/ChatInputBox';
+import { ChannelData } from '../../_types/type';
+import ChatChannelIntro from './_components/ChatChannelIntro';
 
-const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
-
-/**@Todo Channel 컴포넌트로 부터 channel date를 prop로 받고 데이터 바인딩 예정
- * 유저 데이터들 처리하는 로직 짜야함
+/**@ToDo
+ * 소켓 연결 / 소켓 이벤트 리스너 분리하는 로직 짜면 좋을듯
  */
 export default function ChatChannel() {
   // 유저, 서버, 채널 데이터
@@ -27,11 +29,23 @@ export default function ChatChannel() {
     refetchInterval: 5000,
     enabled: !!userId,
   });
+
+  // 채널 데이터
+  const { data: channelData } = useQueryGet<ChannelData>(
+    'getCurrentChannel',
+    `/chat/v1/server/${serverId}/channel/${channelId}`,
+    {
+      staleTime: 5000,
+      refetchInterval: 5000,
+      enabled: !!userId,
+    },
+  );
+
   // 소켓
-  const socketRef = useRef<Socket | null>(null);
+  const socketRef = useSocket();
   // 메시지 관련
   const [messages, setMessages] = useState<MessageItem[]>([]);
-  const [inputValue, setInputValue] = useState<string>('');
+  const messageInputRef = useRef<HTMLInputElement | null>(null);
   // 무한 스크롤
   const [isNoMoreMessages, setIsNoMoreMessages] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
@@ -50,15 +64,13 @@ export default function ChatChannel() {
     setIsClickedUtilityButton(!isClickedUtilityButton);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
   const handleSendMessageKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (inputValue === '') return;
-    if (e.key === 'Enter') {
-      socketRef.current?.emit('send_message', { message: e.currentTarget.value, roomName, userId });
-      setInputValue('');
+    if (messageInputRef.current) {
+      if (messageInputRef.current?.value === '') return;
+      if (e.key === 'Enter') {
+        socketRef.current?.emit(SOCKET_EMIT.SEND_MESSAGE, { message: e.currentTarget.value, roomName, userId });
+        messageInputRef.current.value = '';
+      }
     }
   };
 
@@ -78,7 +90,7 @@ export default function ChatChannel() {
       });
     });
     setCurrentEditingMessageId(messageId);
-    socketRef.current?.emit('update_message_editing', { messageId, createdAt, roomName });
+    socketRef.current?.emit(SOCKET_EMIT.UPDATE_MESSAGE_EDITING, { messageId, createdAt, roomName });
   };
 
   const hanedleEditingMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,13 +114,19 @@ export default function ChatChannel() {
     });
     setCurrentEditingMessageId(null);
 
-    socketRef.current?.emit('update_message_complete', { messageId, createdAt, message: editingMessage, roomName });
+    socketRef.current?.emit(SOCKET_EMIT.UPDATE_MESSAGE_COMPLETE, {
+      messageId,
+      createdAt,
+      message: editingMessage,
+      roomName,
+    });
     setEditingMessage('');
+    console.log('메시지 업데이트 완료');
   };
 
   // 메시지 수정 취소
   const handleUpdateMessageCancelClick = ({ messageId }: { messageId: string }) => {
-    socketRef.current?.emit('update_message_cancel', { messageId, roomName });
+    socketRef.current?.emit(SOCKET_EMIT.UPDATE_MESSAGE_CANCEL, { messageId, roomName });
     setMessages((prevMessages) => {
       return prevMessages.map((message) => {
         if (message.messageId === messageId) {
@@ -125,7 +143,7 @@ export default function ChatChannel() {
 
   // 메시지 삭제
   const handleDeleteMessageClick = ({ messageId, createdAt }: { messageId: string; createdAt: number }) => {
-    socketRef.current?.emit('delete_message', { messageId, createdAt, roomName });
+    socketRef.current?.emit(SOCKET_EMIT.DELETE_MESSAGE, { messageId, createdAt, roomName });
   };
 
   // infinite scroll : InfiniteScrollTrigger에 닿으면 추가로 메시지를 가져온다.
@@ -135,7 +153,11 @@ export default function ChatChannel() {
         (entries) => {
           entries.forEach(async (entry) => {
             if (entry.isIntersecting && infiniteScrollTriggerRef.current && lastKey) {
-              socketRef.current?.emit('more_messages', { roomName, userSocketId: socketRef.current?.id, lastKey });
+              socketRef.current?.emit(SOCKET_EMIT.MORE_MESSAGES, {
+                roomName,
+                userSocketId: socketRef.current?.id,
+                lastKey,
+              });
 
               infiniteScrollTriggerIo.disconnect();
             }
@@ -149,31 +171,89 @@ export default function ChatChannel() {
   };
 
   useEffect(() => {
-    socketRef.current = io(SOCKET_SERVER_URL);
+    if (!socketRef.current) return;
 
-    socketRef.current.emit('join_chat_channel', roomName);
+    socketRef.current.emit(SOCKET_EMIT.JOIN_CHAT_CHANNEL, roomName);
 
-    socketRef.current.on('join_chat_channel_user_join', (socketId) => {
+    socketRef.current.on(SOCKET_ON.JOIN_CHAT_CHANNEL_USER_JOIN, (socketId) => {
       console.log(socketId + 'is joined');
     });
 
     socketRef.current.on(
-      'initial_chat_messages',
+      SOCKET_ON.INITIAL_CHAT_MESSAGES,
       ({ initialMessages, lastKey }: { initialMessages: MessageItem[]; lastKey: lastKey }) => {
         console.log('initial messages data : ', initialMessages);
         setMessages([...initialMessages]);
         setLastKey(lastKey);
+
+        // 알림표시 제거를 위한 localStroage update
+        const alramMessageId = localStorage.getItem(`${LOCAL_STORAGE_ALRAM_KEY}:${channelId}`);
+        initialMessages.forEach((msg) => {
+          msg.messageId === alramMessageId && localStorage.removeItem(`${LOCAL_STORAGE_ALRAM_KEY}:${channelId}`);
+        });
+
+        // 초기 메시지 수신 후 마지막 메시지 읽음 처리
+        if (socketRef.current) {
+          console.log('[read-init] read on emit :', userId, roomName, initialMessages[0].messageId);
+          socketRef.current.emit(SOCKET_COMMON.READ_MESSAGE, {
+            messageId: initialMessages[0].messageId,
+            roomName: roomName,
+            userId,
+          });
+        }
       },
     );
 
-    socketRef.current.on('receive_message', (newMessage: MessageItem) => {
-      console.log('new message data : ', newMessage);
-      setMessages((prevMessages) => [newMessage, ...prevMessages]);
+    // 메시지 수신 후 읽음 처리
+    socketRef.current.on(SOCKET_ON.RECEIVE_MESSAGE, (newMessage: MessageItem) => {
+      console.log('[read] read on receive message');
+      if (channelId === newMessage.channelId) {
+        setMessages((prevMessages) => [newMessage, ...prevMessages]);
+
+        if (socketRef.current) {
+          socketRef.current.emit(SOCKET_COMMON.READ_MESSAGE, {
+            messageId: newMessage.messageId,
+            roomName: roomName,
+            userId,
+          });
+        }
+      }
     });
+
+    socketRef.current.on(
+      SOCKET_COMMON.READ_MESSAGE,
+      ({ prevMessageId, messageId, channelId: readChannelId, userId }: ReadMessageItem) => {
+        // 읽음 ui update
+        if (channelId !== readChannelId) return;
+        console.log('read message : ', prevMessageId, messageId, channelId, userId);
+
+        let disCountStart = false;
+        let disCountEnd = false;
+        setMessages((prevMessages) =>
+          prevMessages.map((prevMessage) => {
+            if (prevMessage.messageId === messageId) disCountStart = true;
+            if (prevMessage.messageId === prevMessageId) disCountEnd = true;
+
+            if (disCountEnd) {
+              return prevMessage;
+            }
+
+            if (disCountStart) {
+              return {
+                ...prevMessage,
+                notReadCount: prevMessage.notReadCount - 1,
+              };
+            }
+
+            return prevMessage;
+          }),
+        );
+      },
+    );
 
     // 메시지 수정 완료
     socketRef.current.on(
-      'update_message_complete',
+      SOCKET_ON.UPDATE_MESSAGE_COMPLETE,
       ({ messageId, message }: { messageId: string; message: string }) => {
         console.log('update message data : ', messageId, message);
         setMessages((prevMessages) =>
@@ -192,14 +272,16 @@ export default function ChatChannel() {
     );
 
     // 메시지 삭제
-    socketRef.current.on('delete_message', (messageId: string) => {
+    socketRef.current.on(SOCKET_ON.DELETE_MESSAGE, (messageId: string) => {
       console.log('delete message data : ', messageId);
       setMessages((prevMessages) => prevMessages.filter((message) => message.messageId !== messageId));
     });
 
+    // 메시지 알림
+
     // 인피니티 스크롤을 위한 이벤트
     socketRef.current.on(
-      'more_messages',
+      SOCKET_ON.MORE_MESSAGES,
       ({
         moreMessages,
         lastKey,
@@ -220,17 +302,22 @@ export default function ChatChannel() {
 
     return () => {
       if (socketRef.current) {
-        socketRef.current.disconnect();
+        socketRef.current.off(SOCKET_ON.JOIN_CHAT_CHANNEL_USER_JOIN);
+        socketRef.current.off(SOCKET_ON.INITIAL_CHAT_MESSAGES);
+        socketRef.current.off(SOCKET_ON.RECEIVE_MESSAGE);
+        socketRef.current.off(SOCKET_ON.UPDATE_MESSAGE_COMPLETE);
+        socketRef.current.off(SOCKET_ON.DELETE_MESSAGE);
+        socketRef.current.off(SOCKET_ON.MORE_MESSAGES);
       }
     };
   }, [roomName]);
 
   useEffect(() => {
     // 페이지 진입시, 채팅이 추가될 때마다 스크롤을 맨 아래로 내려준다
-    if (inputValue === '' && chatContainerRef.current) {
+    if (messageInputRef.current?.value === '' && chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [inputValue]);
+  }, []);
 
   useEffect(() => {
     infiniteScroll();
@@ -254,40 +341,24 @@ export default function ChatChannel() {
           onUpdateMessageCancelClick={handleUpdateMessageCancelClick}
           onEditingMessageChange={hanedleEditingMessageChange}
         />
-        {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게 하면될듯, 서버 데이터 필요 */}
-        {isNoMoreMessages ? (
-          <ChatChannelIntro>
-            <ChannelName>{'# 채팅 채널1'}의 첫 시작 부분이에요</ChannelName>
-            <CreationDate>생성일 : {'2024년 04월 11일'}</CreationDate>
-          </ChatChannelIntro>
-        ) : null}
+        {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게할 컴포넌트 */}
+        {isNoMoreMessages ? <ChatChannelIntro channelData={channelData} /> : null}
+        {/* 무한 스크롤 로딩스피너 */}
         {lastKey ? (
           <>
-            {/* LoadingSpinner */}
-            <ChatLoadingSpinner ref={infiniteScrollTriggerRef}>
-              <Spinner delay='0s' />
-              <Spinner delay='0.2s' />
-              <Spinner delay='0.4s' />
-            </ChatLoadingSpinner>
+            <MessageLoadingSpinner infiniteScrollTriggerRef={infiniteScrollTriggerRef} />
           </>
         ) : null}
         {/* 가장 위쪽 */}
       </ChatContainer>
       {/* 채팅 input */}
-      <ChatInputBox>
-        <ChatInput
-          type='text'
-          placeholder={`${'#채팅방 이름'}에 메시지 보내기`}
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={handleSendMessageKeyDown}
-          maxLength={messageMaxLength}
-        />
-        <UtilityButton
-          isClickedUtilityButton={isClickedUtilityButton}
-          handleUiilityButtonClick={handleUiilityButtonClick}
-        />
-      </ChatInputBox>
+      <ChatInputBox
+        messageInputRef={messageInputRef}
+        handleSendMessageKeyDown={handleSendMessageKeyDown}
+        messageMaxLength={messageMaxLength}
+        isClickedUtilityButton={isClickedUtilityButton}
+        handleUiilityButtonClick={handleUiilityButtonClick}
+      />
     </Wrapper>
   );
 }
@@ -320,77 +391,4 @@ const ChatContainer = styled.div`
     border-radius: 2px;
     background: #ccc;
   }
-`;
-
-const ChatChannelIntro = styled.div`
-  margin-top: 495px;
-  padding-left: 20px;
-`;
-
-const ChannelName = styled.h1`
-  color: var(--black_000000);
-  font-family: Pretendard;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 160%; /* 32px */
-  margin: 0;
-`;
-
-const CreationDate = styled.p`
-  color: var(--gray_666666);
-  font-family: Pretendard;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 160%; /* 22.4px */
-  margin: 0;
-`;
-
-const ChatInputBox = styled.div`
-  display: flex;
-  justify-content: center;
-  padding-bottom: 20px;
-
-  position: relative;
-  margin-left: 20px;
-  margin-right: 20px;
-`;
-
-const ChatInput = styled.input`
-  border-radius: 10px;
-  border: 1px solid var(--gray_CCCCCC);
-  width: 100%;
-  height: 48px;
-
-  flex-shrink: 0;
-  background: var(--white_FFFFFF);
-  padding-left: 16px;
-  padding-right: 12px;
-
-  &:focus {
-    outline: none;
-    border: 1px solid #00bb83;
-  }
-`;
-
-const ChatLoadingSpinner = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 300px;
-`;
-
-const bounce = keyframes`
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
-`;
-
-const Spinner = styled.div<{ delay: string }>`
-  margin: 8px;
-  width: 12px;
-  height: 12px;
-  background-color: var(--black_000000);
-  border-radius: 50%;
-  animation: ${bounce} 1s infinite;
-  animation-delay: ${(props) => props.delay};
 `;

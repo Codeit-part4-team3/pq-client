@@ -1,8 +1,5 @@
 import styled from 'styled-components';
-
-interface ChatDayDividerProps {
-  ChatDayDividerDay: string;
-}
+import { ChatDayDividerProps } from '../../_types/props';
 
 export default function ChatDayDivider({ ChatDayDividerDay }: ChatDayDividerProps) {
   return (

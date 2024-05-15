@@ -1,15 +1,18 @@
 import styled from 'styled-components';
-
 import MediaControlPanel from './_components/MediaControlPanel';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
 import LocalMedia from './_components/LocalMedia';
 import RemoteMedia from './_components/RemoteMedia';
-import MeetingNote from './_components/MeetingNote';
 import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
-
-const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
+import useSocket from 'src/hooks/useSocket';
+import { SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
+import { useQueryGet } from 'src/apis/service/service';
+import { User } from '../chatChannel/_types/type';
+import MeetingNoteModal from './_components/MeetingNoteModal';
+import MeetingNoteListModal from './_components/MeetingNoteListModal';
+import { IMeetingNote } from './_types/type';
+import MeetingNote from './_components/MeetingNote';
 
 const pc_config = {
   iceServers: [
@@ -19,10 +22,6 @@ const pc_config = {
     { urls: 'turn:43.200.40.206', username: 'codeit', credential: 'sprint101!' }, // TURN 서버 설정
   ],
 };
-
-/**@ToDo
- * 1. 유저 데이터들 처리하는 로직 짜야함
- * 2. Channel 컴포넌트로 부터 channel date를 prop로 받고 데이터 바인딩 예정 */
 
 export default function VoiceChannel() {
   const { serverId, channelId } = useParams();
@@ -34,8 +33,16 @@ export default function VoiceChannel() {
   const { id: userId, nickname: userNickname } = userInfo;
   console.log('UserInfo', userInfo);
 
+  // serverUserData
+  // 서버내의 모든 유저 데이터
+  const { data: serverUserData } = useQueryGet<User[]>('getServerAllUser', `/chat/v1/server/${serverId}/users`, {
+    staleTime: 5000,
+    refetchInterval: 5000,
+    enabled: !!userId,
+  });
+
   // socket
-  const socketRef = useRef<Socket | null>(null);
+  const socketRef = useSocket();
   const pcsRef = useRef<{ [socketId: string]: RTCPeerConnection }>({});
   const localVideoRef = useRef<HTMLVideoElement | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
@@ -46,6 +53,7 @@ export default function VoiceChannel() {
       userNickname: string;
       stream: MediaStream;
       showVideo: boolean;
+      isTalking: boolean;
     }[]
   >([]);
 
@@ -65,7 +73,58 @@ export default function VoiceChannel() {
   };
 
   // 회의록
-  const showMeetingNote = true;
+  const [meetingNoteModalOpen, setMeetingNoteModalOpen] = useState<boolean>(false);
+  const [showMeetingNote, setShowMeetingNote] = useState(false);
+  const [meetingNoteId, setMeetingNoteId] = useState<string | null>(null);
+
+  interface RecognizedText {
+    userId: number;
+    text: string;
+  }
+
+  type RecognizedTexts = RecognizedText[];
+
+  // 렌더링할 텍스트
+  const [recognizedTexts, setRecognizedTexts] = useState<RecognizedTexts>([]);
+
+  // 회의록 시작
+  const startMeetingNote = (meetingNoteName: string) => {
+    console.log('회의록 시작');
+    socketRef.current?.emit(SOCKET_EMIT.START_MEETING_NOTE, { roomName, meetingNoteName });
+  };
+
+  // 회의록 종료
+  const handleMeetingNoteEndClick = () => {
+    console.log('회의록 종료');
+    socketRef.current?.emit(SOCKET_EMIT.END_MEETING_NOTE, { roomName });
+    setRecognizedTexts([]);
+  };
+
+  // 회의록 모달
+  const handleMeetingNoteModalClose = () => {
+    setMeetingNoteModalOpen(false);
+  };
+
+  const handleMeetingNoteModalOpen = () => {
+    setMeetingNoteModalOpen(true);
+  };
+
+  // 회의록 리스트
+  // 회의록 목록
+  const [meetingNoteList, setMeetingNoteList] = useState<IMeetingNote[]>([]);
+  const [isOpenMeetingNoteList, setIsOpenMeetingNoteList] = useState<boolean>(false);
+
+  const handleMeetingNoteListModalOpen = () => {
+    setIsOpenMeetingNoteList(true);
+  };
+
+  const handleMeetingNoteListModalClose = () => {
+    setIsOpenMeetingNoteList(false);
+  };
+
+  const getMeetingNoteList = () => {
+    socketRef.current?.emit(SOCKET_EMIT.GET_MEETING_NOTE_LIST, { roomName });
+  };
 
   /**
    * audioTrack.enabled의 경우 소리 생산 자체를 관여해서 들리지 않게 한다.
@@ -91,7 +150,7 @@ export default function VoiceChannel() {
       console.log(videoTrack);
       if (videoTrack) {
         videoTrack.enabled = !videoTrack.enabled;
-        socketRef.current?.emit('video_track_enabled_changed', {
+        socketRef.current?.emit(SOCKET_EMIT.VIDEO_TRACK_ENABLED_CHANGED, {
           enabled: videoTrack.enabled,
           userSocketId: socketRef.current.id,
           roomName,
@@ -116,7 +175,7 @@ export default function VoiceChannel() {
       localStreamRef.current = stream;
 
       if (socketRef.current) {
-        socketRef.current.emit('join_voice_channel', { roomName, userId, userNickname });
+        socketRef.current.emit(SOCKET_EMIT.JOIN_VOICE_CHANNEL, { roomName, userId, userNickname });
       }
     } catch (error) {
       console.error('failed to get user media :', error);
@@ -125,9 +184,9 @@ export default function VoiceChannel() {
 
   useEffect(() => {
     console.log('useEffect');
-    socketRef.current = io(SOCKET_SERVER_URL);
+    if (!socketRef.current) return;
 
-    socketRef.current.on('participants_list', async ({ participants }) => {
+    socketRef.current.on(SOCKET_ON.PARTICIPANTS_LIST, async ({ participants }) => {
       console.log('participants_list', participants);
       // participant를 순회하면서 RTCPeerConnection을 생성하고 offer를 보낸다.
       for (const participant of participants) {
@@ -139,7 +198,7 @@ export default function VoiceChannel() {
         // onicecandidate
         pc.onicecandidate = (e) => {
           if (e.candidate) {
-            socketRef.current?.emit('candidate', {
+            socketRef.current?.emit(SOCKET_EMIT.CANDIDATE, {
               candidate: e.candidate,
               candidateSenderId: socketRef.current?.id,
               candidateReceiverId: participant.socketId,
@@ -163,6 +222,7 @@ export default function VoiceChannel() {
               userNickname: participant.userNickname,
               stream: e.streams[0],
               showVideo: true,
+              isTalking: false,
             },
           ]);
         };
@@ -193,68 +253,72 @@ export default function VoiceChannel() {
       }
     });
 
-    socketRef.current.on('get_offer', async ({ sdp, offerSenderSocketId, offerSenderNickname, offerSenderId }) => {
-      console.log('get_offer : ', sdp, offerSenderSocketId, offerSenderNickname, offerSenderId);
-      // pc 설정
-      const pc = new RTCPeerConnection(pc_config);
-      pcsRef.current[offerSenderSocketId] = pc;
+    socketRef.current.on(
+      SOCKET_ON.GET_OFFER,
+      async ({ sdp, offerSenderSocketId, offerSenderNickname, offerSenderId }) => {
+        console.log('get_offer : ', sdp, offerSenderSocketId, offerSenderNickname, offerSenderId);
+        // pc 설정
+        const pc = new RTCPeerConnection(pc_config);
+        pcsRef.current[offerSenderSocketId] = pc;
 
-      // onicecandidate
-      pc.onicecandidate = (e) => {
-        if (e.candidate) {
-          socketRef.current?.emit('candidate', {
-            candidate: e.candidate,
-            candidateSenderId: socketRef.current?.id,
-            candidateReceiverId: offerSenderSocketId,
+        // onicecandidate
+        pc.onicecandidate = (e) => {
+          if (e.candidate) {
+            socketRef.current?.emit(SOCKET_EMIT.CANDIDATE, {
+              candidate: e.candidate,
+              candidateSenderId: socketRef.current?.id,
+              candidateReceiverId: offerSenderSocketId,
+            });
+          }
+        };
+
+        pc.oniceconnectionstatechange = (e) => {
+          console.log(e);
+        };
+
+        // 미디어 스트림 수신
+        pc.ontrack = (e) => {
+          console.log('ontrack', e.streams[0]);
+          setUsers((prevUsers) => prevUsers.filter((user) => user.socketId !== offerSenderSocketId));
+          setUsers((prevUsers) => [
+            ...prevUsers,
+            {
+              socketId: offerSenderSocketId,
+              userId: offerSenderId,
+              userNickname: offerSenderNickname,
+              stream: e.streams[0],
+              showVideo: true,
+              isTalking: false,
+            },
+          ]);
+        };
+
+        // 로컬 미디어 스트림 송신
+        if (localStreamRef.current) {
+          localStreamRef.current.getTracks().forEach((track) => {
+            pc.addTrack(track, localStreamRef.current!);
           });
         }
-      };
 
-      pc.oniceconnectionstatechange = (e) => {
-        console.log(e);
-      };
-
-      // 미디어 스트림 수신
-      pc.ontrack = (e) => {
-        console.log('ontrack', e.streams[0]);
-        setUsers((prevUsers) => prevUsers.filter((user) => user.socketId !== offerSenderSocketId));
-        setUsers((prevUsers) => [
-          ...prevUsers,
-          {
-            socketId: offerSenderSocketId,
-            userId: offerSenderId,
-            userNickname: offerSenderNickname,
-            stream: e.streams[0],
-            showVideo: true,
-          },
-        ]);
-      };
-
-      // 로컬 미디어 스트림 송신
-      if (localStreamRef.current) {
-        localStreamRef.current.getTracks().forEach((track) => {
-          pc.addTrack(track, localStreamRef.current!);
-        });
-      }
-
-      // setRemoteDescription
-      try {
-        await pc.setRemoteDescription(new RTCSessionDescription(sdp));
-        const answer = await pc.createAnswer();
-        await pc.setLocalDescription(new RTCSessionDescription(answer));
-        if (socketRef.current) {
-          socketRef.current.emit('answer', {
-            sdp: answer,
-            answerSenderSocketId: socketRef.current.id,
-            answerReceiverSocketId: offerSenderSocketId,
-          });
+        // setRemoteDescription
+        try {
+          await pc.setRemoteDescription(new RTCSessionDescription(sdp));
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(new RTCSessionDescription(answer));
+          if (socketRef.current) {
+            socketRef.current.emit(SOCKET_EMIT.ANSWER, {
+              sdp: answer,
+              answerSenderSocketId: socketRef.current.id,
+              answerReceiverSocketId: offerSenderSocketId,
+            });
+          }
+        } catch (error) {
+          console.error('failed to set remote description :', error);
         }
-      } catch (error) {
-        console.error('failed to set remote description :', error);
-      }
-    });
+      },
+    );
 
-    socketRef.current.on('get_answer', async ({ sdp, answerSenderSocketId }) => {
+    socketRef.current.on(SOCKET_ON.GET_ANSWER, async ({ sdp, answerSenderSocketId }) => {
       console.log('get_answer : ', sdp, answerSenderSocketId);
       try {
         const pc: RTCPeerConnection = pcsRef.current[answerSenderSocketId];
@@ -267,7 +331,7 @@ export default function VoiceChannel() {
       }
     });
 
-    socketRef.current.on('get_candidate', async ({ candidate, candidateSenderId }) => {
+    socketRef.current.on(SOCKET_ON.GET_CANDIDATE, async ({ candidate, candidateSenderId }) => {
       const pc: RTCPeerConnection = pcsRef.current[candidateSenderId];
       if (pc) {
         try {
@@ -280,7 +344,7 @@ export default function VoiceChannel() {
     });
 
     // 다른 유저가 자신의 비디오를 껐을 때
-    socketRef.current.on('video_track_enabled_changed', ({ enabled, userSocketId }) => {
+    socketRef.current.on(SOCKET_ON.VIDEO_TRACK_ENABLED_CHANGED, ({ enabled, userSocketId }) => {
       setUsers((prevUsers) => {
         const user = prevUsers.find((user) => user.socketId === userSocketId);
         if (user) {
@@ -291,7 +355,7 @@ export default function VoiceChannel() {
     });
 
     // 다른 유저가 나갔을 때
-    socketRef.current.on('user_exit', ({ exitSocketId }) => {
+    socketRef.current.on(SOCKET_ON.USER_EXIT, ({ exitSocketId }) => {
       console.log('user_exit', exitSocketId);
       // 해당 유저의 RTCPeerConnection을 종료하고 users에서 제거
       pcsRef.current[exitSocketId].close();
@@ -299,17 +363,60 @@ export default function VoiceChannel() {
       setUsers((prevUsers) => prevUsers.filter((user) => user.socketId !== exitSocketId));
     });
 
+    // 회의록 시작
+    socketRef.current.on(SOCKET_EMIT.START_MEETING_NOTE, ({ meetingNoteId }) => {
+      console.log('start_meeting_note : ', meetingNoteId);
+      setShowMeetingNote(true);
+      setMeetingNoteId(meetingNoteId);
+    });
+
+    // 회의록 업데이트
+    socketRef.current?.on('update_meeting_note', ({ transcript, userId }: { transcript: string; userId: number }) => {
+      console.log('update_meeting_note 이벤트 발생 : ', transcript, userId);
+      setRecognizedTexts((prev) => [...prev, { userId, text: transcript }]);
+    });
+
+    // 회의록 종료
+    socketRef.current.on(SOCKET_EMIT.END_MEETING_NOTE, () => {
+      console.log('end_meeting_note');
+      setShowMeetingNote(false);
+    });
+
+    // 회의록 목록 가져오기
+    socketRef.current.on(SOCKET_EMIT.GET_MEETING_NOTE_LIST, ({ meetingNoteList }) => {
+      console.log('get_meeting_note_list : ', meetingNoteList);
+      setMeetingNoteList(meetingNoteList);
+    });
+
     getLocalStream();
+    getMeetingNoteList();
 
     return () => {
       if (socketRef.current) {
-        socketRef.current.disconnect();
+        socketRef.current.off(SOCKET_ON.PARTICIPANTS_LIST);
+        socketRef.current.off(SOCKET_ON.GET_OFFER);
+        socketRef.current.off(SOCKET_ON.GET_ANSWER);
+        socketRef.current.off(SOCKET_ON.GET_CANDIDATE);
+        socketRef.current.off(SOCKET_ON.VIDEO_TRACK_ENABLED_CHANGED);
+        socketRef.current.off(SOCKET_ON.USER_EXIT);
       }
     };
   }, [roomName, userId, userNickname, getLocalStream]);
 
   return (
     <Wrapper>
+      <MeetingNoteModal
+        startMeetingNote={startMeetingNote}
+        meetingNoteModalOpen={meetingNoteModalOpen}
+        onModalClose={handleMeetingNoteModalClose}
+      />
+      <MeetingNoteListModal
+        isOpenMeetingNoteList={isOpenMeetingNoteList}
+        onClose={handleMeetingNoteListModalClose}
+        getMeetingNoteList={getMeetingNoteList}
+        meetingNoteList={meetingNoteList}
+        serverUserData={serverUserData}
+      />
       <ContentBox>
         <MediaBox>
           <VideoContainer>
@@ -325,9 +432,23 @@ export default function VoiceChannel() {
             showLocalVideo={showLocalVideo}
             onHandleMuteAllRemoteStreamsButtonClick={handleMuteAllRemoteStreams}
             isMutedAllRemoteStreams={isMutedAllRemoteStreams}
+            onMeetingNoteModalOpen={handleMeetingNoteModalOpen}
+            onMeetingNoteEndClick={handleMeetingNoteEndClick}
+            showMeetingNote={showMeetingNote}
+            onMeetingNoteListOpen={handleMeetingNoteListModalOpen}
+            isOpenMeetingNoteList={isOpenMeetingNoteList}
           />
         </MediaBox>
-        {showMeetingNote ? <MeetingNote /> : null}
+        {showMeetingNote ? (
+          <MeetingNote
+            roomName={roomName}
+            userId={userId}
+            serverUserData={serverUserData}
+            meetingNoteId={meetingNoteId}
+            recognizedTexts={recognizedTexts}
+            setRecognizedTexts={setRecognizedTexts}
+          />
+        ) : null}
       </ContentBox>
     </Wrapper>
   );

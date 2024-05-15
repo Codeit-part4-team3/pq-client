@@ -3,9 +3,9 @@ import EssentialInput from '../../input/EssentialInput';
 import styled from 'styled-components';
 import ModalButtons from '../../button/ModalButtons';
 import { ModalContainer, ModalForm, ModalTitle } from '../../CommonStyles';
-import axiosInstance from 'src/apis/instance/axiosInstance';
-import { Event } from './type/type';
-import { useQueryGet } from 'src/apis/service/service';
+
+import { Event, EventReqeust } from './type/type';
+import { useMutationDelete, useMutationPost, useMutationPut, useQueryGet } from 'src/apis/service/service';
 import { ServerIdContext } from 'src/pages/server/Server';
 import { getTimes } from 'src/utils/dateFuntion';
 
@@ -26,12 +26,34 @@ export default function DayContainer({ currentDay, currentMonth, currentYear, se
   const [eId, setEId] = useState<number>(0);
   const newStartDate = new Date(currentYear, currentMonth, currentDay, 0, 0, 0, 0).toISOString();
   const newEndDate = new Date(currentYear, currentMonth, currentDay + 1, 0, 0, 0, 0).toISOString();
-  const { data, refetch: eventRefetch } = useQueryGet<Event[]>(
-    'oneDayEvents',
-    `/chat/v1/server/events?serverId=${1}&startDate=${newStartDate}&endDate=${newEndDate}`,
-  );
 
   const serverId = useContext<number>(ServerIdContext);
+
+  const { data, refetch: eventRefetch } = useQueryGet<Event[]>(
+    'oneDayEvents',
+    `/chat/v1/server/events?serverId=${serverId}&startDate=${newStartDate}&endDate=${newEndDate}`,
+  );
+
+  const createMutation = useMutationPost<Event, EventReqeust>(`/chat/v1/server/event`, {
+    onSuccess: () => {
+      eventRefetch();
+      refetch();
+    },
+  });
+
+  const updateMutation = useMutationPut<Event, EventReqeust>(`/chat/v1/server/event/update?eId=${eId}`, {
+    onSuccess: () => {
+      eventRefetch();
+      refetch();
+    },
+  });
+
+  const deleteMutation = useMutationDelete(`/chat/v1/server/event/delete?eId=${eId}`, {
+    onSuccess: () => {
+      eventRefetch();
+      refetch();
+    },
+  });
 
   const reset = () => {
     setIsUpdate(false);
@@ -54,9 +76,8 @@ export default function DayContainer({ currentDay, currentMonth, currentYear, se
   };
 
   const deleteButtonClick = async (id: number) => {
-    await axiosInstance.delete(`/chat/v1/server/event/delete?eId=${id}`);
-    eventRefetch();
-    refetch();
+    await setEId(id);
+    deleteMutation.mutate();
   };
 
   const onSubmit: FormEventHandler = async (e) => {
@@ -69,25 +90,16 @@ export default function DayContainer({ currentDay, currentMonth, currentYear, se
       Number(time.split(':')[0]),
       Number(time.split(':')[1]),
     );
+
     if (!isUpdate) {
-      await axiosInstance.post('/chat/v1/server/event', {
-        title,
-        start: startDate,
-        serverId,
-      });
+      await createMutation.mutate({ title, start: startDate, serverId });
     }
 
     if (isUpdate) {
-      await axiosInstance.put(`/chat/v1/server/event/update?eId=${eId}`, {
-        title,
-        start: startDate,
-        serverId,
-      });
+      updateMutation.mutate({ title, start: startDate, serverId });
     }
 
     reset();
-    eventRefetch();
-    refetch();
   };
 
   useEffect(() => {
@@ -121,14 +133,14 @@ export default function DayContainer({ currentDay, currentMonth, currentYear, se
                   {event.title} <span>{getTimes(event.start)}</span>
                 </ScheduleTitle>
 
-                <div>
-                  <button type='button' onClick={() => updateButtonClick(event.title, event.start, event.id)}>
+                <ButtonBox>
+                  <EditButton type='button' onClick={() => updateButtonClick(event.title, event.start, event.id)}>
                     수정
-                  </button>
-                  <button type='button' onClick={() => deleteButtonClick(event.id)}>
+                  </EditButton>
+                  <DeleteButton type='button' onClick={() => deleteButtonClick(event.id)}>
                     삭제
-                  </button>
-                </div>
+                  </DeleteButton>
+                </ButtonBox>
               </Schedule>
             ))}
           </ScheduleList>
@@ -151,6 +163,15 @@ const TimeInput = styled.input`
   font-size: 1rem;
   border: none;
   text-align: center;
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  outline: none;
+
+  &:focus {
+    border: 2px solid #258dff;
+  }
 `;
 
 const ScheduleList = styled.div`
@@ -170,7 +191,13 @@ const Schedule = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 8px;
-  background-color: #f0f0f0;
+  background-color: transparent;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
 `;
 
 const ScheduleTitle = styled.div`
@@ -178,4 +205,38 @@ const ScheduleTitle = styled.div`
   display: flex;
   justify-content: space-between;
   width: 60%;
+`;
+
+const ButtonBox = styled.div`
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+`;
+const DeleteButton = styled.button`
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+
+  &:hover {
+    background-color: #b30000;
+  }
+`;
+
+const EditButton = styled.button`
+  background-color: #258dff;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+
+  &:hover {
+    background-color: #1451b3;
+  }
 `;

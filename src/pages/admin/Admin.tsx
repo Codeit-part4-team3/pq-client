@@ -3,13 +3,13 @@ import AdminJoinServerModal from './_components/AdminJoinServerModal';
 import AdminServerModal from './_components/AdminServerModal';
 import AdminChatSocketServer from './_components/AdminChatSocketServer';
 import styled from 'styled-components';
-import AdminVoiceSocketServer from './_components/AdminVoiceSocketServer';
-import PaymentTest from './_components/PaymentTest';
+// import AdminVoiceSocketServer from './_components/AdminVoiceSocketServer';
 import { useQueryGet } from 'src/apis/service/service';
 import { UserInfo } from 'src/types/userType';
 import { USER_URL } from 'src/constants/apiUrl';
 import { useEffect } from 'react';
 import useUserStore from 'src/store/userStore';
+import Event from './_components/Event';
 
 export default function Admin() {
   const { setUserInfo } = useUserStore();
@@ -27,15 +27,13 @@ export default function Admin() {
   return (
     <>
       <Area>
+        <Event />
         <AdminServerModal />
         <AdminJoinServerModal />
         <AdminChatSocketServer />
         <AdminChatServer />
-        <PaymentTest />
       </Area>
-      <VoiceChannelArea>
-        <AdminVoiceSocketServer />
-      </VoiceChannelArea>
+      <VoiceChannelArea>{/* <AdminVoiceSocketServer /> */}</VoiceChannelArea>
     </>
   );
 }
