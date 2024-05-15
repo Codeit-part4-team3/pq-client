@@ -10,6 +10,7 @@ export default function useSocket() {
     socketRef.current = io(SOCKET_SERVER_URL);
 
     return () => {
+      console.log('chatChannel Socket disconnected');
       socketRef.current?.disconnect();
     };
   }, []);

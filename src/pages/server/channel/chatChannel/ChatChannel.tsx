@@ -308,6 +308,7 @@ export default function ChatChannel() {
         socketRef.current.off(SOCKET_ON.UPDATE_MESSAGE_COMPLETE);
         socketRef.current.off(SOCKET_ON.DELETE_MESSAGE);
         socketRef.current.off(SOCKET_ON.MORE_MESSAGES);
+        socketRef.current.disconnect();
       }
     };
   }, [roomName]);
