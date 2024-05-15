@@ -383,6 +383,8 @@ export default function VoiceChannel() {
     socketRef.current.on(SOCKET_EMIT.END_MEETING_NOTE, () => {
       console.log('end_meeting_note');
       setShowMeetingNote(false);
+      // 회의록 목록 업데이트
+      getMeetingNoteList();
     });
 
     // 회의록 목록 가져오기
