@@ -157,13 +157,14 @@ export const InputNormal = styled.input`
 `;
 
 export const ProfileImageWrapper = styled.div`
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
 
   border: 2px solid var(--primary_basic_color);
   border-radius: 50%;
   overflow: hidden;
   display: flex;
+  flex-shrink: 0;
   flex-direction: row;
   justify-content: center;
   align-items: center;

@@ -5,6 +5,7 @@ import { ChatMessagesProps } from '../_types/props';
 import { formatMessageData } from '../_utils/formatMessageData';
 import ChatMessageTextEditingBox from './ChatMessageTextEditingBox';
 import useChatMessages from '../_hooks/useChatMessages';
+import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
 
 export default function ChatMessages({
   serverUserData,
@@ -56,9 +57,9 @@ export default function ChatMessages({
                   )}
                   isOnEdit={currentEditingMessageId === messageItem.messageId}
                 >
-                  <UserProfileImage>
-                    <Image profileImage={user?.imageUrl ? user.imageUrl : '/images/minji-profile-image.png'} />
-                  </UserProfileImage>
+                  <ProfileImageWrapper>
+                    <ProfileImage $imageUrl={user?.imageUrl ? user.imageUrl : '/images/landing.webp'} />
+                  </ProfileImageWrapper>
                   <ChatMessageContent>
                     <ChatMessageContentHeader>
                       <ChatMessageSender>{user?.nickname}</ChatMessageSender>
@@ -139,6 +140,7 @@ const UserProfileImage = styled.div`
   height: 40px;
   border-radius: 50%;
   overflow: hidden;
+  flex-shrink: 0;
 `;
 
 const Image = styled.img<{ profileImage: string }>`
