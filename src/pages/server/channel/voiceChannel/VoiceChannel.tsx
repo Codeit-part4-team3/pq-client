@@ -49,7 +49,7 @@ export default function VoiceChannel() {
   const [users, setUsers] = useState<
     {
       socketId: string;
-      userId: string;
+      userId: number;
       userNickname: string;
       stream: MediaStream;
       showVideo: boolean;
@@ -383,6 +383,8 @@ export default function VoiceChannel() {
     socketRef.current.on(SOCKET_EMIT.END_MEETING_NOTE, () => {
       console.log('end_meeting_note');
       setShowMeetingNote(false);
+      // 회의록 목록 업데이트
+      getMeetingNoteList();
     });
 
     // 회의록 목록 가져오기
@@ -429,7 +431,12 @@ export default function VoiceChannel() {
           <VideoContainer>
             <LocalMedia {...localMediaData} />
             {users.map((user) => (
-              <RemoteMedia key={user.socketId} {...user} isMutedAllRemoteStreams={isMutedAllRemoteStreams} />
+              <RemoteMedia
+                key={user.socketId}
+                {...user}
+                serverUserData={serverUserData}
+                isMutedAllRemoteStreams={isMutedAllRemoteStreams}
+              />
             ))}
           </VideoContainer>
           <MediaControlPanel

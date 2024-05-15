@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { MeetingNoteProps } from '../_types/props';
 import useMeetingNote from '../_hooks/useMeetingNote';
+import useUserStore from 'src/store/userStore';
 
 declare global {
   interface Window {
@@ -23,6 +24,9 @@ export default function MeetingNote({
     recognizedTexts,
   });
 
+  const { userInfo } = useUserStore();
+  const { id: myId, nickname: myNickname } = userInfo;
+
   return (
     <Wrapper>
       <Header>
@@ -32,11 +36,21 @@ export default function MeetingNote({
       <RecognizedTextContainer ref={SpeechContainerRef}>
         {recognizedTexts.map((recognizedText, index) => {
           const nickname = serverUserData?.find((user) => user.id === recognizedText.userId)?.nickname;
+          const isMine = recognizedText.userId === myId;
+
+          if (isMine) {
+            return (
+              <MyRecognizedText key={index}>
+                <Nickname>{myNickname}</Nickname>
+                <Text>{recognizedText.text}</Text>
+              </MyRecognizedText>
+            );
+          }
           return (
-            <RecognizedText key={index}>
+            <OtherRecognizedText key={index}>
               <Nickname>{nickname}</Nickname>
               <Text>{recognizedText.text}</Text>
-            </RecognizedText>
+            </OtherRecognizedText>
           );
         })}
       </RecognizedTextContainer>
@@ -92,14 +106,23 @@ const RecognizedTextContainer = styled.div`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 24px;
   overflow-y: scroll;
 `;
 
 const RecognizedText = styled.div`
   width: 100%;
   display: flex;
-  gap: 16px;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const MyRecognizedText = styled(RecognizedText)`
+  align-items: flex-start;
+`;
+
+const OtherRecognizedText = styled(RecognizedText)`
+  align-items: flex-end;
 `;
 
 const Nickname = styled.div`
@@ -113,11 +136,9 @@ const Nickname = styled.div`
 const Text = styled.div`
   border: 1px solid var(--text_gray);
   border-radius: 10px;
-  width: 100%;
+  width: 70%;
   border-radius: 10px;
   background: var(--white_FFFFFF);
   color: var(--background_light_gray);
   padding: 12px;
-
-  margin-top: 18px;
 `;

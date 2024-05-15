@@ -196,9 +196,9 @@ export default function ChatChannel() {
 
         // 초기 메시지 수신 후 마지막 메시지 읽음 처리
         if (socketRef.current) {
-          console.log('[read-init] read on emit :', userId, roomName, initialMessages[0].messageId);
+          console.log('[read-init] read on emit :', userId, roomName, initialMessages[0]?.messageId);
           socketRef.current.emit(SOCKET_COMMON.READ_MESSAGE, {
-            messageId: initialMessages[0].messageId,
+            messageId: initialMessages[0]?.messageId,
             roomName: roomName,
             userId,
           });
@@ -295,7 +295,15 @@ export default function ChatChannel() {
         isNoMoreMessages: boolean;
       }) => {
         console.log('more messages data : ', moreMessages);
-        setMessages((prevMessages) => [...prevMessages, ...moreMessages]);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          ...moreMessages.map((msg) => {
+            return {
+              ...msg,
+              notReadCount: 0,
+            };
+          }),
+        ]);
         setLastKey(lastKey);
         if (isNoMoreMessages) {
           setIsNoMoreMessages(true);
@@ -321,7 +329,7 @@ export default function ChatChannel() {
     if (messageInputRef.current?.value === '' && chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, []);
+  }, [messages]);
 
   useEffect(() => {
     infiniteScroll();
