@@ -10,8 +10,10 @@ export function RegistCardFail() {
     <Area className='result wrapper'>
       <Container className='box_section'>
         <h2>카드 등록 실패</h2>
-        <p>{`에러 코드: ${searchParams.get('code')}`}</p>
-        <p>{`실패 사유: ${searchParams.get('message')}`}</p>
+        <Box>
+          <p>{`에러 코드: ${searchParams.get('code')}`}</p>
+          <p>{`실패 사유: ${searchParams.get('message')}`}</p>
+        </Box>
         <Button onClick={() => navigate('/server')}>처음으로 돌아가기</Button>
       </Container>
     </Area>
@@ -29,6 +31,13 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+`;
+
+const Box = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 `;
 
 const Button = styled(CtaButton)`
