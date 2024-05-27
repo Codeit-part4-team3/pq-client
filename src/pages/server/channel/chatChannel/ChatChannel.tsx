@@ -7,11 +7,12 @@ import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
 import { useQueryGet } from 'src/apis/service/service';
 import { LOCAL_STORAGE_ALRAM_KEY, SOCKET_COMMON, SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
-import useSocket from 'src/hooks/useSocket';
 import MessageLoadingSpinner from './_components/MessageLoadingSpinner';
 import ChatInputBox from './_components/ChatInputBox';
 import { ChannelData } from '../../_types/type';
 import ChatChannelIntro from './_components/ChatChannelIntro';
+import useSocketStore from 'src/store/socketStore';
+import { Socket } from 'socket.io-client';
 
 /**@ToDo
  * 소켓 연결 / 소켓 이벤트 리스너 분리하는 로직 짜면 좋을듯
@@ -42,7 +43,9 @@ export default function ChatChannel() {
   );
 
   // 소켓
-  const socketRef = useSocket();
+  const { socket } = useSocketStore();
+  const socketRef = useRef<Socket | null>(null);
+
   // 메시지 관련
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const messageInputRef = useRef<HTMLInputElement | null>(null);
@@ -173,6 +176,10 @@ export default function ChatChannel() {
   };
 
   useEffect(() => {
+    if (socket) {
+      socketRef.current = socket;
+    }
+
     if (!socketRef.current) return;
 
     socketRef.current.emit(SOCKET_EMIT.JOIN_CHAT_CHANNEL, roomName);
