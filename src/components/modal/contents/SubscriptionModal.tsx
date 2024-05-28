@@ -102,6 +102,7 @@ export default function SubscriptionModal({ closeModal, isOpen }: ModalProps) {
     if (!selectedPayment.orderId) return console.error(ERROR_MESSAGES.PAYMENT.NO_ORDER_ID);
     if (subscription && selectedPayment.planId < subscription?.planId)
       return alert(ERROR_MESSAGES.PAYMENT.REFUND_NOT_ALLOWED);
+    if (!cancelReason) return alert(ERROR_MESSAGES.PAYMENT.NO_CANCEL_REASON);
 
     const cancelData = {
       orderId: selectedPayment.orderId,

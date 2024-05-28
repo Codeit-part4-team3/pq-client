@@ -7,6 +7,8 @@ import useUserStore from 'src/store/userStore';
 import { UserInfo } from 'src/types/userType';
 import styled, { keyframes } from 'styled-components';
 import axios from 'axios';
+import { usePreventRefresh } from 'src/hooks/usePreventRefresh';
+import { usePreventGoBack } from 'src/hooks/usePreventGoback';
 
 /**
  * 결제 요청 승인 후 실제 결제 진행
@@ -14,6 +16,9 @@ import axios from 'axios';
 export function OrderApproval() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { setUserInfo } = useUserStore();
+  usePreventGoBack();
+  usePreventRefresh();
 
   // 결제 정보
   const paymentData = {
@@ -24,12 +29,13 @@ export function OrderApproval() {
     paymentKey: searchParams.get('paymentKey') ?? '',
   };
 
-  const { setUserInfo } = useUserStore();
+  const paymentType = searchParams.get('paymentType');
+
   const { data: userData, isLoading } = useQueryGet<UserInfo | null>('getUserData', `${USER_URL.USER}/me`);
   const { mutate } = useMutationPost<ConfirmResponse, ConfirmRequest>(`${USER_URL.PAYMENTS}/confirm`, {
     onSuccess: () => {
       navigate(
-        `/order-success?orderId=${paymentData.orderId}&amount=${paymentData.amount}&paymentKey=${paymentData.paymentKey}`,
+        `/order-success?orderId=${paymentData.orderId}&amount=${paymentData.amount}&paymentKey=${paymentData.paymentKey}&paymentType=${paymentType}`,
       );
     },
     onError: (err: unknown) => {
@@ -52,7 +58,23 @@ export function OrderApproval() {
     }
 
     mutate(paymentData);
-  }, [userData, setUserInfo]);
+  }, [userData]);
+
+  useEffect(() => {
+    const preventClose = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+      return;
+    };
+
+    (() => {
+      window.addEventListener('beforeunload', preventClose);
+    })();
+
+    return () => {
+      window.removeEventListener('beforeunload', preventClose);
+    };
+  }, []);
 
   return (
     <Area className='result wrapper'>

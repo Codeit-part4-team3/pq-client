@@ -6,6 +6,7 @@ import { PaymentMethodsWidget } from './_type/type';
 import styled from 'styled-components';
 import { CtaButton } from 'src/GlobalStyles';
 import { ERROR_MESSAGES } from 'src/constants/error';
+import { useNavigate } from 'react-router-dom';
 
 const widgetClientKey = import.meta.env.VITE_APP_TOSS_CLIENT_KEY;
 
@@ -22,11 +23,14 @@ export default function Checkout() {
   const { userInfo } = useUserStore();
   const { tempOrderId } = useTempOrderStore();
   const { planId, amount, planType } = usePlanStore();
+  const navigate = useNavigate();
 
   // 결제 위젯 불러오기
   useEffect(() => {
     if (!userInfo.email) {
-      return console.error(ERROR_MESSAGES.PAYMENT.NO_USER_INFO);
+      console.error(ERROR_MESSAGES.PAYMENT.NO_USER_INFO);
+      navigate(`/order-fail?code=404&message=데이터가 유실되었습니다. 다시 시도해주세요.`);
+      return;
     }
 
     const customerKey = userInfo.email;
@@ -79,14 +83,23 @@ export default function Checkout() {
       orderName: planType,
       customerEmail: userInfo.email,
       customerName: userInfo.nickname,
-      successUrl: `${location.origin}/order-approval?userId=${userInfo.id}&planId=${planId}`,
-      failUrl: `${location.origin}/order-fail`,
     };
 
     try {
-      await paymentWidget?.requestPayment(paymentRequestData);
+      const response = await paymentWidget?.requestPayment(paymentRequestData);
+
+      const userId = userInfo.id;
+      const paymentKey = response?.paymentKey ?? '';
+      const amount = response?.amount;
+      const orderId = response?.orderId ?? '';
+      const paymentType = response?.paymentType ?? '';
+
+      navigate(
+        `/order-approval?userId=${userId}&planId=${planId}&paymentKey=${encodeURIComponent(paymentKey)}&amount=${amount}&orderId=${encodeURIComponent(orderId)}&paymentType=${encodeURIComponent(paymentType)}`,
+      );
     } catch (error) {
       console.error('Error requesting payment:', error);
+      navigate(`/order-fail?code=500&message=결제 요청 중 오류가 발생했습니다. 다시 시도해주세요.`);
     }
   };
 

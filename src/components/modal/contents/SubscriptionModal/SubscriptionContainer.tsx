@@ -10,8 +10,8 @@ import {
 import styled from 'styled-components';
 import { useQueryGet } from 'src/apis/service/service';
 import { SubscriptionResponse } from 'src/components/modal/contents/SubscriptionModal/_type/subscriptionType';
-import { EventPaymentsResponse } from 'src/pages/payments/_type/type';
 import { PLAN } from 'src/constants/plan';
+import { useEventWinner } from 'src/hooks/useEventWinner';
 import useEventStore from 'src/store/eventStore';
 
 interface SubscriptionContainerProps {
@@ -28,30 +28,17 @@ export default function SubscriptionContainer({
   setIsCancelSelected,
 }: SubscriptionContainerProps) {
   const [isRecurring, setIsRecurring] = useState(false);
-  const [participants, setParticipants] = useState<EventPaymentsResponse>(null);
+  const { participants } = useEventWinner();
   const { isEventActive } = useEventStore();
-  const { BASIC, PREMIUM, EVENT } = PLAN;
+  const { BASIC, PREMIUM } = PLAN;
   const maxLength = [BASIC.maxLength, PREMIUM.maxLength];
 
+  const { data: eventAmount, refetch: refetchEventAmount } = useQueryGet<EventResponse>(
+    'getEventAmount',
+    `${USER_URL.PAYMENTS}/event`,
+  );
   const { data: plans } = useQueryGet<PlansResponse>('getPlan', `${USER_URL.PLANS}/all`);
   const event = plans?.[2];
-
-  const { data: eventPayments } = useQueryGet<EventPaymentsResponse>(
-    'getEventPayments',
-    `${USER_URL.PAYMENTS}/plan/${EVENT.id}`,
-  );
-  const { data: eventAmount, refetch } = useQueryGet<EventResponse>('getEventAmount', `${USER_URL.PAYMENTS}/event`);
-
-  useEffect(() => {
-    if (eventPayments && eventAmount) {
-      setParticipants(eventPayments.filter((payment) => payment.createdAt > eventAmount.createdAt));
-    }
-  }, [eventAmount, eventPayments, setParticipants]);
-
-  useEffect(() => {
-    console.log('isEventActive', isEventActive);
-    refetch();
-  }, [isEventActive, refetch]);
 
   const handlePlanButtonClick = useCallback(
     (id: number) => {
@@ -67,6 +54,10 @@ export default function SubscriptionContainer({
     if (!subscription || !subscription.isActive) return false;
     return subscription.planId >= planId;
   };
+
+  useEffect(() => {
+    refetchEventAmount();
+  }, [isEventActive]);
 
   return (
     <>

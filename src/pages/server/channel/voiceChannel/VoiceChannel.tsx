@@ -5,7 +5,6 @@ import LocalMedia from './_components/LocalMedia';
 import RemoteMedia from './_components/RemoteMedia';
 import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
-import useSocket from 'src/hooks/useSocket';
 import { SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
 import { useQueryGet } from 'src/apis/service/service';
 import { User } from '../chatChannel/_types/type';
@@ -13,6 +12,8 @@ import MeetingNoteModal from './_components/MeetingNoteModal';
 import MeetingNoteListModal from './_components/MeetingNoteListModal';
 import { IMeetingNote } from './_types/type';
 import MeetingNote from './_components/MeetingNote';
+import useSocketStore from 'src/store/socketStore';
+import { Socket } from 'socket.io-client';
 
 const pc_config = {
   iceServers: [
@@ -41,8 +42,9 @@ export default function VoiceChannel() {
     enabled: !!userId,
   });
 
-  // socket
-  const socketRef = useSocket();
+  // 소켓
+  const { socket } = useSocketStore();
+  const socketRef = useRef<Socket | null>(null);
   const pcsRef = useRef<{ [socketId: string]: RTCPeerConnection }>({});
   const localVideoRef = useRef<HTMLVideoElement | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
@@ -184,6 +186,10 @@ export default function VoiceChannel() {
 
   useEffect(() => {
     console.log('useEffect');
+    if (socket) {
+      socketRef.current = socket;
+    }
+
     if (!socketRef.current) return;
 
     socketRef.current.on(SOCKET_ON.PARTICIPANTS_LIST, async ({ participants }) => {

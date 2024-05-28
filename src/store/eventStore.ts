@@ -1,5 +1,4 @@
 import { Socket, io } from 'socket.io-client';
-import { EventPaymentsResponse } from 'src/pages/payments/_type/type';
 import { create } from 'zustand';
 
 const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
@@ -7,8 +6,6 @@ const SOCKET_SERVER_URL = 'https://api.pqsoft.net:3000';
 interface EventState {
   socket: Socket | null;
   isEventActive: boolean | null;
-  participants: EventPaymentsResponse;
-  setParticipants: (participants: EventPaymentsResponse) => void;
   initializeSocket: () => void;
   disconnectSocket: () => void;
 }
@@ -16,11 +13,6 @@ interface EventState {
 export const useEventStore = create<EventState>((set, get) => ({
   socket: null,
   isEventActive: null,
-  participants: [],
-
-  setParticipants: (participants) => {
-    set({ participants });
-  },
 
   initializeSocket: () => {
     try {

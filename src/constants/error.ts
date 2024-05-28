@@ -43,6 +43,7 @@ export const ERROR_MESSAGES = {
     SELECT_PAYMENT: '주문을 선택해 주세요.',
     INVALID_CARD_DATA: '카드 정보가 올바르지 않습니다.',
     NO_USER_INFO: '결제 위젯을 불러오기 위해 사용자 정보가 필요합니다.',
+    NO_CANCEL_REASON: '취소 사유를 선택해 주세요.',
   },
   CARD: {
     INVALID_SUBSCRIPTION_DATA: '카드 등록 정보가 올바르지 않습니다.',
