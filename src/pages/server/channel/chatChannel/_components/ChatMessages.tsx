@@ -6,6 +6,7 @@ import { formatMessageData } from '../_utils/formatMessageData';
 import ChatMessageTextEditingBox from './ChatMessageTextEditingBox';
 import useChatMessages from '../_hooks/useChatMessages';
 import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
+import ChatMessageContentHeader from './ChatMessageContentHeader';
 
 export default function ChatMessages({
   serverUserData,
@@ -39,6 +40,7 @@ export default function ChatMessages({
         });
         return (
           <>
+            {/* 마우스 오른쪽 버튼 클릭시 나오는 컨텍스트 버튼 */}
             {isContextMenuOpen.isOpen ? (
               <ContextMenu
                 {...isContextMenuOpen}
@@ -46,6 +48,7 @@ export default function ChatMessages({
                 onDeleteMessageClick={onDeleteMessageClick}
               />
             ) : null}
+            {/* 이전 메시지의 유저가 다르면 메시지에 프로필 사진과 닉네임을 보여준다. */}
             {isDifferentUserRef ? (
               <>
                 <ChatMessageWrapper
@@ -61,10 +64,7 @@ export default function ChatMessages({
                     <ProfileImage $imageUrl={user?.imageUrl ? user.imageUrl : '/images/landing.webp'} />
                   </ProfileImageWrapper>
                   <ChatMessageContent>
-                    <ChatMessageContentHeader>
-                      <ChatMessageSender>{user?.nickname}</ChatMessageSender>
-                      <ChatMessageCreatedAt>{messageCreatedAt}</ChatMessageCreatedAt>
-                    </ChatMessageContentHeader>
+                    <ChatMessageContentHeader nickname={user?.nickname} messageCreatedAt={messageCreatedAt} />
                     {messageItem.status === 'editing' ? (
                       <ChatMessageTextEditingBox
                         messageItem={messageItem}
@@ -139,29 +139,6 @@ const ChatMessageContent = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-`;
-
-const ChatMessageContentHeader = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
-const ChatMessageSender = styled.div`
-  color: var(--black_000000);
-  font-family: Pretendard;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 160%; /* 25.6px */
-`;
-
-const ChatMessageCreatedAt = styled.div`
-  color: var(--gray_666666);
-  font-family: Pretendard;
-  font-size: 10px;
-  line-height: 160%; /* 16px */
-
-  display: flex;
-  align-items: center;
 `;
 
 const ChatMessageText = styled.p`
