@@ -1,7 +1,9 @@
 import styled from 'styled-components';
-import { ChatChannelIntroProps } from '../../_types/props';
+import useChatChannelIntro from '../_hooks/useChatChannelIntro';
 
-export default function ChatChannelIntro({ channelData }: ChatChannelIntroProps) {
+export default function ChatChannelIntro() {
+  const { channelData } = useChatChannelIntro();
+
   return (
     <>
       <Wrapper>

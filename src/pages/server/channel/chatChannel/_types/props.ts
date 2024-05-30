@@ -5,7 +5,6 @@ export interface ChatChannelProps {
 }
 
 export interface ChatMessagesProps {
-  serverUserData: User[] | undefined;
   messages: MessageItem[];
   onUpdateMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
   onDeleteMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;

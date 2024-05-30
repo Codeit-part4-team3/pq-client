@@ -9,7 +9,6 @@ import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
 import ChatMessageContentHeader from './ChatMessageContentHeader';
 
 export default function ChatMessages({
-  serverUserData,
   messages,
   onUpdateMessageClick,
   onDeleteMessageClick,
@@ -20,12 +19,17 @@ export default function ChatMessages({
   onEditingMessageChange,
   currentEditingMessageId,
 }: ChatMessagesProps) {
-  const { isContextMenuOpen, handleContextMenuOpen, isDifferentUserRef, handleMessageTextEditingKeyDown } =
-    useChatMessages({
-      onUpdateMessageKeyDown,
-      onUpdateMessageCancelClick,
-      setEditingMessage,
-    });
+  const {
+    isContextMenuOpen,
+    handleContextMenuOpen,
+    isDifferentUserRef,
+    handleMessageTextEditingKeyDown,
+    serverUserData,
+  } = useChatMessages({
+    onUpdateMessageKeyDown,
+    onUpdateMessageCancelClick,
+    setEditingMessage,
+  });
 
   if (!messages || messages.length === 0) return null;
   return (

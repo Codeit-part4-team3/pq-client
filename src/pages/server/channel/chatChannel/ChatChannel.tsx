@@ -1,15 +1,13 @@
 import styled from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
-import { lastKey, MessageItem, ReadMessageItem, User } from 'src/pages/server/channel/chatChannel/_types/type';
+import { lastKey, MessageItem, ReadMessageItem } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
 import { useSubscription } from 'src/hooks/useSubscription';
 import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
-import { useQueryGet } from 'src/apis/service/service';
 import { LOCAL_STORAGE_ALRAM_KEY, SOCKET_COMMON, SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
 import MessageLoadingSpinner from './_components/MessageLoadingSpinner';
 import ChatInputBox from './_components/ChatInputBox';
-import { ChannelData } from '../../_types/type';
 import ChatChannelIntro from './_components/ChatChannelIntro';
 import useSocketStore from 'src/store/socketStore';
 import { Socket } from 'socket.io-client';
@@ -21,26 +19,8 @@ export default function ChatChannel() {
   // 유저, 서버, 채널 데이터
   const { userInfo } = useUserStore();
   const { id: userId } = userInfo;
-  const { serverId, channelId } = useParams();
+  const { channelId } = useParams();
   const roomName = channelId;
-
-  // 서버내의 모든 유저 데이터
-  const { data: serverUserData } = useQueryGet<User[]>('getServerAllUser', `/chat/v1/server/${serverId}/users`, {
-    staleTime: 5000,
-    refetchInterval: 5000,
-    enabled: !!userId,
-  });
-
-  // 채널 데이터
-  const { data: channelData } = useQueryGet<ChannelData>(
-    'getCurrentChannel',
-    `/chat/v1/server/${serverId}/channel/${channelId}`,
-    {
-      staleTime: 5000,
-      refetchInterval: 5000,
-      enabled: !!userId,
-    },
-  );
 
   // 소켓
   const { socket } = useSocketStore();
@@ -349,7 +329,6 @@ export default function ChatChannel() {
         {/* flex: column-reverse상태 */}
         {/* 가장 아래쪽 */}
         <ChatMessages
-          serverUserData={serverUserData}
           messages={messages}
           editingMessage={editingMessage}
           setEditingMessage={setEditingMessage}
@@ -361,7 +340,7 @@ export default function ChatChannel() {
           onEditingMessageChange={hanedleEditingMessageChange}
         />
         {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게할 컴포넌트 */}
-        {isNoMoreMessages ? <ChatChannelIntro channelData={channelData} /> : null}
+        {isNoMoreMessages ? <ChatChannelIntro /> : null}
         {/* 무한 스크롤 로딩스피너 */}
         {lastKey ? (
           <>
