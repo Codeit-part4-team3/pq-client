@@ -65,6 +65,7 @@ export default function ChatMessages({
                   </ProfileImageWrapper>
                   <ChatMessageContent>
                     <ChatMessageContentHeader nickname={user?.nickname} messageCreatedAt={messageCreatedAt} />
+                    {/* 수정중인 경우 보여줄 에디터 박스 */}
                     {messageItem.status === 'editing' ? (
                       <ChatMessageTextEditingBox
                         messageItem={messageItem}
@@ -75,8 +76,10 @@ export default function ChatMessages({
                         onKeyDown={handleMessageTextEditingKeyDown}
                       />
                     ) : (
+                      // 수정중이 아니라면 메시지 내용을 보여준다.
                       <ChatMessageText>
                         {messageItem.message}
+                        {/* 읽은 사람 수 */}
                         {messageItem.notReadCount > 0 && <div>{messageItem.notReadCount}</div>}
                       </ChatMessageText>
                     )}
@@ -84,7 +87,9 @@ export default function ChatMessages({
                 </ChatMessageWrapper>
               </>
             ) : (
+              // 이전 메시지의 유저가 같다면 프로필 사진과 닉네임을 보여주지 않는다.
               <>
+                {/* 수정중인 경우 보여울 에디터 박스 */}
                 {messageItem.status === 'editing' ? (
                   <SameUserMessage isOnEdit={currentEditingMessageId === messageItem.messageId}>
                     <ChatMessageTextEditingBox
@@ -97,6 +102,7 @@ export default function ChatMessages({
                     />
                   </SameUserMessage>
                 ) : (
+                  // 수정중이 아니라면 메시지 내용을 보여준다.
                   <SameUserMessage
                     key={messageItem.messageId}
                     onContextMenu={handleContextMenuOpen(
@@ -111,6 +117,7 @@ export default function ChatMessages({
                 )}
               </>
             )}
+            {/* 날짜가 달라지는 경우 날짜를 표시해줄 컴포넌트 */}
             {isDifferentDay ? <ChatDayDivider ChatDayDividerDay={ChatDayDividerDay} /> : null}
           </>
         );
