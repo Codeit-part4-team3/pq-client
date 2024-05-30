@@ -1,14 +1,16 @@
 import styled from 'styled-components';
 import { ChatDayDividerProps } from '../../_types/props';
 
-export default function ChatDayDivider({ ChatDayDividerDay }: ChatDayDividerProps) {
+export default function ChatDayDivider({ ChatDayDividerDay, isDifferentDay }: ChatDayDividerProps) {
   return (
     <>
-      <Wrapper>
-        <HLine />
-        <ChatDayDividerText>{ChatDayDividerDay}</ChatDayDividerText>
-        <HLine />
-      </Wrapper>
+      {isDifferentDay ? (
+        <Wrapper>
+          <HLine />
+          <ChatDayDividerText>{ChatDayDividerDay}</ChatDayDividerText>
+          <HLine />
+        </Wrapper>
+      ) : null}
     </>
   );
 }

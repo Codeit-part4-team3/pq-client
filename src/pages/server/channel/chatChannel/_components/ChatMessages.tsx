@@ -122,7 +122,7 @@ export default function ChatMessages({
               </>
             )}
             {/* 날짜가 달라지는 경우 날짜를 표시해줄 컴포넌트 */}
-            {isDifferentDay ? <ChatDayDivider ChatDayDividerDay={ChatDayDividerDay} /> : null}
+            <ChatDayDivider ChatDayDividerDay={ChatDayDividerDay} isDifferentDay={isDifferentDay} />
           </>
         );
       })}

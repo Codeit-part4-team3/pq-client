@@ -7,6 +7,7 @@ export interface ChatChannelIntroProps {
 
 export interface ChatDayDividerProps {
   ChatDayDividerDay: string;
+  isDifferentDay: boolean;
 }
 
 export interface ChatInputBoxProps {
