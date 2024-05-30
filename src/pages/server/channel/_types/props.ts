@@ -1,4 +1,5 @@
 import { ChannelData } from '../../_types/type';
+import { lastKey } from '../chatChannel/_types/type';
 
 export interface ChatChannelIntroProps {
   channelData: ChannelData | undefined;
@@ -18,4 +19,5 @@ export interface ChatInputBoxProps {
 
 export interface MessageLoadingSpinnerProps {
   infiniteScrollTriggerRef: React.RefObject<HTMLDivElement>;
+  lastKey: lastKey | null;
 }

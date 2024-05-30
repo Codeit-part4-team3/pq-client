@@ -322,11 +322,7 @@ export default function ChatChannel() {
         {/* 채팅 가져오고 더이상 가져올 채팅이 없으면 보여주게할 컴포넌트 */}
         {isNoMoreMessages ? <ChatChannelIntro /> : null}
         {/* 무한 스크롤 로딩스피너 */}
-        {lastKey ? (
-          <>
-            <MessageLoadingSpinner infiniteScrollTriggerRef={infiniteScrollTriggerRef} />
-          </>
-        ) : null}
+        <MessageLoadingSpinner infiniteScrollTriggerRef={infiniteScrollTriggerRef} lastKey={lastKey} />
         {/* 가장 위쪽 */}
       </ChatContainer>
       {/* 채팅 input */}
