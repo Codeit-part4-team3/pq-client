@@ -1,22 +1,25 @@
 import styled from 'styled-components';
 import addSvg from '../../../../../../public/images/add_FILL0_wght200_GRAD0_opsz24 3.svg';
 import UtilityMenu from './UtilityMenu';
+import { useState } from 'react';
 
-interface UtilityButtonProps {
-  isClickedUtilityButton: boolean;
-  handleUiilityButtonClick: () => void;
-}
+export default function UtilityButton() {
+  // 유틸리티 버튼
+  const [isClicked, setIsClicked] = useState<boolean>(false);
 
-export default function UtilityButton({ isClickedUtilityButton, handleUiilityButtonClick }: UtilityButtonProps) {
+  const handleButtonClick = () => {
+    setIsClicked(!isClicked);
+  };
+
   return (
-    <Wrapper $isClickedUtilityButton={isClickedUtilityButton} onClick={handleUiilityButtonClick}>
+    <Wrapper $isClicked={isClicked} onClick={handleButtonClick}>
       <img src={addSvg} alt='add 이미지' width={24} height={24} />
-      {isClickedUtilityButton ? <UtilityMenu /> : null}
+      {isClicked ? <UtilityMenu /> : null}
     </Wrapper>
   );
 }
 
-const Wrapper = styled.button<{ $isClickedUtilityButton: boolean }>`
+const Wrapper = styled.button<{ $isClicked: boolean }>`
   border: none;
   border-radius: 4px;
   width: 24px;
@@ -25,7 +28,7 @@ const Wrapper = styled.button<{ $isClickedUtilityButton: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${({ $isClickedUtilityButton }) => ($isClickedUtilityButton ? '#d8e2ff' : 'transparent')};
+  background-color: ${({ $isClicked }) => ($isClicked ? '#d8e2ff' : 'transparent')};
 
   position: absolute;
   top: 12px;

@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { lastKey, MessageItem, ReadMessageItem } from 'src/pages/server/channel/chatChannel/_types/type';
 import ChatMessages from 'src/pages/server/channel/chatChannel/_components/ChatMessages';
-import { useSubscription } from 'src/hooks/useSubscription';
 import { useParams } from 'react-router-dom';
 import useUserStore from 'src/store/userStore';
 import { LOCAL_STORAGE_ALRAM_KEY, SOCKET_COMMON, SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
@@ -28,36 +27,17 @@ export default function ChatChannel() {
 
   // 메시지 관련
   const [messages, setMessages] = useState<MessageItem[]>([]);
-  const messageInputRef = useRef<HTMLInputElement | null>(null);
+
   // 무한 스크롤
   const [isNoMoreMessages, setIsNoMoreMessages] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const infiniteScrollTriggerRef = useRef<HTMLDivElement | null>(null);
   const [lastKey, setLastKey] = useState<lastKey | null>(null);
-  // 유틸리티 버튼
-  const [isClickedUtilityButton, setIsClickedUtilityButton] = useState<boolean>(false);
+
   // 메시지 수정
   const [editingMessage, setEditingMessage] = useState<string>('');
   // 메시지 수정 상태, 수정중인 메시지의 messageId를 저장
   const [currentEditingMessageId, setCurrentEditingMessageId] = useState<string | null>(null);
-  // 구독 여부에 따라 채팅 글자수 제한
-  const { messageMaxLength } = useSubscription();
-
-  const handleUiilityButtonClick = () => {
-    setIsClickedUtilityButton(!isClickedUtilityButton);
-  };
-
-  const handleSendMessageKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (messageInputRef.current) {
-      if (messageInputRef.current?.value === '') return;
-      if (e.nativeEvent.isComposing) return;
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        socketRef.current?.emit(SOCKET_EMIT.SEND_MESSAGE, { message: e.currentTarget.value, roomName, userId });
-        messageInputRef.current.value = '';
-      }
-    }
-  };
 
   // // 메시지 수정 상태로 만들기
   const handleUpdateMessageClick = ({ messageId, createdAt }: { messageId: string; createdAt: number }) => {
@@ -309,11 +289,11 @@ export default function ChatChannel() {
         socketRef.current.off(SOCKET_COMMON.READ_MESSAGE);
       }
     };
-  }, [roomName]);
+  }, [roomName, channelId, socket, userId]);
 
   useEffect(() => {
     // 페이지 진입시, 채팅이 추가될 때마다 스크롤을 맨 아래로 내려준다
-    if (messageInputRef.current?.value === '' && chatContainerRef.current) {
+    if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [messages]);
@@ -350,13 +330,7 @@ export default function ChatChannel() {
         {/* 가장 위쪽 */}
       </ChatContainer>
       {/* 채팅 input */}
-      <ChatInputBox
-        messageInputRef={messageInputRef}
-        handleSendMessageKeyDown={handleSendMessageKeyDown}
-        messageMaxLength={messageMaxLength}
-        isClickedUtilityButton={isClickedUtilityButton}
-        handleUiilityButtonClick={handleUiilityButtonClick}
-      />
+      <ChatInputBox />
     </Wrapper>
   );
 }
