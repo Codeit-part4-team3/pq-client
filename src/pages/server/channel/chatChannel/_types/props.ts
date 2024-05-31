@@ -47,3 +47,12 @@ export interface useChatMessagesProps {
   onUpdateMessageCancelClick: ({ messageId }: { messageId: string }) => void;
   setEditingMessage: React.Dispatch<React.SetStateAction<string>>;
 }
+
+export interface ChatMessageContentHeaderProps {
+  nickname: string | undefined;
+  messageCreatedAt: string;
+}
+
+export interface ChatChannelIntroProps {
+  isNoMoreMessages: boolean;
+}

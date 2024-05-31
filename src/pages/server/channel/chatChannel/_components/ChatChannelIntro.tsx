@@ -1,9 +1,6 @@
 import styled from 'styled-components';
 import useChatChannelIntro from '../_hooks/useChatChannelIntro';
-
-interface ChatChannelIntroProps {
-  isNoMoreMessages: boolean;
-}
+import { ChatChannelIntroProps } from '../_types/props';
 
 export default function ChatChannelIntro({ isNoMoreMessages }: ChatChannelIntroProps) {
   const { channelData } = useChatChannelIntro();

@@ -1,9 +1,5 @@
 import styled from 'styled-components';
-
-interface ChatMessageContentHeaderProps {
-  nickname: string | undefined;
-  messageCreatedAt: string;
-}
+import { ChatMessageContentHeaderProps } from '../_types/props';
 
 export default function ChatMessageContentHeader({ nickname, messageCreatedAt }: ChatMessageContentHeaderProps) {
   return (
