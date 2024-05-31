@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 import useSocketStore from 'src/store/socketStore';
 import useUserStore from 'src/store/userStore';
 import { lastKey, MessageItem, ReadMessageItem } from '../_types/type';
 import { LOCAL_STORAGE_ALRAM_KEY, SOCKET_COMMON, SOCKET_EMIT, SOCKET_ON } from 'src/constants/common';
+import infiniteScroll from 'src/utils/infiniteScroll';
 
 export default function useChatContainer() {
   // 유저, 서버, 채널 데이터
@@ -103,29 +104,14 @@ export default function useChatContainer() {
     socketRef.current?.emit(SOCKET_EMIT.DELETE_MESSAGE, { messageId, createdAt, roomName });
   };
 
-  // infinite scroll : InfiniteScrollTrigger에 닿으면 추가로 메시지를 가져온다.
-  const infiniteScroll = async () => {
-    if (infiniteScrollTriggerRef.current) {
-      const infiniteScrollTriggerIo = new IntersectionObserver(
-        (entries) => {
-          entries.forEach(async (entry) => {
-            if (entry.isIntersecting && infiniteScrollTriggerRef.current && lastKey) {
-              socketRef.current?.emit(SOCKET_EMIT.MORE_MESSAGES, {
-                roomName,
-                userSocketId: socketRef.current?.id,
-                lastKey,
-              });
-
-              infiniteScrollTriggerIo.disconnect();
-            }
-          });
-        },
-        { threshold: 0.3 },
-      );
-
-      infiniteScrollTriggerIo.observe(infiniteScrollTriggerRef.current);
-    }
-  };
+  // 무한 스크롤 함수
+  const infiniteScrollFn = useCallback(async () => {
+    socketRef.current?.emit(SOCKET_EMIT.MORE_MESSAGES, {
+      roomName,
+      userSocketId: socketRef.current?.id,
+      lastKey,
+    });
+  }, [lastKey, roomName, socketRef]);
 
   useEffect(() => {
     if (socket) {
@@ -172,7 +158,6 @@ export default function useChatContainer() {
         setMessages((prevMessages) => [newMessage, ...prevMessages]);
 
         if (socketRef.current) {
-          console.log('좋버그 EMIT_READ_MESSAGE');
           socketRef.current.emit(SOCKET_COMMON.READ_MESSAGE, {
             messageId: newMessage.messageId,
             roomName: roomName,
@@ -188,7 +173,6 @@ export default function useChatContainer() {
         // 읽음 ui update
         if (channelId !== readChannelId) return;
 
-        console.log('좋버그 EMIT_READ_MESSAGE');
         let disCountStart = false;
         let disCountEnd = false;
         setMessages((prevMessages) =>
@@ -291,9 +275,13 @@ export default function useChatContainer() {
   }, [messages]);
 
   useEffect(() => {
-    infiniteScroll();
-    // eslint-disable-next-line
-  }, [lastKey]);
+    infiniteScroll({
+      infiniteScrollTriggerRef,
+      fn: infiniteScrollFn,
+      lastKey,
+      threshold: 0.3,
+    });
+  }, [lastKey, infiniteScrollFn]);
 
   return {
     messages,
