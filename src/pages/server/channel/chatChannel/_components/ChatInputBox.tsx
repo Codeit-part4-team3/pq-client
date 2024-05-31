@@ -1,27 +1,20 @@
 import styled from 'styled-components';
 import UtilityButton from './UtilityButton';
-import { ChatInputBoxProps } from '../../_types/props';
+import useChatInputBox from '../_hooks/useChatInputBox';
 
-export default function ChatInputBox({
-  messageInputRef,
-  handleSendMessageKeyDown,
-  messageMaxLength,
-  isClickedUtilityButton,
-  handleUiilityButtonClick,
-}: ChatInputBoxProps) {
+export default function ChatInputBox() {
+  const { InputRef, handleKeyDown, messageMaxLength } = useChatInputBox();
+
   return (
     <Wrapper>
       <ChatInput
         type='text'
         placeholder={`${'#채팅방 이름'}에 메시지 보내기`}
-        ref={messageInputRef}
-        onKeyDown={handleSendMessageKeyDown}
+        ref={InputRef}
+        onKeyDown={handleKeyDown}
         maxLength={messageMaxLength}
       />
-      <UtilityButton
-        isClickedUtilityButton={isClickedUtilityButton}
-        handleUiilityButtonClick={handleUiilityButtonClick}
-      />
+      <UtilityButton />
     </Wrapper>
   );
 }

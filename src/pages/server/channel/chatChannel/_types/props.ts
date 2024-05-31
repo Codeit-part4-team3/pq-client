@@ -5,7 +5,6 @@ export interface ChatChannelProps {
 }
 
 export interface ChatMessagesProps {
-  serverUserData: User[] | undefined;
   messages: MessageItem[];
   onUpdateMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
   onDeleteMessageClick: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
@@ -47,4 +46,13 @@ export interface useChatMessagesProps {
   onUpdateMessageKeyDown: ({ messageId, createdAt }: { messageId: string; createdAt: number }) => void;
   onUpdateMessageCancelClick: ({ messageId }: { messageId: string }) => void;
   setEditingMessage: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export interface ChatMessageContentHeaderProps {
+  nickname: string | undefined;
+  messageCreatedAt: string;
+}
+
+export interface ChatChannelIntroProps {
+  isNoMoreMessages: boolean;
 }

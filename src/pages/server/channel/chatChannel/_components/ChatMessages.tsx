@@ -6,9 +6,9 @@ import { formatMessageData } from '../_utils/formatMessageData';
 import ChatMessageTextEditingBox from './ChatMessageTextEditingBox';
 import useChatMessages from '../_hooks/useChatMessages';
 import { ProfileImage, ProfileImageWrapper } from 'src/GlobalStyles';
+import ChatMessageContentHeader from './ChatMessageContentHeader';
 
 export default function ChatMessages({
-  serverUserData,
   messages,
   onUpdateMessageClick,
   onDeleteMessageClick,
@@ -19,12 +19,17 @@ export default function ChatMessages({
   onEditingMessageChange,
   currentEditingMessageId,
 }: ChatMessagesProps) {
-  const { isContextMenuOpen, handleContextMenuOpen, isDifferentUserRef, handleMessageTextEditingKeyDown } =
-    useChatMessages({
-      onUpdateMessageKeyDown,
-      onUpdateMessageCancelClick,
-      setEditingMessage,
-    });
+  const {
+    isContextMenuOpen,
+    handleContextMenuOpen,
+    isDifferentUserRef,
+    handleMessageTextEditingKeyDown,
+    serverUserData,
+  } = useChatMessages({
+    onUpdateMessageKeyDown,
+    onUpdateMessageCancelClick,
+    setEditingMessage,
+  });
 
   if (!messages || messages.length === 0) return null;
   return (
@@ -39,6 +44,7 @@ export default function ChatMessages({
         });
         return (
           <>
+            {/* 마우스 오른쪽 버튼 클릭시 나오는 컨텍스트 버튼 */}
             {isContextMenuOpen.isOpen ? (
               <ContextMenu
                 {...isContextMenuOpen}
@@ -46,6 +52,7 @@ export default function ChatMessages({
                 onDeleteMessageClick={onDeleteMessageClick}
               />
             ) : null}
+            {/* 이전 메시지의 유저가 다르면 메시지에 프로필 사진과 닉네임을 보여준다. */}
             {isDifferentUserRef ? (
               <>
                 <ChatMessageWrapper
@@ -61,10 +68,8 @@ export default function ChatMessages({
                     <ProfileImage $imageUrl={user?.imageUrl ? user.imageUrl : '/images/landing.webp'} />
                   </ProfileImageWrapper>
                   <ChatMessageContent>
-                    <ChatMessageContentHeader>
-                      <ChatMessageSender>{user?.nickname}</ChatMessageSender>
-                      <ChatMessageCreatedAt>{messageCreatedAt}</ChatMessageCreatedAt>
-                    </ChatMessageContentHeader>
+                    <ChatMessageContentHeader nickname={user?.nickname} messageCreatedAt={messageCreatedAt} />
+                    {/* 수정중인 경우 보여줄 에디터 박스 */}
                     {messageItem.status === 'editing' ? (
                       <ChatMessageTextEditingBox
                         messageItem={messageItem}
@@ -75,8 +80,10 @@ export default function ChatMessages({
                         onKeyDown={handleMessageTextEditingKeyDown}
                       />
                     ) : (
+                      // 수정중이 아니라면 메시지 내용을 보여준다.
                       <ChatMessageText>
                         {messageItem.message}
+                        {/* 읽은 사람 수 */}
                         {messageItem.notReadCount > 0 && <div>{messageItem.notReadCount}</div>}
                       </ChatMessageText>
                     )}
@@ -84,7 +91,9 @@ export default function ChatMessages({
                 </ChatMessageWrapper>
               </>
             ) : (
+              // 이전 메시지의 유저가 같다면 프로필 사진과 닉네임을 보여주지 않는다.
               <>
+                {/* 수정중인 경우 보여울 에디터 박스 */}
                 {messageItem.status === 'editing' ? (
                   <SameUserMessage isOnEdit={currentEditingMessageId === messageItem.messageId}>
                     <ChatMessageTextEditingBox
@@ -97,6 +106,7 @@ export default function ChatMessages({
                     />
                   </SameUserMessage>
                 ) : (
+                  // 수정중이 아니라면 메시지 내용을 보여준다.
                   <SameUserMessage
                     key={messageItem.messageId}
                     onContextMenu={handleContextMenuOpen(
@@ -111,7 +121,8 @@ export default function ChatMessages({
                 )}
               </>
             )}
-            {isDifferentDay ? <ChatDayDivider ChatDayDividerDay={ChatDayDividerDay} /> : null}
+            {/* 날짜가 달라지는 경우 날짜를 표시해줄 컴포넌트 */}
+            <ChatDayDivider ChatDayDividerDay={ChatDayDividerDay} isDifferentDay={isDifferentDay} />
           </>
         );
       })}
@@ -139,29 +150,6 @@ const ChatMessageContent = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-`;
-
-const ChatMessageContentHeader = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
-const ChatMessageSender = styled.div`
-  color: var(--black_000000);
-  font-family: Pretendard;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 160%; /* 25.6px */
-`;
-
-const ChatMessageCreatedAt = styled.div`
-  color: var(--gray_666666);
-  font-family: Pretendard;
-  font-size: 10px;
-  line-height: 160%; /* 16px */
-
-  display: flex;
-  align-items: center;
 `;
 
 const ChatMessageText = styled.p`

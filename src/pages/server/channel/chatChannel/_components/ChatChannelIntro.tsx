@@ -1,13 +1,18 @@
 import styled from 'styled-components';
-import { ChatChannelIntroProps } from '../../_types/props';
+import useChatChannelIntro from '../_hooks/useChatChannelIntro';
+import { ChatChannelIntroProps } from '../_types/props';
 
-export default function ChatChannelIntro({ channelData }: ChatChannelIntroProps) {
+export default function ChatChannelIntro({ isNoMoreMessages }: ChatChannelIntroProps) {
+  const { channelData } = useChatChannelIntro();
+
   return (
     <>
-      <Wrapper>
-        <ChannelName>{channelData?.name}의 첫 시작 부분이에요</ChannelName>
-        <CreationDate>생성일 : {'2024년 04월 11일'}</CreationDate>
-      </Wrapper>
+      {isNoMoreMessages ? (
+        <Wrapper>
+          <ChannelName>{channelData?.name}의 첫 시작 부분이에요</ChannelName>
+          <CreationDate>생성일 : {'2024년 04월 11일'}</CreationDate>
+        </Wrapper>
+      ) : null}
     </>
   );
 }

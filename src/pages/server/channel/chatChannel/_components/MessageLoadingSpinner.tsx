@@ -1,14 +1,16 @@
 import styled, { keyframes } from 'styled-components';
 import { MessageLoadingSpinnerProps } from '../../_types/props';
 
-export default function MessageLoadingSpinner({ infiniteScrollTriggerRef }: MessageLoadingSpinnerProps) {
+export default function MessageLoadingSpinner({ infiniteScrollTriggerRef, lastKey }: MessageLoadingSpinnerProps) {
   return (
     <>
-      <ChatLoadingSpinner ref={infiniteScrollTriggerRef}>
-        <Spinner delay='0s' />
-        <Spinner delay='0.2s' />
-        <Spinner delay='0.4s' />
-      </ChatLoadingSpinner>
+      {lastKey ? (
+        <ChatLoadingSpinner ref={infiniteScrollTriggerRef}>
+          <Spinner delay='0s' />
+          <Spinner delay='0.2s' />
+          <Spinner delay='0.4s' />
+        </ChatLoadingSpinner>
+      ) : null}
     </>
   );
 }

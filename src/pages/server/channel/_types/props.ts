@@ -1,4 +1,5 @@
 import { ChannelData } from '../../_types/type';
+import { lastKey } from '../chatChannel/_types/type';
 
 export interface ChatChannelIntroProps {
   channelData: ChannelData | undefined;
@@ -6,6 +7,7 @@ export interface ChatChannelIntroProps {
 
 export interface ChatDayDividerProps {
   ChatDayDividerDay: string;
+  isDifferentDay: boolean;
 }
 
 export interface ChatInputBoxProps {
@@ -18,4 +20,5 @@ export interface ChatInputBoxProps {
 
 export interface MessageLoadingSpinnerProps {
   infiniteScrollTriggerRef: React.RefObject<HTMLDivElement>;
+  lastKey: lastKey | null;
 }
